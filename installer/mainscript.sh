@@ -356,10 +356,10 @@ install_cachyos_options() {
     # Check if cachyosmenu.sh exists in current directory
     if [ -f "cachyosmenu.sh" ]; then
         echo -e "${COLOR_GREEN}Copying cachyosmenu.sh to chroot...${COLOR_RESET}"
-        execute_command "cp cachyosmenu.sh /mnt/root/"
-        execute_command "chmod +x /mnt/root/cachyosmenu.sh"
+        execute_command "cp cachyosmenu.sh /mnt"
+        execute_command "chmod +x /mnt/cachyosmenu.sh"
         echo -e "${COLOR_GREEN}Executing cachyosmenu.sh in chroot...${COLOR_RESET}"
-        execute_command "chroot /mnt /bin/bash -c \"/root/cachyosmenu.sh\""
+        execute_command "chroot /mnt /bin/bash -c \"/cachyosmenu.sh\""
         echo -e "${COLOR_GREEN}Cachyos installation completed!${COLOR_RESET}"
     else
         echo -e "${COLOR_RED}Error: cachyosmenu.sh not found in current directory${COLOR_RESET}"
@@ -389,10 +389,10 @@ install_claudemods_distribution() {
     # Check if claudemods-distributions.sh exists in current directory
     if [ -f "claudemods-distributions.sh" ]; then
         echo -e "${COLOR_GREEN}Copying claudemods-distributions.sh to chroot...${COLOR_RESET}"
-        execute_command "cp claudemods-distributions.sh /mnt/root/"
-        execute_command "chmod +x /mnt/root/claudemods-distributions.sh"
+        execute_command "cp claudemods-distributions.sh /mnt"
+        execute_command "chmod +x /mnt/claudemods-distributions.sh"
         echo -e "${COLOR_GREEN}Executing claudemods-distributions.sh in chroot...${COLOR_RESET}"
-        execute_command "chroot /mnt /bin/bash -c \"/root/claudemods-distributions.sh\""
+        execute_command "chroot /mnt /bin/bash -c \"/claudemods-distributions.sh\""
         echo -e "${COLOR_GREEN}Claudemods distribution installation completed!${COLOR_RESET}"
     else
         echo -e "${COLOR_RED}Error: claudemods-distributions.sh not found in current directory${COLOR_RESET}"

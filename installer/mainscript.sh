@@ -79,8 +79,8 @@ display_header() {
 ╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝
 ░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░
 EOF
-    echo -e "${COLOR_CYAN}claudemods cmi rsync installer v1.03.2${COLOR_RESET}"
-    echo -e "${COLOR_CYAN}Supports Ext4 filesystems${COLOR_RESET}"
+    echo -e "${COLOR_CYAN}claudemods distribution installer v1.0 27-10-2025${COLOR_RESET}"
+    echo -e "${COLOR_CYAN}Supports Ext4 And Btrfs filesystems${COLOR_RESET}"
     echo
 }
 

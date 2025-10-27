@@ -2,6 +2,8 @@
 
 A Tty Grub-based Iso offering multiple Arch Linux and CachyOS installation options. 💻
 
+ext4 and btrfs supported 🚀
+
 ## Installation Options
 
 ### 🐧 Vanilla Arch Linux

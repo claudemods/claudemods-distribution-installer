@@ -28,6 +28,6 @@ ext4 and btrfs supported 🚀
 13. 🌟 Vanilla CachyOS KDE GRUB
 14. 🎯 Vanilla CachyOS GNOME GRUB
 
-### 📦 Minimal Builds
-15. 🏔️ Apex CKGE Minimal
-16. 🔥 Spitfire CKGE Minimal
+### 📦 claudemods CKGE Minimal Builds
+15. 🏔️ Spitfire CKGE Minimal
+16. 🔥 Apex CKGE Minimal

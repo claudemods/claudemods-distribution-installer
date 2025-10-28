@@ -1,0 +1,2 @@
+#!/bin/bash
+cd /home/$USER && git clone https://github.com/claudemods/vanillaarch-to-cachyos && cd /home/$USER/vanillaarch-to-cachyos/install-fulltty-grub && sudo chmod +x /home/$USER/vanillaarch-to-cachyos/install-fulltty-grub/install-repo-and-full-cachyos-tty-grub-packages.sh && ./install-repo-and-full-cachyos-tty-grub-packages.sh && sudo rm -rf https://github.com/claudemods/vanillaarch-to-cachyos

@@ -9,6 +9,27 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 BOLD='\033[1m'
 
+# Function for colored output
+print_status() {
+    echo -e "${GREEN}[✓]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[!]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[✗]${NC} $1"
+}
+
+print_info() {
+    echo -e "${CYAN}[i]${NC} $1"
+}
+
+print_section() {
+    echo -e "${BLUE}${BOLD}[=== $1 ===]${NC}"
+}
+
 # Check if username is provided as argument
 if [ $# -eq 1 ]; then
     TARGET_USER="$1"
@@ -40,27 +61,6 @@ echo "           ClaudeMods Vanilla Arch Tty Grub to CachyOS Tty Grub v1.01 28-1
 echo -e "${NC}"
 echo "================================================================================"
 echo ""
-
-# Function for colored output
-print_status() {
-    echo -e "${GREEN}[✓]${NC} $1"
-}
-
-print_warning() {
-    echo -e "${YELLOW}[!]${NC} $1"
-}
-
-print_error() {
-    echo -e "${RED}[✗]${NC} $1"
-}
-
-print_info() {
-    echo -e "${CYAN}[i]${NC} $1"
-}
-
-print_section() {
-    echo -e "${BLUE}${BOLD}[=== $1 ===]${NC}"
-}
 
 # Check if running as root
 if [[ $EUID -eq 0 ]]; then

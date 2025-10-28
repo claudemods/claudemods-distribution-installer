@@ -1264,7 +1264,7 @@ print_status "Package installation completed"
 print_section "Step 3: System Configuration"
 
 print_info "Configuring GRUB bootloader..."
-sudo cp -r /home/$USER/vanillaarch-to-cachyos/install-fullkde-grub/grub /etc/default
+sudo cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/grub /etc/default
 print_status "GRUB configuration copied"
 
 print_info "Generating new GRUB configuration..."
@@ -1277,22 +1277,22 @@ print_status "Plymouth theme configured"
 
 print_info "Configuring Fish shell..."
 mkdir /home/$USER/.config/fish
-cp -r /home/$USER/vanillaarch-to-cachyos/install-fullkde-grub/config.fish /home/$USER/.config/fish/config.fish
-cp -r /home/$USER/vanillaarch-to-cachyos/install-fullkde-grub/.zshrc /home/$USER/.zshrc
+cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/config.fish /home/$USER/.config/fish/config.fish
+cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/.zshrc /home/$USER/.zshrc
 sudo chmod +X /home/$USER/.config/fish/config.fish
 chsh -s $(which fish)
 print_status "Fish configuration applied"
 print_info "Cachyos Hello Will Now Open Please Close To Continue..."
 cachyos-hello > /dev/null 2>&1
 print_info "Apply Cachyos Kde Theme..."
-sudo chmod +x /home/$USER/vanillaarch-to-cachyos/install-fullkde-grub/./installcachyostheme.sh
-sudo chmod +x /home/$USER/vanillaarch-to-cachyos/install-fullkde-grub/start.sh
-cd /home/$USER/vanillaarch-to-cachyos/install-fullkde-grub && ./installcachyostheme.sh
+sudo chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/./installcachyostheme.sh
+sudo chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/start.sh
+cd /opt/claudemods-distribution-installer/install-fullkde-grub && ./installcachyostheme.sh
 print_info "Theme Applied..."
 
 print_section "CachyOS Conversion Complete!"
 echo -e "${GREEN}${BOLD}"
 echo "Conversion to CachyOS has been completed successfully!"
-sudo rm -rf /home/$USER/vanillaarch-to-cachyos
+sudo rm -rf /opt/claudemods-distribution-installer
 echo "Please reboot your system to apply all changes."
 echo -e "${NC}"

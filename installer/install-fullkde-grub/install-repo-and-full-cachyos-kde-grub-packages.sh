@@ -100,11 +100,11 @@ print_section "Starting CachyOS Conversion Process"
 # Step 1: Download and setup CachyOS repositories
 print_section "Step 1: Setting up CachyOS Repositories"
 print_info "Downloading CachyOS repository package..."
-curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz
+sudo -S curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz
 print_status "Download completed"
 
 print_info "Extracting repository files..."
-tar xvf cachyos-repo.tar.xz && cd cachyos-repo
+sudo -S tar xvf cachyos-repo.tar.xz && cd cachyos-repo
 print_status "Extraction completed"
 
 print_info "Running CachyOS repository setup..."

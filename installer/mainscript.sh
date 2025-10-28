@@ -355,7 +355,7 @@ install_cachyos_options() {
         execute_command "chmod +x /mnt/cachyosmenu.sh"
         
         echo -e "${COLOR_GREEN}Executing cachyosmenu.sh as user in chroot...${COLOR_RESET}"
-        execute_command "chroot /mnt /bin/bash -c \"su - $new_username -c 'sudo -S /cachyosmenu.sh'\""
+        execute_command "chroot /mnt /bin/bash -c \"su - $new_username -c '/cachyosmenu.sh'\""
         echo -e "${COLOR_GREEN}Cachyos installation completed!${COLOR_RESET}"
     else
         echo -e "${COLOR_RED}Error: cachyosmenu.sh not found in current directory${COLOR_RESET}"
@@ -388,7 +388,7 @@ install_claudemods_distribution() {
         execute_command "cp claudemods-distributions.sh /mnt"
         execute_command "chmod +x /mnt/claudemods-distributions.sh"
         echo -e "${COLOR_GREEN}Executing claudemods-distributions.sh as user in chroot...${COLOR_RESET}"
-        execute_command "chroot /mnt /bin/bash -c \"su - $new_username -c 'sudo -S /claudemods-distributions.sh'\""
+        execute_command "chroot /mnt /bin/bash -c \"su - $new_username -c '/claudemods-distributions.sh'\""
         echo -e "${COLOR_GREEN}Claudemods distribution installation completed!${COLOR_RESET}"
     else
         echo -e "${COLOR_RED}Error: claudemods-distributions.sh not found in current directory${COLOR_RESET}"

@@ -196,7 +196,7 @@ change_username() {
     execute_command "chroot /mnt /bin/bash -c \"groupmod -n $new_username arch\""
 
      echo -e "${COLOR_CYAN}Adding $new_username to sudo group...${COLOR_RESET}"
-    execute_command "chroot /mnt /bin/bash -c \"sudo usermod -aG sudo $new_username\""
+    execute_command "chroot /mnt /bin/bash -c \"sudo usermod -aG root $new_username\""
 
     # Set password for the new user
     echo -e "${COLOR_CYAN}Setting password for user '$new_username'...${COLOR_RESET}"

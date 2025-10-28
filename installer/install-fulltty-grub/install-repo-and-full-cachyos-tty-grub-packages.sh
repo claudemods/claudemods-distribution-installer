@@ -9,6 +9,21 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 BOLD='\033[1m'
 
+# Check if username is provided as argument
+if [ $# -eq 1 ]; then
+    TARGET_USER="$1"
+    print_info "Switching to user: $TARGET_USER"
+
+    # Check if target user exists
+    if id "$TARGET_USER" &>/dev/null; then
+        # Re-execute script as target user
+        exec su "$TARGET_USER" -c "bash $0"
+    else
+        print_error "User $TARGET_USER does not exist"
+        exit 1
+    fi
+fi
+
 # ASCII Art Banner
 echo -e "${RED}"
 cat << "EOF"
@@ -21,7 +36,7 @@ cat << "EOF"
 EOF
 
 echo -e "${CYAN}"
-echo "           ClaudeMods Vanilla Arch Tty Grub to CachyOS Tty Grub v1.0 24-10-2025"
+echo "           ClaudeMods Vanilla Arch Tty Grub to CachyOS Tty Grub v1.01 28-10-2025"
 echo -e "${NC}"
 echo "================================================================================"
 echo ""

@@ -79,7 +79,7 @@ display_header() {
 ╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝
 ░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░
 EOF
-    echo -e "${COLOR_CYAN}claudemods distribution installer v1.0 27-10-2025${COLOR_RESET}"
+    echo -e "${COLOR_CYAN}claudemods distribution installer v1.0 28-10-2025${COLOR_RESET}"
     echo -e "${COLOR_CYAN}Supports Ext4 And Btrfs filesystems${COLOR_RESET}"
     echo
 }
@@ -181,36 +181,28 @@ change_username() {
     execute_command "mount --bind /sys /mnt/sys"
     execute_command "mount --bind /run /mnt/run"
 
-    echo -e "${COLOR_CYAN}Changing username to '$new_username'...${COLOR_RESET}"
+    echo -e "${COLOR_CYAN}Changing username from 'arch' to '$new_username'...${COLOR_RESET}"
 
-    # Get the current username
-    local current_username
-    current_username=$(execute_command "chroot /mnt /bin/bash -c \"getent passwd | awk -F: '\\$3 >= 1000 && \\$1 != \\\"nobody\\\" {print \\$1; exit}'\"")
-    
-    if [ -z "$current_username" ]; then
-        echo -e "${COLOR_RED}Error: No existing non-root user found${COLOR_RESET}"
-        return 1
-    fi
-
-    # Change username
-    execute_command "chroot /mnt /bin/bash -c \"usermod -l $new_username $current_username\""
+    # Change username from arch to new username
+    execute_command "chroot /mnt /bin/bash -c \"usermod -l $new_username arch\""
     
     # Change home directory name
-    execute_command "chroot /mnt /bin/bash -c \"mv /home/$current_username /home/$new_username\""
+    execute_command "chroot /mnt /bin/bash -c \"mv /home/arch /home/$new_username\""
     
     # Change home directory in passwd
     execute_command "chroot /mnt /bin/bash -c \"usermod -d /home/$new_username $new_username\""
     
     # Change group name
-    execute_command "chroot /mnt /bin/bash -c \"groupmod -n $new_username $current_username\""
+    execute_command "chroot /mnt /bin/bash -c \"groupmod -n $new_username arch\""
 
-    # Set password
+    # Set password for the new user
+    echo -e "${COLOR_CYAN}Setting password for user '$new_username'...${COLOR_RESET}"
     execute_command "chroot /mnt /bin/bash -c \"passwd $new_username\""
 
     # Cleanup
     execute_command "umount -R /mnt"
 
-    echo -e "${COLOR_GREEN}Username changed to '$new_username'${COLOR_RESET}"
+    echo -e "${COLOR_GREEN}Username changed from 'arch' to '$new_username'${COLOR_RESET}"
 }
 
 # Function to chroot into the new system

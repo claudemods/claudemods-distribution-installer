@@ -89,7 +89,7 @@ fi
 print_section "Checking for virt-manager"
 if pacman -Qi virt-manager &>/dev/null; then
     print_info "virt-manager found, removing it..."
-    sudo pacman -Rns --noconfirm virt-manager
+    sudo -S pacman -Rns --noconfirm virt-manager
     print_status "virt-manager removed successfully"
 else
     print_info "virt-manager not installed, proceeding..."
@@ -108,7 +108,7 @@ tar xvf cachyos-repo.tar.xz && cd cachyos-repo
 print_status "Extraction completed"
 
 print_info "Running CachyOS repository setup..."
-sudo ./cachyos-repo.sh
+sudo -S ./cachyos-repo.sh
 print_status "Repository setup completed"
 
 # Step 2: Massive package installation
@@ -116,7 +116,7 @@ print_section "Step 2: Installing Packages"
 print_info "Starting installation (this will take a while)..."
 print_info "Please be patient as this process may take 30-60 minutes..."
 
-sudo pacman -S --needed \
+sudo -S pacman -S --needed \
 a52dec \
 aalib \
 abseil-cpp \
@@ -968,7 +968,7 @@ qemu-guest-agent \
 qqc2-breeze-style \
 qqc2-desktop-style \
 qrencode \
-qt-sudo \
+qt-sudo -S \
 qt5-base \
 qt5-declarative \
 qt5-translations \
@@ -1052,7 +1052,7 @@ sqlite \
 sratom \
 srt \
 startup-notification \
-sudo \
+sudo -S \
 svt-av1 \
 svt-hevc \
 syndication \
@@ -1264,35 +1264,35 @@ print_status "Package installation completed"
 print_section "Step 3: System Configuration"
 
 print_info "Configuring GRUB bootloader..."
-sudo cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/grub /etc/default
+sudo -S cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/grub /etc/default
 print_status "GRUB configuration copied"
 
 print_info "Generating new GRUB configuration..."
-sudo grub-mkconfig -o /boot/grub/grub.cfg
+sudo -S grub-mkconfig -o /boot/grub/grub.cfg
 print_status "GRUB configuration updated"
 
 print_info "Setting Plymouth boot animation..."
-sudo plymouth-set-default-theme -R cachyos-bootanimation
+sudo -S plymouth-set-default-theme -R cachyos-bootanimation
 print_status "Plymouth theme configured"
 
 print_info "Configuring Fish shell..."
 mkdir /home/$USER/.config/fish
 cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/config.fish /home/$USER/.config/fish/config.fish
 cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/.zshrc /home/$USER/.zshrc
-sudo chmod +X /home/$USER/.config/fish/config.fish
+sudo -S chmod +X /home/$USER/.config/fish/config.fish
 chsh -s $(which fish)
 print_status "Fish configuration applied"
 print_info "Cachyos Hello Will Now Open Please Close To Continue..."
 cachyos-hello > /dev/null 2>&1
 print_info "Apply Cachyos Kde Theme..."
-sudo chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/./installcachyostheme.sh
-sudo chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/start.sh
+sudo -S chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/./installcachyostheme.sh
+sudo -S chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/start.sh
 cd /opt/claudemods-distribution-installer/install-fullkde-grub && ./installcachyostheme.sh
 print_info "Theme Applied..."
 
 print_section "CachyOS Conversion Complete!"
 echo -e "${GREEN}${BOLD}"
 echo "Conversion to CachyOS has been completed successfully!"
-sudo rm -rf /opt/claudemods-distribution-installer
+sudo -S rm -rf /opt/claudemods-distribution-installer
 echo "Please reboot your system to apply all changes."
 echo -e "${NC}"

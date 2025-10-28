@@ -90,6 +90,7 @@ print_section "Checking for virt-manager"
 if pacman -Qi virt-manager &>/dev/null; then
     print_info "virt-manager found, removing it..."
     sudo -S pacman -Rns --noconfirm virt-manager
+    wait
     print_status "virt-manager removed successfully"
 else
     print_info "virt-manager not installed, proceeding..."
@@ -101,14 +102,17 @@ print_section "Starting CachyOS Conversion Process"
 print_section "Step 1: Setting up CachyOS Repositories"
 print_info "Downloading CachyOS repository package..."
 sudo -S curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz
+wait
 print_status "Download completed"
 
 print_info "Extracting repository files..."
 sudo -S tar xvf cachyos-repo.tar.xz && cd cachyos-repo
+wait
 print_status "Extraction completed"
 
 print_info "Running CachyOS repository setup..."
 sudo -S ./cachyos-repo.sh
+wait
 print_status "Repository setup completed"
 
 # Step 2: Massive package installation
@@ -1228,7 +1232,6 @@ xorg-xinit \
 xorg-xinput \
 xorg-xkbcomp \
 xorg-xkill \
-xorg-xmessage \
 xorg-xmodmap \
 xorg-xprop \
 xorg-xrandr \
@@ -1257,7 +1260,7 @@ zsh-theme-powerlevel10k \
 zstd \
 zvbi \
 zxing-cpp
-
+wait
 print_status "Package installation completed"
 
 # Step 3: System Configuration
@@ -1265,34 +1268,47 @@ print_section "Step 3: System Configuration"
 
 print_info "Configuring GRUB bootloader..."
 sudo -S cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/grub /etc/default
+wait
 print_status "GRUB configuration copied"
 
 print_info "Generating new GRUB configuration..."
 sudo -S grub-mkconfig -o /boot/grub/grub.cfg
+wait
 print_status "GRUB configuration updated"
 
 print_info "Setting Plymouth boot animation..."
 sudo -S plymouth-set-default-theme -R cachyos-bootanimation
+wait
 print_status "Plymouth theme configured"
 
 print_info "Configuring Fish shell..."
 mkdir /home/$USER/.config/fish
+wait
 cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/config.fish /home/$USER/.config/fish/config.fish
+wait
 cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/.zshrc /home/$USER/.zshrc
+wait
 sudo -S chmod +X /home/$USER/.config/fish/config.fish
+wait
 chsh -s $(which fish)
+wait
 print_status "Fish configuration applied"
 print_info "Cachyos Hello Will Now Open Please Close To Continue..."
 cachyos-hello > /dev/null 2>&1
+wait
 print_info "Apply Cachyos Kde Theme..."
 sudo -S chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/./installcachyostheme.sh
+wait
 sudo -S chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/start.sh
+wait
 cd /opt/claudemods-distribution-installer/install-fullkde-grub && ./installcachyostheme.sh
+wait
 print_info "Theme Applied..."
 
 print_section "CachyOS Conversion Complete!"
 echo -e "${GREEN}${BOLD}"
 echo "Conversion to CachyOS has been completed successfully!"
 sudo -S rm -rf /opt/claudemods-distribution-installer
+wait
 echo "Please reboot your system to apply all changes."
 echo -e "${NC}"

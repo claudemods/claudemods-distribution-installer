@@ -89,7 +89,7 @@ fi
 print_section "Checking for virt-manager"
 if pacman -Qi virt-manager &>/dev/null; then
     print_info "virt-manager found, removing it..."
-    sudo pacman -Rns --noconfirm virt-manager
+    sudo -S pacman -Rns --noconfirm virt-manager
     print_status "virt-manager removed successfully"
 else
     print_info "virt-manager not installed, proceeding..."
@@ -108,7 +108,7 @@ tar xvf cachyos-repo.tar.xz && cd cachyos-repo
 print_status "Extraction completed"
 
 print_info "Running CachyOS repository setup..."
-sudo ./cachyos-repo.sh
+sudo -S ./cachyos-repo.sh
 print_status "Repository setup completed"
 
 # Step 2: Massive package installation
@@ -116,7 +116,7 @@ print_section "Step 2: Installing Packages"
 print_info "Starting installation (this will take a while)..."
 print_info "Please be patient as this process may take 30-60 minutes..."
 
-sudo pacman -S --needed \
+sudo -S pacman -S --needed \
 a52dec \
 aalib \
 abseil-cpp \
@@ -1091,7 +1091,7 @@ qemu-vhost-user-gpu \
 qqc2-breeze-style \
 qqc2-desktop-style \
 qrencode \
-qt-sudo \
+qt-sudo -S \
 qt5-base \
 qt5-declarative \
 qt5-tools \
@@ -1189,7 +1189,7 @@ sratom \
 srt \
 sshfs \
 startup-notification \
-sudo \
+sudo -S \
 svt-av1 \
 svt-hevc \
 syndication \
@@ -1377,35 +1377,35 @@ print_status "Package installation completed"
 
 # Step 3: System Configuration
 print_section "Step 3: System Configuration"
-echo 'blacklist ntfs3' | sudo tee /etc/modprobe.d/disable-ntfs3.conf >/dev/null 2>&1
-sudo chmod 4755 /usr/lib/spice-client-glib-usb-acl-helper
-sudo pacman -R firefox
+echo 'blacklist ntfs3' | sudo -S tee /etc/modprobe.d/disable-ntfs3.conf >/dev/null 2>&1
+sudo -S chmod 4755 /usr/lib/spice-client-glib-usb-acl-helper
+sudo -S pacman -R firefox
 
 
 print_info "Configuring GRUB bootloader..."
-sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub /etc/default
+sudo -S cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub /etc/default
 print_status "GRUB configuration copied"
 
 print_info "Generating new GRUB configuration..."
-sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/10_linux /etc/grub.d
-sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub.cfg /boot/grub
-sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/cachyos /usr/share/grub/themes
-sudo grub-mkconfig -o /boot/grub/grub.cfg
+sudo -S cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/10_linux /etc/grub.d
+sudo -S cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub.cfg /boot/grub
+sudo -S cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/cachyos /usr/share/grub/themes
+sudo -S grub-mkconfig -o /boot/grub/grub.cfg
 print_status "GRUB configuration updated"
 
 print_info "Setting Plymouth boot animation..."
-sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.sh /usr/local/bin
-sudo chmod +x /usr/local/bin/term.sh
-sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.service /etc/systemd/system/
-sudo systemctl enable term.service >/dev/null 2>&1
-sudo plymouth-set-default-theme -R cachyos-bootanimation
+sudo -S cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.sh /usr/local/bin
+sudo -S chmod +x /usr/local/bin/term.sh
+sudo -S cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.service /etc/systemd/system/
+sudo -S systemctl enable term.service >/dev/null 2>&1
+sudo -S plymouth-set-default-theme -R cachyos-bootanimation
 print_status "Plymouth theme configured"
 
 print_info "Configuring Fish shell..."
 mkdir /home/$USER/.config/fish
 cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/config.fish /home/$USER/.config/fish/config.fish
 cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/.zshrc /home/$USER/.zshrc
-sudo chmod +X /home/$USER/.config/fish/config.fish
+sudo -S chmod +X /home/$USER/.config/fish/config.fish
 chsh -s $(which fish)
 print_status "Fish configuration applied"
 
@@ -1415,17 +1415,17 @@ cd /home/$USER && mv download* /home/$USER/appimages.zip >/dev/null 2>&1
 cd /home/$USER && unzip appimages.zip -d /home/$USER/apps
 mkdir /home/$USER/.local/bin
 mkdir /home/$USER/.local/share/plasma
-sudo mkdir /etc/sddm.conf.d
-cd /home/$USER/apps && sudo unzip symlinks.zip -d /home/$USER/.local/bin && sudo unzip bauh.zip -d /home/$USER/.local/share/ && sudo unzip Arch-Systemtool.zip -d /opt && sudo unzip applications -d /home/$USER/.local/share/ >/dev/null 2>&1
+sudo -S mkdir /etc/sddm.conf.d
+cd /home/$USER/apps && sudo -S unzip symlinks.zip -d /home/$USER/.local/bin && sudo -S unzip bauh.zip -d /home/$USER/.local/share/ && sudo -S unzip Arch-Systemtool.zip -d /opt && sudo -S unzip applications -d /home/$USER/.local/share/ >/dev/null 2>&1
 cd /opt/claudemods-distribution-installer/apex-ckge-minimal && unzip kio.zip -d /home/$USER/.local/share
 cd /opt/claudemods-distribution-installer/apex-ckge-minimal && unzip color-schemes.zip -d /home/$USER/.local/share
-sudo chown $USER /home/$USER/.local/share/plasma
-sudo chown $USER /home/$USER/.local/share/color-schemes
-sudo chown $USER /home/$USER/.local/share/kio
-cd /opt/claudemods-distribution-installer/apex-ckge-minimal && sudo unzip ApexLogin2.zip -d /usr/share/sddm/themes
-sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
+sudo -S chown $USER /home/$USER/.local/share/plasma
+sudo -S chown $USER /home/$USER/.local/share/color-schemes
+sudo -S chown $USER /home/$USER/.local/share/kio
+cd /opt/claudemods-distribution-installer/apex-ckge-minimal && sudo -S unzip ApexLogin2.zip -d /usr/share/sddm/themes
+sudo -S cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
 unzip /opt/claudemods-distribution-installer/apex-ckge-minimal/autostart.zip -d /home/$USER/.config
-sudo chmod +x /home/$USER/.local/.config/autostart
+sudo -S chmod +x /home/$USER/.local/.config/autostart
 cd /opt/claudemods-distribution-installer/apex-ckge-minimal && unzip apex-theme.zip -d /opt/claudemods-distribution-installer/apex-ckge-minimal
 plasma-apply-colorscheme Apex > /dev/null 2>&1
 mkdir /home/$USER/.icons
@@ -1434,14 +1434,14 @@ cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/aurorae /home/$US
 print_info "Cachyos Hello Will Now Open Please Close To Continue..."
 cachyos-hello > /dev/null 2>&1
 print_status "Proceeding..."
-sudo chmod +x /opt/claudemods-distribution-installer/apex-ckge-minimal/installapextheme.sh
-sudo chmod +x /opt/claudemods-distribution-installer/apex-ckge-minimal/start.sh
+sudo -S chmod +x /opt/claudemods-distribution-installer/apex-ckge-minimal/installapextheme.sh
+sudo -S chmod +x /opt/claudemods-distribution-installer/apex-ckge-minimal/start.sh
 cd /opt/claudemods-distribution-installer/apex-ckge-minimal && ./installapextheme.sh
 print_info "Theme Applied..."
 
 print_section "CachyOS Conversion Complete!!"
 echo -e "${GREEN}${BOLD}"
 echo "Conversion to CachyOS has been completed successfully!"
-sudo rm -rf /home/$USER/vanillaarch-to-cachyos
+sudo -S rm -rf /home/$USER/vanillaarch-to-cachyos
 echo "Please reboot your system to apply all changes."
 echo -e "${NC}"

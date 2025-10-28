@@ -24,8 +24,8 @@ echo -n "Enter your choice [0-2]: "
 read choice
 
 case $choice in
-    1) bash -c "$(curl -fsSL https://raw.githubusercontent.com/claudemods/vanillaarch-or-cachyos-to-claudemods-spitfire-ckge/refs/heads/main/kdegrub-minimal/install-from-github.sh)" ;;
-    2) bash -c "$(curl -fsSL https://raw.githubusercontent.com/claudemods/vanillaarch-or-cachyos-to-claudemods-apex-ckge/refs/heads/main/minimal/install-from-github.sh)" ;;
+    1) bash /opt/claudemods-distribution-installer/spitfire-ckge-minimal/install-repo-and-full-cachyos-kde-grub-packages.sh ;;
+    2) bash /opt/claudemods-distribution-installer/apex-ckge-minimal/install-repo-and-full-cachyos-kde-grub-packages.sh ;;
     0) exit ;;
     *) echo "Invalid choice" ;;
 esac

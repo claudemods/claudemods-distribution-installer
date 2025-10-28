@@ -1,5 +1,4 @@
-currently being built scripts are a base i will test them soon and add a release
-
+nothing working so far need to look at pacstrap options complete recode needed not impossible but not easy for sure
 
 
 # claudemods Distribution Installer 🚀

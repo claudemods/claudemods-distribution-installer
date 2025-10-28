@@ -9,23 +9,6 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 BOLD='\033[1m'
 
-# ASCII Art Banner
-echo -e "${RED}"
-cat << "EOF"
- ░█████╗░██╗░░░░░░█████╗░██╗░░░██╗██████╗░███████╗███╗░░░███╗░█████╗░██████╗░░██████╗
- ██╔══██╗██║░░░░░██╔══██╗██║░░░██║██╔══██╗██╔════╝████╗░████║██╔══██╗██╔══██╗██╔════╝
- ██║░░╚═╝██║░░░░░███████║██║░░░██║██║░░██║█████╗░░██╔████╔██║██║░░██║██║░░██║╚█████╗░
- ██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗
- ╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝
- ░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚══════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░
-EOF
-
-echo -e "${CYAN}"
-echo "           ClaudeMods Vanilla Arch Kde Grub to Apex CKGE Minimal v1.0 27-10-2025"
-echo -e "${NC}"
-echo "================================================================================"
-echo ""
-
 # Function for colored output
 print_status() {
     echo -e "${GREEN}[✓]${NC} $1"
@@ -46,6 +29,38 @@ print_info() {
 print_section() {
     echo -e "${BLUE}${BOLD}[=== $1 ===]${NC}"
 }
+
+# Check if username is provided as argument
+if [ $# -eq 1 ]; then
+    TARGET_USER="$1"
+    print_info "Switching to user: $TARGET_USER"
+
+    # Check if target user exists
+    if id "$TARGET_USER" &>/dev/null; then
+        # Re-execute script as target user
+        exec su "$TARGET_USER" -c "bash $0"
+    else
+        print_error "User $TARGET_USER does not exist"
+        exit 1
+    fi
+fi
+
+# ASCII Art Banner
+echo -e "${RED}"
+cat << "EOF"
+ ░█████╗░██╗░░░░░░█████╗░██╗░░░██╗██████╗░███████╗███╗░░░███╗░█████╗░██████╗░░██████╗
+ ██╔══██╗██║░░░░░██╔══██╗██║░░░██║██╔══██╗██╔════╝████╗░████║██╔══██╗██╔══██╗██╔════╝
+ ██║░░╚═╝██║░░░░░███████║██║░░░██║██║░░██║█████╗░░██╔████╔██║██║░░██║██║░░██║╚█████╗░
+ ██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗
+ ╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝
+ ░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚══════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░
+EOF
+
+echo -e "${CYAN}"
+echo "           ClaudeMods Vanilla Arch Kde Grub to Apex CKGE Minimal v1.0 27-10-2025"
+echo -e "${NC}"
+echo "================================================================================"
+echo ""
 
 # Check if running as root
 if [[ $EUID -eq 0 ]]; then
@@ -1368,28 +1383,28 @@ sudo pacman -R firefox
 
 
 print_info "Configuring GRUB bootloader..."
-sudo cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/grub /etc/default
+sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub /etc/default
 print_status "GRUB configuration copied"
 
 print_info "Generating new GRUB configuration..."
-sudo cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/10_linux /etc/grub.d
-sudo cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/grub.cfg /boot/grub
-sudo cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/cachyos /usr/share/grub/themes
+sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/10_linux /etc/grub.d
+sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub.cfg /boot/grub
+sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/cachyos /usr/share/grub/themes
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 print_status "GRUB configuration updated"
 
 print_info "Setting Plymouth boot animation..."
-sudo cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/term.sh /usr/local/bin
+sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.sh /usr/local/bin
 sudo chmod +x /usr/local/bin/term.sh
-sudo cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/term.service /etc/systemd/system/
+sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.service /etc/systemd/system/
 sudo systemctl enable term.service >/dev/null 2>&1
 sudo plymouth-set-default-theme -R cachyos-bootanimation
 print_status "Plymouth theme configured"
 
 print_info "Configuring Fish shell..."
 mkdir /home/$USER/.config/fish
-cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/config.fish /home/$USER/.config/fish/config.fish
-cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/.zshrc /home/$USER/.zshrc
+cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/config.fish /home/$USER/.config/fish/config.fish
+cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/.zshrc /home/$USER/.zshrc
 sudo chmod +X /home/$USER/.config/fish/config.fish
 chsh -s $(which fish)
 print_status "Fish configuration applied"
@@ -1402,26 +1417,26 @@ mkdir /home/$USER/.local/bin
 mkdir /home/$USER/.local/share/plasma
 sudo mkdir /etc/sddm.conf.d
 cd /home/$USER/apps && sudo unzip symlinks.zip -d /home/$USER/.local/bin && sudo unzip bauh.zip -d /home/$USER/.local/share/ && sudo unzip Arch-Systemtool.zip -d /opt && sudo unzip applications -d /home/$USER/.local/share/ >/dev/null 2>&1
-cd /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal && unzip kio.zip -d /home/$USER/.local/share
-cd /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal && unzip color-schemes.zip -d /home/$USER/.local/share
+cd /opt/claudemods-distribution-installer/apex-ckge-minimal && unzip kio.zip -d /home/$USER/.local/share
+cd /opt/claudemods-distribution-installer/apex-ckge-minimal && unzip color-schemes.zip -d /home/$USER/.local/share
 sudo chown $USER /home/$USER/.local/share/plasma
 sudo chown $USER /home/$USER/.local/share/color-schemes
 sudo chown $USER /home/$USER/.local/share/kio
-cd /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal && sudo unzip ApexLogin2.zip -d /usr/share/sddm/themes
-sudo cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/kde_settings.conf /etc/sddm.conf.d
-unzip /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/autostart.zip -d /home/$USER/.config
+cd /opt/claudemods-distribution-installer/apex-ckge-minimal && sudo unzip ApexLogin2.zip -d /usr/share/sddm/themes
+sudo cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
+unzip /opt/claudemods-distribution-installer/apex-ckge-minimal/autostart.zip -d /home/$USER/.config
 sudo chmod +x /home/$USER/.local/.config/autostart
-cd /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal && unzip apex-theme.zip -d /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal
+cd /opt/claudemods-distribution-installer/apex-ckge-minimal && unzip apex-theme.zip -d /opt/claudemods-distribution-installer/apex-ckge-minimal
 plasma-apply-colorscheme Apex > /dev/null 2>&1
 mkdir /home/$USER/.icons
 unzip Windows10Dark.zip -d /home/$USER/.icons > /dev/null 2>&1
-cp -r /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/aurorae /home/$USER/.local/share
+cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/aurorae /home/$USER/.local/share
 print_info "Cachyos Hello Will Now Open Please Close To Continue..."
 cachyos-hello > /dev/null 2>&1
 print_status "Proceeding..."
-sudo chmod +x /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/installapextheme.sh
-sudo chmod +x /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal/start.sh
-cd /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal && ./installapextheme.sh
+sudo chmod +x /opt/claudemods-distribution-installer/apex-ckge-minimal/installapextheme.sh
+sudo chmod +x /opt/claudemods-distribution-installer/apex-ckge-minimal/start.sh
+cd /opt/claudemods-distribution-installer/apex-ckge-minimal && ./installapextheme.sh
 print_info "Theme Applied..."
 
 print_section "CachyOS Conversion Complete!!"

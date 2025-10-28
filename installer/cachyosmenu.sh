@@ -3,7 +3,7 @@ RED='\033[38;2;255;0;0m'
 CYAN='\033[38;2;0;255;255m'
 clear
 echo -e "${RED}
- ░█████╗░██╗░░░░░░█████╗░██║░░░██╗██████╗░███████╗███╗░░░███╗░█████╗░██████╗░░██████╗
+ ░█████╗░██╗░░░░░░█████╗░██║░░░██╗██████╗░███████╗███╗░░░███╗░█████╗░██████╗░██████╗
  ██╔══██╗██║░░░░░██╔══██╗██║░░░██║██╔══██╗██╔════╝████╗░████║██╔══██╗██╔══██╗██╔════╝
  ██║░░╚═╝██║░░░░░███████║██║░░░██║██║░░██║█████╗░░██╔████╔██║██║░░██║██║░░██║╚█████╗░
  ██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗
@@ -26,9 +26,9 @@ echo -n "Enter your choice [0-3]: "
 read choice
 
 case $choice in
-    1) bash -c "$(curl -fsSL https://raw.githubusercontent.com/claudemods/vanillaarch-to-cachyos/refs/heads/main/install-fulltty-grub/install-from-github.sh)" ;;
-    2) bash -c "$(curl -fsSL https://raw.githubusercontent.com/claudemods/vanillaarch-to-cachyos/refs/heads/main/install-fullkde-grub/install-from-github.sh)" ;;
-    3) bash -c "$(curl -fsSL https://raw.githubusercontent.com/claudemods/vanillaarch-to-cachyos/refs/heads/main/install-fullgnome-grub/install-from-github.sh)" ;;
+    1) bash /opt/claudemods-distribution-installer/install-fulltty-grub/install-repo-and-full-cachyos-tty-grub-packages.sh ;;
+    2) bash /opt/claudemods-distribution-installer/install-fullkde-grub/install-repo-and-full-cachyos-kde-grub-packages.sh ;;
+    3) bash /opt/claudemods-distribution-installer/install-fullgnome-grub/install-repo-and-full-cachyos-gnome-grub-packages.sh ;;
     0) exit ;;
     *) echo "Invalid choice" ;;
 esac

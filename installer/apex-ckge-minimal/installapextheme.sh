@@ -187,7 +187,7 @@ install_backup() {
     LOG_TEXT+="Applying KDE configurations...\n"
     qdbus6 org.kde.KWin /KWin reconfigure
     kquitapp6 plasmashell
-    cd /home/$USER/vanillaarch-or-cachyos-to-claudemods-apex-ckge/minimal && ./start.sh > /dev/null 2>&1
+    cd /opt/claudemods-distribution-installer/apex-ckge-minimal && ./start.sh > /dev/null 2>&1
     LOG_TEXT+="✓ KDE configuration applied successfully\n"
 }
 

@@ -4,7 +4,7 @@ currently being built scripts are a base i will test them soon and add a release
 
 # claudemods Distribution Installer 🚀
 
-A Tty Grub-based Iso offering multiple Arch Linux and CachyOS installation options. 💻
+A 1gb Tty Grub-based Iso offering multiple Arch Linux and CachyOS installation options. 💻
 
 ext4 and btrfs supported 💿
 

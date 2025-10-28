@@ -1,4 +1,4 @@
-currently being built script are a based i will test them soon and add a release
+currently being built scripts are a base i will test them soon and add a release
 
 
 

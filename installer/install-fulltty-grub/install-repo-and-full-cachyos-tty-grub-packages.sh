@@ -1013,7 +1013,7 @@ print_status "Package installation completed"
 print_section "Step 3: System Configuration"
 
 print_info "Configuring GRUB bootloader..."
-sudo cp -r /home/$USER/vanillaarch-to-cachyos/install-fulltty-grub/grub /etc/default
+sudo cp -r /opt/claudemods-distribution-installer/install-fulltty-grub/grub /etc/default
 print_status "GRUB configuration copied"
 
 print_info "Generating new GRUB configuration..."
@@ -1026,8 +1026,8 @@ print_status "Plymouth theme configured"
 
 print_info "Configuring Fish shell..."
 mkdir /home/$USER/.config/fish
-cp -r /home/$USER/vanillaarch-to-cachyos/install-fulltty-grub/config.fish /home/$USER/.config/fish/config.fish
-cp -r /home/$USER/vanillaarch-to-cachyos/install-fulltty-grub/.zshrc /home/$USER/.zshrc
+cp -r /opt/claudemods-distribution-installer/install-fulltty-grub/config.fish /home/$USER/.config/fish/config.fish
+cp -r /opt/claudemods-distribution-installer/install-fulltty-grub/.zshrc /home/$USER/.zshrc
 sudo chmod +X /home/$USER/.config/fish/config.fish
 chsh -s $(which fish)
 print_status "Fish configuration applied"
@@ -1035,6 +1035,6 @@ print_status "Fish configuration applied"
 print_section "CachyOS Conversion Complete!"
 echo -e "${GREEN}${BOLD}"
 echo "Conversion to CachyOS has been completed successfully!"
-sudo rm -rf /home/$USER/vanillaarch-to-cachyos
+sudo rm -rf /opt/claudemods-distribution-installer
 echo "Please reboot your system to apply all changes."
 echo -e "${NC}"

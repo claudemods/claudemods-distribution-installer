@@ -34,7 +34,7 @@ is_block_device() {
 display_header() {
     echo -e "${COLOR_RED}"
     cat << 'EOF'
-░█████╗░██╗░░░░░░█████╗░██╗░░░██╗██████╗░███████╗███╗░░░███╗░█████╗░██████╗░░██████╗
+░█████╗░██╗░░░░░░█████╗░██║░░░██╗██████╗░███████╗███╗░░░███╗░█████╗░██████╗░░██████╗
 ██╔══██╗██║░░░░░██╔══██╗██║░░░██║██╔══██╗██╔════╝████╗░████║██╔══██╗██╔══██╗██╔════╝
 ██║░░╚═╝██║░░░░░███████║██║░░░██║██║░░██║█████╗░░██╔████╔██║██║░░██║██║░░██║╚█████╗░
 ██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗
@@ -151,7 +151,7 @@ change_username() {
     echo -e "${COLOR_CYAN}Enter new username: ${COLOR_RESET}"
     read -r new_username
 
-    echo -e "${COLOR_CYAN}Mounting system for username change...${COLOR_RESET}"
+    echo -e "${COLOR_CYAN}Mounting system for username change...${COLOR_RESET}")
 
     # Mount ALL btrfs subvolumes
     execute_command "mount -o subvol=@,compress=zstd:22,compress-force=zstd:22 ${drive}2 /mnt")
@@ -170,7 +170,7 @@ change_username() {
     execute_command "mount --bind /sys /mnt/sys")
     execute_command "mount --bind /run /mnt/run")
 
-    echo -e "${COLOR_CYAN}Changing username from 'arch' to '$new_username'...${COLOR_RESET}"
+    echo -e "${COLOR_CYAN}Changing username from 'arch' to '$new_username'...${COLOR_RESET}")
 
     # Change username from arch to new username
     execute_command "chroot /mnt /bin/bash -c \"usermod -l $new_username arch\"")
@@ -356,8 +356,8 @@ install_cachyos_options() {
         echo -e "${COLOR_GREEN}Copying cachyosmenu.sh to chroot...${COLOR_RESET}")
         execute_command "cp cachyosmenu.sh /mnt")
         execute_command "chmod +x /mnt/cachyosmenu.sh")
-        echo -e "${COLOR_GREEN}Executing cachyosmenu.sh in chroot...${COLOR_RESET}")
-        execute_command "chroot /mnt /bin/bash -c \"/cachyosmenu.sh\"")
+        echo -e "${COLOR_GREEN}Executing cachyosmenu.sh as user in chroot...${COLOR_RESET}")
+        execute_command "chroot /mnt /bin/bash -c \"su - $new_username -c '/cachyosmenu.sh'\"")
         echo -e "${COLOR_GREEN}Cachyos installation completed!${COLOR_RESET}")
     else
         echo -e "${COLOR_RED}Error: cachyosmenu.sh not found in current directory${COLOR_RESET}")
@@ -392,8 +392,8 @@ install_claudemods_distribution() {
         echo -e "${COLOR_GREEN}Copying claudemods-distributions.sh to chroot...${COLOR_RESET}")
         execute_command "cp claudemods-distributions.sh /mnt")
         execute_command "chmod +x /mnt/claudemods-distributions.sh")
-        echo -e "${COLOR_GREEN}Executing claudemods-distributions.sh in chroot...${COLOR_RESET}")
-        execute_command "chroot /mnt /bin/bash -c \"/claudemods-distributions.sh\"")
+        echo -e "${COLOR_GREEN}Executing claudemods-distributions.sh as user in chroot...${COLOR_RESET}")
+        execute_command "chroot /mnt /bin/bash -c \"su - $new_username -c '/claudemods-distributions.sh'\"")
         echo -e "${COLOR_GREEN}Claudemods distribution installation completed!${COLOR_RESET}")
     else
         echo -e "${COLOR_RED}Error: claudemods-distributions.sh not found in current directory${COLOR_RESET}")

@@ -6,7 +6,7 @@ currently being built scripts are a base i will test them soon and add a release
 
 A Tty Grub-based Iso offering multiple Arch Linux and CachyOS installation options. 💻
 
-ext4 and btrfs supported 🚀
+ext4 and btrfs supported 💿
 
 ## Installation Options
 

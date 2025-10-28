@@ -4,6 +4,6 @@ nohup /usr/bin/plasmashell > /dev/null 2>&1 &
 sleep 1
 plasma-apply-wallpaperimage -f stretch /opt/Arch-Systemtool/systemtool-extras/Apex/rift.jpg > /dev/null 2>&1
 plasma-apply-colorscheme Apex > /dev/null 2>&1
-sudo rm -rf /opt/claudemods-distribution-installer
-sudo rm -rf /home/$USER/appimages.zip
-sudo rm -rf /home/$USER/apps
+sudo -S rm -rf /opt/claudemods-distribution-installer
+sudo -S rm -rf /home/$USER/appimages.zip
+sudo -S rm -rf /home/$USER/apps

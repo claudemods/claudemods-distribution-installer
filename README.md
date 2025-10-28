@@ -1,4 +1,8 @@
-# ClaudeMods Distribution Installer 🚀
+currently being built script are a based i will test them soon and add a release
+
+
+
+# claudemods Distribution Installer 🚀
 
 A Tty Grub-based Iso offering multiple Arch Linux and CachyOS installation options. 💻
 

@@ -357,7 +357,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable gdm");
             
             // Cleanup
             execute_command("umount -R /mnt");
@@ -391,7 +391,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable sddm");
             
             // Cleanup
             execute_command("umount -R /mnt");
@@ -425,7 +425,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
             
             // Cleanup
             execute_command("umount -R /mnt");
@@ -459,7 +459,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable sddm");
             
             // Cleanup
             execute_command("umount -R /mnt");
@@ -493,7 +493,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
             
             // Cleanup
             execute_command("umount -R /mnt");
@@ -527,7 +527,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
             
             // Cleanup
             execute_command("umount -R /mnt");
@@ -561,7 +561,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
             
             // Cleanup
             execute_command("umount -R /mnt");
@@ -595,7 +595,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
             
             // Cleanup
             execute_command("umount -R /mnt");
@@ -629,7 +629,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
             
             // Cleanup
             execute_command("umount -R /mnt");
@@ -663,7 +663,7 @@ private:
             create_new_user(fs_type, drive);
             
             // Enable services
-            execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+            execute_command("chroot /mnt /bin/bash -c systemctl enable sddm");
             
             // Cleanup
             execute_command("umount -R /mnt");

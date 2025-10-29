@@ -285,7 +285,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with GNOME
-            execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -314,7 +314,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with KDE
-            execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -343,7 +343,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with XFCE
-            execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -372,7 +372,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with LXQt
-            execute_command "pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -401,7 +401,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with Cinnamon
-            execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -430,7 +430,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with MATE
-            execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -459,7 +459,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with Budgie
-            execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -488,7 +488,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with i3
-            execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -517,7 +517,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with Sway
-            execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -546,7 +546,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with Hyprland
-            execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+            execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -593,7 +593,7 @@ install_cachyos_options() {
     setup_ext4_filesystem "$root_part"
     
     # Install base system
-    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
     
     # Mount EFI partition
     execute_command "mount $efi_part /mnt/boot/efi"
@@ -644,7 +644,7 @@ install_claudemods_distribution() {
     setup_ext4_filesystem "$root_part"
     
     # Install base system
-    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio"
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
     
     # Mount EFI partition
     execute_command "mount $efi_part /mnt/boot/efi"

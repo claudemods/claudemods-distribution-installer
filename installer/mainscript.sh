@@ -163,7 +163,7 @@ install_grub_ext4() {
     execute_command "chroot /mnt /bin/bash -c \"mkinitcpio -P\""
 }
 
-# Function to change username in the new system
+# Function to change username in the new system (for Arch TTY Grub)
 change_username() {
     local fs_type="$1"
     local drive="$2"
@@ -208,6 +208,78 @@ change_username() {
     echo -e "${COLOR_GREEN}Username changed from 'arch' to '$new_username'${COLOR_RESET}"
 }
 
+# Function to create new user (for desktop environments)
+create_new_user() {
+    local fs_type="$1"
+    local drive="$2"
+
+    echo -e "${COLOR_CYAN}Enter new username: ${COLOR_RESET}"
+    read -r new_username
+
+    echo -e "${COLOR_CYAN}Mounting system for user creation...${COLOR_RESET}"
+
+    execute_command "mount ${drive}2 /mnt"
+    execute_command "mount ${drive}1 /mnt/boot/efi"
+    execute_command "mount --bind /dev /mnt/dev"
+    execute_command "mount --bind /dev/pts /mnt/dev/pts"
+    execute_command "mount --bind /proc /mnt/proc"
+    execute_command "mount --bind /sys /mnt/sys"
+    execute_command "mount --bind /run /mnt/run"
+
+    echo -e "${COLOR_CYAN}Creating new user '$new_username'...${COLOR_RESET}"
+
+    # Create new user with home directory and wheel group
+    execute_command "chroot /mnt /bin/bash -c \"useradd -m -G wheel -s /bin/bash $new_username\""
+    
+    # Set password for the new user
+    echo -e "${COLOR_CYAN}Setting password for user '$new_username'...${COLOR_RESET}"
+    execute_command "chroot /mnt /bin/bash -c \"passwd $new_username\""
+
+    # Configure sudo for wheel group if not already configured
+    execute_command "chroot /mnt /bin/bash -c \"echo '%wheel ALL=(ALL:ALL) ALL' | tee -a /etc/sudoers\""
+
+    # Cleanup
+    execute_command "umount -R /mnt"
+
+    echo -e "${COLOR_GREEN}User '$new_username' created successfully with sudo privileges${COLOR_RESET}"
+}
+
+# Function to select kernel for desktop installations
+select_kernel() {
+    echo -e "${COLOR_CYAN}"
+    echo "╔══════════════════════════════════════════════════════════════╗"
+    echo "║                      Select Kernel                          ║"
+    echo "╠══════════════════════════════════════════════════════════════╣"
+    echo "║  1. linux (Standard)                                        ║"
+    echo "║  2. linux-lts (Long Term Support)                           ║"
+    echo "║  3. linux-zen (Tuned for desktop performance)               ║"
+    echo "║  4. linux-hardened (Security-focused)                       ║"
+    echo "╚══════════════════════════════════════════════════════════════╝"
+    echo -e "${COLOR_RESET}"
+
+    echo -e "${COLOR_CYAN}Select kernel (1-4): ${COLOR_RESET}"
+    read -r kernel_choice
+
+    case $kernel_choice in
+        1)
+            echo "linux"
+            ;;
+        2)
+            echo "linux-lts"
+            ;;
+        3)
+            echo "linux-zen"
+            ;;
+        4)
+            echo "linux-hardened"
+            ;;
+        *)
+            echo -e "${COLOR_YELLOW}Invalid selection, using standard linux kernel${COLOR_RESET}"
+            echo "linux"
+            ;;
+    esac
+}
+
 # Function to install arch tty grub (complete installation)
 install_arch_tty_grub() {
     local drive="$1"
@@ -234,7 +306,7 @@ install_arch_tty_grub() {
     echo -e "${COLOR_CYAN}Installing GRUB...${COLOR_RESET}"
     install_grub_ext4 "$drive"
     
-    # Change username
+    # Change username (using original method for Arch TTY Grub)
     echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
     change_username "$fs_type" "$drive"
     
@@ -276,6 +348,11 @@ install_desktop() {
             ;;
         2)
             echo -e "${COLOR_CYAN}Installing GNOME Desktop...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -284,8 +361,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with GNOME
-            execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with GNOME and selected kernel
+            execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -293,8 +370,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable gdm\""
@@ -305,6 +383,11 @@ install_desktop() {
             ;;
         3)
             echo -e "${COLOR_CYAN}Installing KDE Plasma...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -313,8 +396,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with KDE
-            execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with KDE and selected kernel
+            execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -322,8 +405,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable sddm\""
@@ -334,6 +418,11 @@ install_desktop() {
             ;;
         4)
             echo -e "${COLOR_CYAN}Installing XFCE...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -342,8 +431,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with XFCE
-            execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with XFCE and selected kernel
+            execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -351,8 +440,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
@@ -363,6 +453,11 @@ install_desktop() {
             ;;
         5)
             echo -e "${COLOR_CYAN}Installing LXQt...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -371,8 +466,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with LXQt
-            execute_command "pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with LXQt and selected kernel
+            execute_command "pacstrap /mnt base lxqt sddm grub efibootmbr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -380,8 +475,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable sddm\""
@@ -392,6 +488,11 @@ install_desktop() {
             ;;
         6)
             echo -e "${COLOR_CYAN}Installing Cinnamon...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -400,8 +501,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with Cinnamon
-            execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with Cinnamon and selected kernel
+            execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -409,8 +510,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
@@ -421,6 +523,11 @@ install_desktop() {
             ;;
         7)
             echo -e "${COLOR_CYAN}Installing MATE...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -429,8 +536,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with MATE
-            execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with MATE and selected kernel
+            execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -438,8 +545,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
@@ -450,6 +558,11 @@ install_desktop() {
             ;;
         8)
             echo -e "${COLOR_CYAN}Installing Budgie...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -458,8 +571,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with Budgie
-            execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with Budgie and selected kernel
+            execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -467,8 +580,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
@@ -479,6 +593,11 @@ install_desktop() {
             ;;
         9)
             echo -e "${COLOR_CYAN}Installing i3 (tiling WM)...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -487,8 +606,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with i3
-            execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with i3 and selected kernel
+            execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -496,8 +615,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
@@ -508,6 +628,11 @@ install_desktop() {
             ;;
         10)
             echo -e "${COLOR_CYAN}Installing Sway (Wayland tiling)...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -516,8 +641,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with Sway
-            execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with Sway and selected kernel
+            execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -525,8 +650,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
@@ -537,6 +663,11 @@ install_desktop() {
             ;;
         11)
             echo -e "${COLOR_PURPLE}Installing Hyprland (Modern Wayland Compositor)...${COLOR_RESET}"
+            
+            # Kernel selection for desktop environments
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -545,8 +676,8 @@ install_desktop() {
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
             
-            # Install base system with Hyprland
-            execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+            # Install base system with Hyprland and selected kernel
+            execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -554,8 +685,9 @@ install_desktop() {
             # Install GRUB
             install_grub_ext4 "$drive"
             
-            # Change username
-            change_username "$fs_type" "$drive"
+            # Create new user (using new method for desktop environments)
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            create_new_user "$fs_type" "$drive"
             
             # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable sddm\""
@@ -584,6 +716,10 @@ install_cachyos_options() {
 
     echo -e "${COLOR_CYAN}Installing CachyOS...${COLOR_RESET}"
     
+    # Kernel selection for CachyOS
+    local selected_kernel=$(select_kernel)
+    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+    
     # Prepare partitions
     prepare_target_partitions "$drive" "ext4"
     local efi_part="${drive}1"
@@ -592,8 +728,8 @@ install_cachyos_options() {
     # Setup filesystem
     setup_ext4_filesystem "$root_part"
     
-    # Install base system
-    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+    # Install base system with selected kernel
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
     
     # Mount EFI partition
     execute_command "mount $efi_part /mnt/boot/efi"
@@ -601,8 +737,9 @@ install_cachyos_options() {
     # Install GRUB
     install_grub_ext4 "$drive"
     
-    # Change username
-    change_username "$fs_type" "$drive"
+    # Create new user (using new method for desktop environments)
+    echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+    create_new_user "$fs_type" "$drive"
     
     # Download and setup CachyOS repositories
     execute_command "curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz"
@@ -635,6 +772,10 @@ install_claudemods_distribution() {
 
     echo -e "${COLOR_CYAN}Installing claudemods distribution...${COLOR_RESET}"
     
+    # Kernel selection for claudemods distribution
+    local selected_kernel=$(select_kernel)
+    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
+    
     # Prepare partitions
     prepare_target_partitions "$drive" "ext4"
     local efi_part="${drive}1"
@@ -643,8 +784,8 @@ install_claudemods_distribution() {
     # Setup filesystem
     setup_ext4_filesystem "$root_part"
     
-    # Install base system
-    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio linux"
+    # Install base system with selected kernel
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
     
     # Mount EFI partition
     execute_command "mount $efi_part /mnt/boot/efi"
@@ -652,8 +793,9 @@ install_claudemods_distribution() {
     # Install GRUB
     install_grub_ext4 "$drive"
     
-    # Change username
-    change_username "$fs_type" "$drive"
+    # Create new user (using new method for desktop environments)
+    echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+    create_new_user "$fs_type" "$drive"
 
     # Check if claudemods-distributions.sh exists in current directory
     if [ -f "claudemods-distributions.sh" ]; then

@@ -217,6 +217,14 @@ change_username() {
 
      echo -e "${COLOR_CYAN}Adding $new_username to sudo group...${COLOR_RESET}"
     execute_command "chroot /mnt /bin/bash -c \"gpasswd -a $new_username wheel\""
+    
+    # Configure sudo for wheel group if not already configured
+    execute_command "chroot /mnt /bin/bash -c \"echo '%wheel ALL=(ALL:ALL) ALL' | tee -a /etc/sudoers\""
+    
+    # Set password for root
+    echo -e "${COLOR_CYAN}Setting password for user 'root'...${COLOR_RESET}"
+    execute_command "chroot /mnt /bin/bash -c \"passwd root\""
+    
 
     # Set password for the new user
     echo -e "${COLOR_CYAN}Setting password for user '$new_username'...${COLOR_RESET}"
@@ -263,6 +271,10 @@ create_new_user() {
     # Set password for the new user
     echo -e "${COLOR_CYAN}Setting password for user '$new_username'...${COLOR_RESET}"
     execute_command "chroot /mnt /bin/bash -c \"passwd $new_username\""
+    
+    # Set password for root
+    echo -e "${COLOR_CYAN}Setting password for user 'root'...${COLOR_RESET}"
+    execute_command "chroot /mnt /bin/bash -c \"passwd root\""
 
     # Configure sudo for wheel group if not already configured
     execute_command "chroot /mnt /bin/bash -c \"echo '%wheel ALL=(ALL:ALL) ALL' | tee -a /etc/sudoers\""

@@ -35,15 +35,6 @@ private:
         return status;
     }
 
-    // Function to execute commands without color reset (for drive list)
-    int execute_command_cyan(const std::string& cmd) {
-        std::cout << COLOR_CYAN;
-        std::string full_cmd = "sudo " + cmd;
-        int status = system(full_cmd.c_str());
-        // Don't reset color here to keep cyan for the drive list
-        return status;
-    }
-
     // Function to check if path is a block device
     bool is_block_device(const std::string& path) {
         std::string cmd = "test -b " + path;
@@ -82,9 +73,8 @@ private:
         std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
         std::cout << COLOR_RESET;
 
-        std::cout << COLOR_CYAN << "Block Devices:" << COLOR_RESET << std::endl;
-        execute_command_cyan("lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,MODEL | grep -v \"loop\"");
-        std::cout << COLOR_RESET; // Reset color after the drive list
+        std::cout << COLOR_CYAN;
+        system("sudo lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,MODEL | grep -v \"loop\"");
         
         std::cout << COLOR_YELLOW;
         std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;

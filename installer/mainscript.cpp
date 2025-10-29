@@ -23,21 +23,23 @@ const std::string COLOR_RESET = "\033[0m";
 class ArchInstaller {
 private:
     // Function to execute commands with error handling - PROCESS IN CYAN
-    int execute_command(const std::string& cmd) {
-        std::string full_cmd = "sudo " + cmd + " 2>&1";
-        
-        FILE* pipe = popen(full_cmd.c_str(), "r");
-        if (!pipe) return -1;
-        
-        char buffer[128];
-        std::cout << COLOR_CYAN;
-        while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-            std::cout << buffer;
-        }
-        std::cout << COLOR_RESET;
-        
-        return pclose(pipe);
+int execute_command(const std::string& cmd) {
+    std::string full_cmd = "sudo " + cmd + " 2>&1";
+    
+    FILE* pipe = popen(full_cmd.c_str(), "r");
+    if (!pipe) return -1;
+    
+    char buffer[128];
+    std::cout << COLOR_CYAN;
+    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        std::cout << buffer;
+        fflush(stdout); // Force immediate output
     }
+    std::cout << COLOR_RESET;
+    fflush(stdout);
+    
+    return pclose(pipe);
+}
 
     // Function to check if path is a block device
     bool is_block_device(const std::string& path) {

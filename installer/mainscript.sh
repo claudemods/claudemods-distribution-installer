@@ -347,6 +347,11 @@ install_cachyos_options() {
     execute_command "mount --bind /proc /mnt/proc"
     execute_command "mount --bind /sys /mnt/sys"
     execute_command "mount --bind /run /mnt/run"
+    # Step 1: Download and setup CachyOS repositories
+    execute_command "sudo curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz"
+    execute_command "sudo tar xvf cachyos-repo.tar.xz && cd cachyos-repo"
+    execute_command "sudo ./cachyos-repo.sh"
+
 
     # Check if cachyosmenu.sh exists in current directory
     if [ -f "cachyosmenu.sh" ]; then
@@ -477,52 +482,7 @@ main() {
         exit 0
     fi
 
-    if [ "$fs_type" != "ext4" ]; then
-        echo -e "${COLOR_RED}Error: Invalid filesystem type. Choose 'ext4' or 'btrfs'${COLOR_RESET}" >&2
-        exit 1
-    fi
-
-    echo -e "${COLOR_YELLOW}\nWARNING: This will erase ALL data on $drive and install a new system.\n"
-    echo -e "Are you sure you want to continue? (yes/no): ${COLOR_RESET}"
-    read -r confirmation
-
-    if [ "$confirmation" != "yes" ]; then
-        echo -e "${COLOR_CYAN}Operation cancelled.${COLOR_RESET}"
-        exit 0
-    fi
-
-    echo -e "${COLOR_CYAN}\nPreparing target partitions...${COLOR_RESET}"
-    prepare_target_partitions "$drive" "$fs_type"
-
-    local root_part="${drive}2"
-
-    echo -e "${COLOR_CYAN}Setting up $fs_type filesystem...${COLOR_RESET}"
-    setup_ext4_filesystem "$root_part"
-
-    echo -e "${COLOR_CYAN}Copying system files (this may take a while)...${COLOR_RESET}"
-    copy_system "${drive}1"
-
-    echo -e "${COLOR_CYAN}Installing bootloader...${COLOR_RESET}"
-    install_grub_ext4 "$drive"
-
-    echo -e "${COLOR_CYAN}Cleaning up...${COLOR_RESET}"
-    execute_command "umount -R /mnt"
-
-    echo -e "${COLOR_GREEN}\nInstallation complete!${COLOR_RESET}"
-
-    # Ask for username change before showing post-install menu
-    echo -e "${COLOR_CYAN}Do you want to change the username? (yes/no): ${COLOR_RESET}"
-    read -r change_username_choice
-
-    if [ "$change_username_choice" = "yes" ]; then
-        change_username "$fs_type" "$drive"
-    else
-        echo -e "${COLOR_CYAN}Skipping username change.${COLOR_RESET}"
-        # Set new_username to default if not changed
-        new_username="arch"
-    fi
-
-    # Show post-install menu
+    # Show post-install menu for ext4
     post_install_menu "$fs_type" "$drive"
 }
 

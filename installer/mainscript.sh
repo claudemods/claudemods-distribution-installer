@@ -277,26 +277,28 @@ install_desktop() {
         2)
             echo -e "${COLOR_CYAN}Installing GNOME Desktop...${COLOR_RESET}"
             install_arch_tty_grub() {
-            local drive="$1"
-            local fs_type="ext4"
-            # Setup filesystem
-            echo -e "${COLOR_CYAN}Setting up filesystem...${COLOR_RESET}"
-            setup_ext4_filesystem "$root_part"
-            # Install GRUB
-             echo -e "${COLOR_CYAN}Installing Stuff...${COLOR_RESET}"
-            execute_command "mount ${drive}2 /mnt"
-            execute_command "mount ${drive}1 /mnt/boot/efi"
-            execute_command "mount --bind /dev /mnt/dev"
-            execute_command "mount --bind /dev/pts /mnt/dev/pts"
-            execute_command "mount --bind /proc /mnt/proc"
-            execute_command "mount --bind /sys /mnt/sys"
-            execute_command "mount --bind /run /mnt/run"
-            execute_command "sudo pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober"
-            install_grub_ext4 "$drive"
-            # Change username
-            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
-            change_username "$fs_type" "$drive"
-            execute_command "chroot /mnt /bin/bash -c \"systemctl enable gdm\""
+                local drive="$1"
+                local fs_type="ext4"
+                # Setup filesystem
+                echo -e "${COLOR_CYAN}Setting up filesystem...${COLOR_RESET}"
+                setup_ext4_filesystem "$root_part"
+                # Install GRUB
+                echo -e "${COLOR_CYAN}Installing Stuff...${COLOR_RESET}"
+                execute_command "mount ${drive}2 /mnt"
+                execute_command "mount ${drive}1 /mnt/boot/efi"
+                execute_command "mount --bind /dev /mnt/dev"
+                execute_command "mount --bind /dev/pts /mnt/dev/pts"
+                execute_command "mount --bind /proc /mnt/proc"
+                execute_command "mount --bind /sys /mnt/sys"
+                execute_command "mount --bind /run /mnt/run"
+                execute_command "sudo pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober"
+                install_grub_ext4 "$drive"
+                # Change username
+                echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+                change_username "$fs_type" "$drive"
+                execute_command "chroot /mnt /bin/bash -c \"systemctl enable gdm\""
+            }
+            install_arch_tty_grub "$drive"
             ;;
         3)
             echo -e "${COLOR_CYAN}Installing KDE Plasma...${COLOR_RESET}"

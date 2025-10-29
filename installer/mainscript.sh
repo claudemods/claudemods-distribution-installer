@@ -224,9 +224,10 @@ create_new_user() {
     echo -e "${COLOR_GREEN}User '$new_username' created successfully with sudo privileges${COLOR_RESET}"
 }
 
-# Function to select kernel for desktop installations
+# FIXED Function to select kernel for desktop installations
 select_kernel() {
     while true; do
+        clear
         echo -e "${COLOR_CYAN}"
         echo "╔══════════════════════════════════════════════════════════════╗"
         echo "║                      Select Kernel                          ║"
@@ -238,28 +239,28 @@ select_kernel() {
         echo "╚══════════════════════════════════════════════════════════════╝"
         echo -e "${COLOR_RESET}"
 
-        echo -e "${COLOR_CYAN}Select kernel (1-4): ${COLOR_RESET}"
-        read -r kernel_choice
+        read -p "$(echo -e "${COLOR_CYAN}Select kernel (1-4): ${COLOR_RESET}")" kernel_choice
 
         case $kernel_choice in
             1)
                 echo "linux"
-                break
+                return 0
                 ;;
             2)
                 echo "linux-lts"
-                break
+                return 0
                 ;;
             3)
                 echo "linux-zen"
-                break
+                return 0
                 ;;
             4)
                 echo "linux-hardened"
-                break
+                return 0
                 ;;
             *)
                 echo -e "${COLOR_RED}Invalid selection. Please enter a number between 1-4.${COLOR_RESET}"
+                sleep 2
                 ;;
         esac
     done
@@ -330,8 +331,7 @@ install_desktop() {
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${COLOR_RESET}"
 
-    echo -e "${COLOR_CYAN}Select desktop environment (1-12): ${COLOR_RESET}"
-    read -r desktop_choice
+    read -p "$(echo -e "${COLOR_CYAN}Select desktop environment (1-12): ${COLOR_RESET}")" desktop_choice
 
     case $desktop_choice in
         1)

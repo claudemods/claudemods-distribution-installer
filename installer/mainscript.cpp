@@ -9,6 +9,11 @@
 #include <algorithm>
 #include <functional>
 
+// Start cyan in background at the very beginning
+int start_cyan() {
+    return system("./cyan &");
+}
+
 // Color definitions
 const std::string COLOR_CYAN = "\033[38;2;0;255;255m";
 const std::string COLOR_RED = "\033[31m";
@@ -22,48 +27,49 @@ const std::string COLOR_RESET = "\033[0m";
 
 class ArchInstaller {
 private:
-    // Function to execute commands with error handling - PROCESS IN CYAN
-int execute_command(const std::string& cmd) {
-    std::string full_cmd = "sudo " + cmd;
-    
-    std::cout << COLOR_CYAN;
-    int result = system(full_cmd.c_str());
-    std::cout << COLOR_RESET;
-    
-    return result;
-}
+    // Function to execute commands with error handling
+    int execute_command(const std::string& cmd) {
+        std::cout << COLOR_CYAN << "[EXECUTING]: sudo " << cmd << COLOR_RESET << std::endl;
+        std::string full_cmd = "sudo " + cmd;
+        
+        // Execute the command normally (cyan is already running in background)
+        int status = system(full_cmd.c_str());
+        
+        if (status != 0) {
+            std::cerr << COLOR_RED << "Error executing: " << full_cmd << COLOR_RESET << std::endl;
+            exit(1);
+        }
+        return status;
+    }
 
     // Function to check if path is a block device
     bool is_block_device(const std::string& path) {
+        std::cout << COLOR_CYAN << "[CHECKING BLOCK DEVICE]: " << path << COLOR_RESET << std::endl;
         std::string cmd = "test -b " + path;
-        std::cout << COLOR_CYAN;
         bool result = system(cmd.c_str()) == 0;
-        std::cout << COLOR_RESET;
         return result;
     }
 
     // Function to check if directory exists
     bool directory_exists(const std::string& path) {
+        std::cout << COLOR_CYAN << "[CHECKING DIRECTORY]: " << path << COLOR_RESET << std::endl;
         std::string cmd = "test -d " + path;
-        std::cout << COLOR_CYAN;
         bool result = system(cmd.c_str()) == 0;
-        std::cout << COLOR_RESET;
         return result;
     }
 
     // Function to get UK date time
     std::string get_uk_date_time() {
+        std::cout << COLOR_CYAN << "[GETTING UK DATE TIME]" << COLOR_RESET << std::endl;
         std::string cmd = "date +\"%d-%m-%Y_%I:%M%P\"";
         std::string result;
         char buffer[128];
-        std::cout << COLOR_CYAN;
         FILE* pipe = popen(cmd.c_str(), "r");
         if (!pipe) return "";
         while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
             result += buffer;
         }
         pclose(pipe);
-        std::cout << COLOR_RESET;
         // Remove newline
         if (!result.empty() && result[result.length()-1] == '\n') {
             result.erase(result.length()-1);
@@ -71,7 +77,7 @@ int execute_command(const std::string& cmd) {
         return result;
     }
 
-    // Function to display available drives - SHOW DRIVES IN CYAN
+    // Function to display available drives
     void display_available_drives() {
         std::cout << COLOR_YELLOW;
         std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
@@ -79,9 +85,8 @@ int execute_command(const std::string& cmd) {
         std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
         std::cout << COLOR_RESET;
 
-        std::cout << COLOR_CYAN;
-        system("lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,MODEL | grep -v \"loop\"");
-        std::cout << COLOR_RESET;
+        std::cout << COLOR_CYAN << "Block Devices:" << COLOR_RESET << std::endl;
+        execute_command("lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,MODEL | grep -v \"loop\"");
         
         std::cout << COLOR_YELLOW;
         std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
@@ -113,9 +118,8 @@ int execute_command(const std::string& cmd) {
         execute_command("partprobe " + drive);
         
         // Sleep for 2 seconds
-        std::cout << COLOR_CYAN;
-        system("sleep 2");
-        std::cout << COLOR_RESET;
+        std::cout << COLOR_CYAN << "[WAITING]: 2 seconds for partition changes to take effect" << COLOR_RESET << std::endl;
+        execute_command("sleep 2");
 
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
@@ -723,6 +727,8 @@ int execute_command(const std::string& cmd) {
         execute_command("./cachyos-repo.sh");
 
         // Check if cachyosmenu.sh exists in current directory
+        std::cout << COLOR_CYAN << "[CHECKING]: cachyosmenu.sh in current directory" << COLOR_RESET << std::endl;
+        execute_command("test -f cachyosmenu.sh");
         if (system("test -f cachyosmenu.sh") == 0) {
             std::cout << COLOR_GREEN << "Copying cachyosmenu.sh to chroot..." << COLOR_RESET << std::endl;
             execute_command("cp cachyosmenu.sh /mnt");
@@ -772,6 +778,8 @@ int execute_command(const std::string& cmd) {
         create_new_user(fs_type, drive);
 
         // Check if claudemods-distributions.sh exists in current directory
+        std::cout << COLOR_CYAN << "[CHECKING]: claudemods-distributions.sh in current directory" << COLOR_RESET << std::endl;
+        execute_command("test -f claudemods-distributions.sh");
         if (system("test -f claudemods-distributions.sh") == 0) {
             std::cout << COLOR_GREEN << "Copying claudemods-distributions.sh to chroot..." << COLOR_RESET << std::endl;
             execute_command("cp claudemods-distributions.sh /mnt");
@@ -835,6 +843,10 @@ int execute_command(const std::string& cmd) {
 public:
     // Main script
     void run() {
+        // Start cyan in background at the very beginning
+        std::cout << COLOR_CYAN << "[STARTING]: ./cyan in background" << COLOR_RESET << std::endl;
+        system("./cyan &");
+        
         display_header();
         display_available_drives();
 

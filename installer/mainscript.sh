@@ -117,47 +117,16 @@ setup_ext4_filesystem() {
     execute_command "mkdir -p /mnt/{home,boot/efi,etc,usr,var,proc,sys,dev,tmp,run}"
 }
 
-# Function to copy system
-copy_system() {
-    local efi_part="$1"
-    local rsync_cmd="sudo rsync -aHAXSr --numeric-ids --info=progress2 "
-    rsync_cmd+="--exclude=/etc/udev/rules.d/70-persistent-cd.rules "
-    rsync_cmd+="--exclude=/etc/udev/rules.d/70-persistent-net.rules "
-    rsync_cmd+="--exclude=/etc/mtab "
-    rsync_cmd+="--exclude=/etc/fstab "
-    rsync_cmd+="--exclude=/dev/* "
-    rsync_cmd+="--exclude=/proc/* "
-    rsync_cmd+="--exclude=/sys/* "
-    rsync_cmd+="--exclude=/tmp/* "
-    rsync_cmd+="--exclude=/run/* "
-    rsync_cmd+="--exclude=/mnt/* "
-    rsync_cmd+="--exclude=/media/* "
-    rsync_cmd+="--exclude=/lost+found "
-    rsync_cmd+="--include=/dev "
-    rsync_cmd+="--include=/proc "
-    rsync_cmd+="--include=/tmp "
-    rsync_cmd+="--include=/sys "
-    rsync_cmd+="--include=/run "
-    rsync_cmd+="--include=/usr "
-    rsync_cmd+="--include=/etc "
-    rsync_cmd+="/ /mnt"
-
-    execute_command "$rsync_cmd"
-    execute_command "mount $efi_part /mnt/boot/efi"
-    execute_command "mkdir -p /mnt/{proc,sys,dev,run,tmp}"
-}
-
 # Function to install GRUB for Ext4
 install_grub_ext4() {
     local drive="$1"
-    execute_command "sudo tar -xzf mtab.tar.gz -C /mnt/etc"
     execute_command "mount --bind /dev /mnt/dev"
     execute_command "mount --bind /dev/pts /mnt/dev/pts"
     execute_command "mount --bind /proc /mnt/proc"
     execute_command "mount --bind /sys /mnt/sys"
     execute_command "mount --bind /run /mnt/run"
     execute_command "chroot /mnt /bin/bash -c \"mount -t efivarfs efivarfs /sys/firmware/efi/efivars \""
-    execute_command "chroot /mnt /bin/bash -c \"genfstab -U /\""
+    execute_command "chroot /mnt /bin/bash -c \"genfstab -U / >> /etc/fstab\""
     execute_command "chroot /mnt /bin/bash -c \"grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB --recheck\""
     execute_command "chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\""
     execute_command "chroot /mnt /bin/bash -c \"mkinitcpio -P\""
@@ -257,46 +226,55 @@ create_new_user() {
 
 # Function to select kernel for desktop installations
 select_kernel() {
-    echo -e "${COLOR_CYAN}"
-    echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                      Select Kernel                          ║"
-    echo "╠══════════════════════════════════════════════════════════════╣"
-    echo "║  1. linux (Standard)                                        ║"
-    echo "║  2. linux-lts (Long Term Support)                           ║"
-    echo "║  3. linux-zen (Tuned for desktop performance)               ║"
-    echo "║  4. linux-hardened (Security-focused)                       ║"
-    echo "╚══════════════════════════════════════════════════════════════╝"
-    echo -e "${COLOR_RESET}"
+    while true; do
+        echo -e "${COLOR_CYAN}"
+        echo "╔══════════════════════════════════════════════════════════════╗"
+        echo "║                      Select Kernel                          ║"
+        echo "╠══════════════════════════════════════════════════════════════╣"
+        echo "║  1. linux (Standard)                                        ║"
+        echo "║  2. linux-lts (Long Term Support)                           ║"
+        echo "║  3. linux-zen (Tuned for desktop performance)               ║"
+        echo "║  4. linux-hardened (Security-focused)                       ║"
+        echo "╚══════════════════════════════════════════════════════════════╝"
+        echo -e "${COLOR_RESET}"
 
-    echo -e "${COLOR_CYAN}Select kernel (1-4): ${COLOR_RESET}"
-    read -r kernel_choice
+        echo -e "${COLOR_CYAN}Select kernel (1-4): ${COLOR_RESET}"
+        read -r kernel_choice
 
-    case $kernel_choice in
-        1)
-            echo "linux"
-            ;;
-        2)
-            echo "linux-lts"
-            ;;
-        3)
-            echo "linux-zen"
-            ;;
-        4)
-            echo "linux-hardened"
-            ;;
-        *)
-            echo -e "${COLOR_YELLOW}Invalid selection, using standard linux kernel${COLOR_RESET}"
-            echo "linux"
-            ;;
-    esac
+        case $kernel_choice in
+            1)
+                echo "linux"
+                break
+                ;;
+            2)
+                echo "linux-lts"
+                break
+                ;;
+            3)
+                echo "linux-zen"
+                break
+                ;;
+            4)
+                echo "linux-hardened"
+                break
+                ;;
+            *)
+                echo -e "${COLOR_RED}Invalid selection. Please enter a number between 1-4.${COLOR_RESET}"
+                ;;
+        esac
+    done
 }
 
-# Function to install arch tty grub (complete installation)
+# Function to install arch tty grub (complete installation) using pacstrap
 install_arch_tty_grub() {
     local drive="$1"
     local fs_type="ext4"
 
     echo -e "${COLOR_CYAN}Starting Arch TTY Grub installation...${COLOR_RESET}"
+    
+    # Kernel selection for Arch TTY Grub
+    local selected_kernel=$(select_kernel)
+    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
     
     # Prepare partitions
     echo -e "${COLOR_CYAN}Preparing partitions...${COLOR_RESET}"
@@ -309,17 +287,20 @@ install_arch_tty_grub() {
     echo -e "${COLOR_CYAN}Setting up filesystem...${COLOR_RESET}"
     setup_ext4_filesystem "$root_part"
     
-    # Copy system
-    echo -e "${COLOR_CYAN}Copying system...${COLOR_RESET}"
-    copy_system "$efi_part"
+    # Install base system using pacstrap (like other desktop environments)
+    echo -e "${COLOR_CYAN}Installing base system with pacstrap...${COLOR_RESET}"
+    execute_command "pacstrap /mnt base $selected_kernel linux-firmware grub efibootmgr os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion"
+    
+    # Mount EFI partition
+    execute_command "mount $efi_part /mnt/boot/efi"
     
     # Install GRUB
     echo -e "${COLOR_CYAN}Installing GRUB...${COLOR_RESET}"
     install_grub_ext4 "$drive"
     
-    # Change username (using original method for Arch TTY Grub)
+    # Create new user (using new method like other desktop environments)
     echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
-    change_username "$fs_type" "$drive"
+    create_new_user "$fs_type" "$drive"
     
     echo -e "${COLOR_GREEN}Arch TTY Grub installation completed successfully!${COLOR_RESET}"
 }
@@ -373,7 +354,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with GNOME and selected kernel
-            execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -408,7 +389,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with KDE and selected kernel
-            execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -443,7 +424,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with XFCE and selected kernel
-            execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -478,7 +459,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with LXQt and selected kernel
-            execute_command "pacstrap /mnt base lxqt sddm grub efibootmbr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -513,7 +494,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with Cinnamon and selected kernel
-            execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -548,7 +529,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with MATE and selected kernel
-            execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -583,7 +564,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with Budgie and selected kernel
-            execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -618,7 +599,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with i3 and selected kernel
-            execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -653,7 +634,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with Sway and selected kernel
-            execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -688,7 +669,7 @@ install_desktop() {
             setup_ext4_filesystem "$root_part"
             
             # Install base system with Hyprland and selected kernel
-            execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -740,7 +721,7 @@ install_cachyos_options() {
     setup_ext4_filesystem "$root_part"
     
     # Install base system with selected kernel
-    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
     
     # Mount EFI partition
     execute_command "mount $efi_part /mnt/boot/efi"
@@ -796,7 +777,7 @@ install_claudemods_distribution() {
     setup_ext4_filesystem "$root_part"
     
     # Install base system with selected kernel
-    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
     
     # Mount EFI partition
     execute_command "mount $efi_part /mnt/boot/efi"

@@ -24,21 +24,13 @@ class ArchInstaller {
 private:
     // Function to execute commands with error handling - PROCESS IN CYAN
 int execute_command(const std::string& cmd) {
-    std::string full_cmd = "sudo " + cmd + " 2>&1";
-    
-    FILE* pipe = popen(full_cmd.c_str(), "r");
-    if (!pipe) return -1;
+    std::string full_cmd = "sudo " + cmd;
     
     std::cout << COLOR_CYAN;
-    int c;
-    while ((c = fgetc(pipe)) != EOF) {
-        std::cout << (char)c;
-        // Flush output to ensure interactive prompts work
-        fflush(stdout);
-    }
+    int result = system(full_cmd.c_str());
     std::cout << COLOR_RESET;
     
-    return pclose(pipe);
+    return result;
 }
 
     // Function to check if path is a block device

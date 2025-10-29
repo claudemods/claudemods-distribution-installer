@@ -104,14 +104,14 @@ setup_btrfs_subvolumes() {
     execute_command "mount $root_part /mnt"
     execute_command "btrfs subvolume create /mnt/@"
     execute_command "btrfs subvolume create /mnt/@home"
-    execute_command "btrfs subvolume create /mnt/@root"
-    execute_command "btrfs subvolume create /mnt/@srv"
-    execute_command "btrfs subvolume create /mnt/@cache"
-    execute_command "btrfs subvolume create /mnt/@tmp"
-    execute_command "btrfs subvolume create /mnt/@log"
-    execute_command "mkdir -p /mnt/@/var/lib"
-    execute_command "btrfs subvolume create /mnt/@/var/lib/portables"
-    execute_command "btrfs subvolume create /mnt/@/var/lib/machines"
+    execute_command "btrfs subvolume create /mnt/@root")
+    execute_command "btrfs subvolume create /mnt/@srv")
+    execute_command "btrfs subvolume create /mnt/@cache")
+    execute_command "btrfs subvolume create /mnt/@tmp")
+    execute_command "btrfs subvolume create /mnt/@log")
+    execute_command "mkdir -p /mnt/@/var/lib")
+    execute_command "btrfs subvolume create /mnt/@/var/lib/portables")
+    execute_command "btrfs subvolume create /mnt/@/var/lib/machines")
     execute_command "umount /mnt"
 
     execute_command "mount -o subvol=@,compress=zstd:22,compress-force=zstd:22 $root_part /mnt"
@@ -127,40 +127,8 @@ setup_btrfs_subvolumes() {
     execute_command "mount -o subvol=@/var/lib/machines,compress=zstd:22,compress-force=zstd:22 $root_part /mnt/var/lib/machines"
 }
 
-copy_system() {
-    local efi_part="$1"
-    local rsync_cmd="sudo rsync -aHAXSr --numeric-ids --info=progress2 \
-    --exclude=/etc/udev/rules.d/70-persistent-cd.rules \
-    --exclude=/etc/udev/rules.d/70-persistent-net.rules \
-    --exclude=/etc/mtab \
-    --exclude=/etc/fstab \
-    --exclude=/dev/* \
-    --exclude=/proc/* \
-    --exclude=/sys/* \
-    --exclude=/tmp/* \
-    --exclude=/run/* \
-    --exclude=/mnt/* \
-    --exclude=/media/* \
-    --exclude=/lost+found \
-    --include=/dev \
-    --include=/proc \
-    --include=/tmp \
-    --include=/sys \
-    --include=/run \
-    --include=/usr \
-    --include=/etc \
-    / /mnt"
-    execute_command "$rsync_cmd"
-    execute_command "mount $efi_part /mnt/boot/efi"
-    execute_command "mkdir -p /mnt/{proc,sys,dev,run,tmp}"
-    execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
-    execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
-}
-
 install_grub_btrfs() {
     local drive="$1"
-    execute_command "sudo tar -xzf mtab.tar.gz -C /mnt/etc"
-    execute_command "touch /mnt/etc/fstab"
     execute_command "mount --bind /dev /mnt/dev"
     execute_command "mount --bind /dev/pts /mnt/dev/pts"
     execute_command "mount --bind /proc /mnt/proc"
@@ -168,6 +136,7 @@ install_grub_btrfs() {
     execute_command "mount --bind /run /mnt/run"
 
     execute_command "chroot /mnt /bin/bash -c \"mount -t efivarfs efivarfs /sys/firmware/efi/efivars\""
+    execute_command "chroot /mnt /bin/bash -c \"genfstab -U / >> /etc/fstab\""
     execute_command "chroot /mnt /bin/bash -c \"grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB --recheck\""
     execute_command "chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\""
     execute_command "chroot /mnt /bin/bash -c \"/opt/btrfsfstabcompressed.sh\""
@@ -287,46 +256,55 @@ create_new_user() {
 
 # Function to select kernel for desktop installations
 select_kernel() {
-    echo -e "${COLOR_CYAN}"
-    echo "╔══════════════════════════════════════════════════════════════╗"
-    echo "║                      Select Kernel                          ║"
-    echo "╠══════════════════════════════════════════════════════════════╣"
-    echo "║  1. linux (Standard)                                        ║"
-    echo "║  2. linux-lts (Long Term Support)                           ║"
-    echo "║  3. linux-zen (Tuned for desktop performance)               ║"
-    echo "║  4. linux-hardened (Security-focused)                       ║"
-    echo "╚══════════════════════════════════════════════════════════════╝"
-    echo -e "${COLOR_RESET}"
+    while true; do
+        echo -e "${COLOR_CYAN}"
+        echo "╔══════════════════════════════════════════════════════════════╗"
+        echo "║                      Select Kernel                          ║"
+        echo "╠══════════════════════════════════════════════════════════════╣"
+        echo "║  1. linux (Standard)                                        ║"
+        echo "║  2. linux-lts (Long Term Support)                           ║"
+        echo "║  3. linux-zen (Tuned for desktop performance)               ║"
+        echo "║  4. linux-hardened (Security-focused)                       ║"
+        echo "╚══════════════════════════════════════════════════════════════╝"
+        echo -e "${COLOR_RESET}"
 
-    echo -e "${COLOR_CYAN}Select kernel (1-4): ${COLOR_RESET}"
-    read -r kernel_choice
+        echo -e "${COLOR_CYAN}Select kernel (1-4): ${COLOR_RESET}"
+        read -r kernel_choice
 
-    case $kernel_choice in
-        1)
-            echo "linux"
-            ;;
-        2)
-            echo "linux-lts"
-            ;;
-        3)
-            echo "linux-zen"
-            ;;
-        4)
-            echo "linux-hardened"
-            ;;
-        *)
-            echo -e "${COLOR_YELLOW}Invalid selection, using standard linux kernel${COLOR_RESET}"
-            echo "linux"
-            ;;
-    esac
+        case $kernel_choice in
+            1)
+                echo "linux"
+                break
+                ;;
+            2)
+                echo "linux-lts"
+                break
+                ;;
+            3)
+                echo "linux-zen"
+                break
+                ;;
+            4)
+                echo "linux-hardened"
+                break
+                ;;
+            *)
+                echo -e "${COLOR_RED}Invalid selection. Please enter a number between 1-4.${COLOR_RESET}"
+                ;;
+        esac
+    done
 }
 
-# Function to install arch tty grub (complete installation)
+# Function to install arch tty grub (complete installation) using pacstrap
 install_arch_tty_grub() {
     local drive="$1"
     local fs_type="btrfs"
 
     echo -e "${COLOR_CYAN}Starting Arch TTY Grub installation...${COLOR_RESET}"
+    
+    # Kernel selection for Arch TTY Grub
+    local selected_kernel=$(select_kernel)
+    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
     
     # Prepare partitions
     echo -e "${COLOR_CYAN}Preparing partitions...${COLOR_RESET}"
@@ -335,21 +313,28 @@ install_arch_tty_grub() {
     local efi_part="${drive}1"
     local root_part="${drive}2"
     
-    # Setup filesystem
+    # Setup btrfs filesystem
     echo -e "${COLOR_CYAN}Setting up btrfs filesystem...${COLOR_RESET}"
     setup_btrfs_subvolumes "$root_part"
     
-    # Copy system
-    echo -e "${COLOR_CYAN}Copying system...${COLOR_RESET}"
-    copy_system "$efi_part"
+    # Install base system using pacstrap (like other desktop environments)
+    echo -e "${COLOR_CYAN}Installing base system with pacstrap...${COLOR_RESET}"
+    execute_command "pacstrap /mnt base $selected_kernel linux-firmware grub efibootmgr os-prober sudo vim nano bash-completion"
+    
+    # Copy btrfsfstabcompressed.sh to the new system
+    execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+    execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
+    
+    # Mount EFI partition
+    execute_command "mount $efi_part /mnt/boot/efi"
     
     # Install GRUB
     echo -e "${COLOR_CYAN}Installing GRUB...${COLOR_RESET}"
     install_grub_btrfs "$drive"
     
-    # Change username (using original method for Arch TTY Grub)
+    # Create new user (using new method like other desktop environments)
     echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
-    change_username "$fs_type" "$drive"
+    create_new_user "$fs_type" "$drive"
     
     echo -e "${COLOR_GREEN}Arch TTY Grub installation completed successfully!${COLOR_RESET}"
 }
@@ -403,7 +388,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with GNOME and selected kernel
-            execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -438,7 +427,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with KDE and selected kernel
-            execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -473,7 +466,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with XFCE and selected kernel
-            execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -508,7 +505,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with LXQt and selected kernel
-            execute_command "pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -543,7 +544,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with Cinnamon and selected kernel
-            execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -578,7 +583,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with MATE and selected kernel
-            execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -613,7 +622,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with Budgie and selected kernel
-            execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -648,7 +661,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with i3 and selected kernel
-            execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -683,7 +700,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with Sway and selected kernel
-            execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -718,7 +739,11 @@ install_desktop() {
             setup_btrfs_subvolumes "$root_part"
             
             # Install base system with Hyprland and selected kernel
-            execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+            execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+            
+            # Copy btrfsfstabcompressed.sh to the new system
+            execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+            execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
             
             # Mount EFI partition
             execute_command "mount $efi_part /mnt/boot/efi"
@@ -770,7 +795,11 @@ install_cachyos_options() {
     setup_btrfs_subvolumes "$root_part"
     
     # Install base system with selected kernel
-    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+    
+    # Copy btrfsfstabcompressed.sh to the new system
+    execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+    execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
     
     # Mount EFI partition
     execute_command "mount $efi_part /mnt/boot/efi"
@@ -826,7 +855,11 @@ install_claudemods_distribution() {
     setup_btrfs_subvolumes "$root_part"
     
     # Install base system with selected kernel
-    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel"
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
+    
+    # Copy btrfsfstabcompressed.sh to the new system
+    execute_command "cp btrfsfstabcompressed.sh /mnt/opt"
+    execute_command "chmod +x /mnt/opt/btrfsfstabcompressed.sh"
     
     # Mount EFI partition
     execute_command "mount $efi_part /mnt/boot/efi"

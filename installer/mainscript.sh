@@ -241,6 +241,11 @@ install_arch_tty_grub() {
     echo -e "${COLOR_GREEN}Arch TTY Grub installation completed successfully!${COLOR_RESET}"
 }
 
+# Function to install desktop environments
+install_desktop() {
+    local fs_type="$1"
+    local drive="$2"
+
     # Display desktop options - Top 10 Arch package list
     echo -e "${COLOR_CYAN}"
     echo "╔══════════════════════════════════════════════════════════════╗"

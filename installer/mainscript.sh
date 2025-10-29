@@ -272,10 +272,6 @@ install_arch_tty_grub() {
 
     echo -e "${COLOR_CYAN}Starting Arch TTY Grub installation...${COLOR_RESET}"
     
-    # Kernel selection for Arch TTY Grub
-    local selected_kernel=$(select_kernel)
-    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-    
     # Prepare partitions
     echo -e "${COLOR_CYAN}Preparing partitions...${COLOR_RESET}"
     prepare_target_partitions "$drive" "$fs_type"
@@ -286,6 +282,10 @@ install_arch_tty_grub() {
     # Setup filesystem
     echo -e "${COLOR_CYAN}Setting up filesystem...${COLOR_RESET}"
     setup_ext4_filesystem "$root_part"
+    
+    # Kernel selection for Arch TTY Grub - MOVED TO AFTER DRIVE SETUP
+    local selected_kernel=$(select_kernel)
+    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
     
     # Install base system using pacstrap (like other desktop environments)
     echo -e "${COLOR_CYAN}Installing base system with pacstrap...${COLOR_RESET}"
@@ -341,10 +341,6 @@ install_desktop() {
         2)
             echo -e "${COLOR_CYAN}Installing GNOME Desktop...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -352,6 +348,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with GNOME and selected kernel
             execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -376,10 +376,6 @@ install_desktop() {
         3)
             echo -e "${COLOR_CYAN}Installing KDE Plasma...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -387,6 +383,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with KDE and selected kernel
             execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -411,10 +411,6 @@ install_desktop() {
         4)
             echo -e "${COLOR_CYAN}Installing XFCE...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -422,6 +418,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with XFCE and selected kernel
             execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -446,10 +446,6 @@ install_desktop() {
         5)
             echo -e "${COLOR_CYAN}Installing LXQt...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -457,6 +453,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with LXQt and selected kernel
             execute_command "pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -481,10 +481,6 @@ install_desktop() {
         6)
             echo -e "${COLOR_CYAN}Installing Cinnamon...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -492,6 +488,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with Cinnamon and selected kernel
             execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -516,10 +516,6 @@ install_desktop() {
         7)
             echo -e "${COLOR_CYAN}Installing MATE...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -527,6 +523,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with MATE and selected kernel
             execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -551,10 +551,6 @@ install_desktop() {
         8)
             echo -e "${COLOR_CYAN}Installing Budgie...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -562,6 +558,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with Budgie and selected kernel
             execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -586,10 +586,6 @@ install_desktop() {
         9)
             echo -e "${COLOR_CYAN}Installing i3 (tiling WM)...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -597,6 +593,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with i3 and selected kernel
             execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -621,10 +621,6 @@ install_desktop() {
         10)
             echo -e "${COLOR_CYAN}Installing Sway (Wayland tiling)...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -632,6 +628,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with Sway and selected kernel
             execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -656,10 +656,6 @@ install_desktop() {
         11)
             echo -e "${COLOR_PURPLE}Installing Hyprland (Modern Wayland Compositor)...${COLOR_RESET}"
             
-            # Kernel selection for desktop environments
-            local selected_kernel=$(select_kernel)
-            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-            
             # Prepare partitions
             prepare_target_partitions "$drive" "ext4"
             local efi_part="${drive}1"
@@ -667,6 +663,10 @@ install_desktop() {
             
             # Setup filesystem
             setup_ext4_filesystem "$root_part"
+            
+            # Kernel selection for desktop environments - MOVED TO AFTER DRIVE SETUP
+            local selected_kernel=$(select_kernel)
+            echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
             
             # Install base system with Hyprland and selected kernel
             execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -708,10 +708,6 @@ install_cachyos_options() {
 
     echo -e "${COLOR_CYAN}Installing CachyOS...${COLOR_RESET}"
     
-    # Kernel selection for CachyOS
-    local selected_kernel=$(select_kernel)
-    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-    
     # Prepare partitions
     prepare_target_partitions "$drive" "ext4"
     local efi_part="${drive}1"
@@ -719,6 +715,10 @@ install_cachyos_options() {
     
     # Setup filesystem
     setup_ext4_filesystem "$root_part"
+    
+    # Kernel selection for CachyOS - MOVED TO AFTER DRIVE SETUP
+    local selected_kernel=$(select_kernel)
+    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
     
     # Install base system with selected kernel
     execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"
@@ -764,10 +764,6 @@ install_claudemods_distribution() {
 
     echo -e "${COLOR_CYAN}Installing claudemods distribution...${COLOR_RESET}"
     
-    # Kernel selection for claudemods distribution
-    local selected_kernel=$(select_kernel)
-    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
-    
     # Prepare partitions
     prepare_target_partitions "$drive" "ext4"
     local efi_part="${drive}1"
@@ -775,6 +771,10 @@ install_claudemods_distribution() {
     
     # Setup filesystem
     setup_ext4_filesystem "$root_part"
+    
+    # Kernel selection for claudemods distribution - MOVED TO AFTER DRIVE SETUP
+    local selected_kernel=$(select_kernel)
+    echo -e "${COLOR_GREEN}Selected kernel: $selected_kernel${COLOR_RESET}"
     
     # Install base system with selected kernel
     execute_command "pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio $selected_kernel linux-firmware sudo"

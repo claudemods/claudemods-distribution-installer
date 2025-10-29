@@ -276,74 +276,292 @@ install_desktop() {
             ;;
         2)
             echo -e "${COLOR_CYAN}Installing GNOME Desktop...${COLOR_RESET}"
-            install_arch_tty_grub() {
-                local drive="$1"
-                local fs_type="ext4"
-                # Setup filesystem
-                echo -e "${COLOR_CYAN}Setting up filesystem...${COLOR_RESET}"
-                setup_ext4_filesystem "$root_part"
-                # Install GRUB
-                echo -e "${COLOR_CYAN}Installing Stuff...${COLOR_RESET}"
-                execute_command "mount ${drive}2 /mnt"
-                execute_command "mount ${drive}1 /mnt/boot/efi"
-                execute_command "mount --bind /dev /mnt/dev"
-                execute_command "mount --bind /dev/pts /mnt/dev/pts"
-                execute_command "mount --bind /proc /mnt/proc"
-                execute_command "mount --bind /sys /mnt/sys"
-                execute_command "mount --bind /run /mnt/run"
-                execute_command "sudo pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober"
-                install_grub_ext4 "$drive"
-                # Change username
-                echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
-                change_username "$fs_type" "$drive"
-                execute_command "chroot /mnt /bin/bash -c \"systemctl enable gdm\""
-            }
-            install_arch_tty_grub "$drive"
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with GNOME
+            execute_command "pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
+            execute_command "chroot /mnt /bin/bash -c \"systemctl enable gdm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
+            echo -e "${COLOR_GREEN}GNOME installation completed!${COLOR_RESET}"
             ;;
         3)
             echo -e "${COLOR_CYAN}Installing KDE Plasma...${COLOR_RESET}"
-            execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm plasma-desktop sddm dolphin konsole\""
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with KDE
+            execute_command "pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable sddm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
+            echo -e "${COLOR_GREEN}KDE Plasma installation completed!${COLOR_RESET}"
             ;;
         4)
             echo -e "${COLOR_CYAN}Installing XFCE...${COLOR_RESET}"
-            execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm xfce4 xfce4-goodies lightdm lightdm-gtk-greeter\""
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with XFCE
+            execute_command "pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
+            echo -e "${COLOR_GREEN}XFCE installation completed!${COLOR_RESET}"
             ;;
         5)
             echo -e "${COLOR_CYAN}Installing LXQt...${COLOR_RESET}"
-            execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm lxqt sddm\""
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with LXQt
+            execute_command "pacstrap /mnt base lxqt sddm grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable sddm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
+            echo -e "${COLOR_GREEN}LXQt installation completed!${COLOR_RESET}"
             ;;
         6)
             echo -e "${COLOR_CYAN}Installing Cinnamon...${COLOR_RESET}"
-            execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm cinnamon lightdm lightdm-gtk-greeter\""
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with Cinnamon
+            execute_command "pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
+            echo -e "${COLOR_GREEN}Cinnamon installation completed!${COLOR_RESET}"
             ;;
         7)
             echo -e "${COLOR_CYAN}Installing MATE...${COLOR_RESET}"
-            execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm mate mate-extra lightdm lightdm-gtk-greeter\""
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with MATE
+            execute_command "pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
+            echo -e "${COLOR_GREEN}MATE installation completed!${COLOR_RESET}"
             ;;
         8)
             echo -e "${COLOR_CYAN}Installing Budgie...${COLOR_RESET}"
-            execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm budgie-desktop lightdm lightdm-gtk-greeter\""
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with Budgie
+            execute_command "pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
+            echo -e "${COLOR_GREEN}Budgie installation completed!${COLOR_RESET}"
             ;;
         9)
             echo -e "${COLOR_CYAN}Installing i3 (tiling WM)...${COLOR_RESET}"
-            execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter\""
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with i3
+            execute_command "pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
+            echo -e "${COLOR_GREEN}i3 installation completed!${COLOR_RESET}"
             ;;
         10)
             echo -e "${COLOR_CYAN}Installing Sway (Wayland tiling)...${COLOR_RESET}"
-            execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm sway swaybg waybar wofi lightdm lightdm-gtk-greeter\""
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with Sway
+            execute_command "pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
+            echo -e "${COLOR_GREEN}Sway installation completed!${COLOR_RESET}"
             ;;
         11)
             echo -e "${COLOR_PURPLE}Installing Hyprland (Modern Wayland Compositor)...${COLOR_RESET}"
-            execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm hyprland waybar rofi wl-clipboard sddm\""
+            # Prepare partitions
+            prepare_target_partitions "$drive" "ext4"
+            local efi_part="${drive}1"
+            local root_part="${drive}2"
+            
+            # Setup filesystem
+            setup_ext4_filesystem "$root_part"
+            
+            # Install base system with Hyprland
+            execute_command "pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober"
+            
+            # Mount EFI partition
+            execute_command "mount $efi_part /mnt/boot/efi"
+            
+            # Install GRUB
+            install_grub_ext4 "$drive"
+            
+            # Change username
+            change_username "$fs_type" "$drive"
+            
+            # Enable services
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable sddm\""
+            
+            # Cleanup
+            execute_command "umount -R /mnt"
             echo -e "${COLOR_PURPLE}Hyprland installed! Note: You may need to configure ~/.config/hypr/hyprland.conf${COLOR_RESET}"
             ;;
         12)
@@ -364,20 +582,32 @@ install_cachyos_options() {
     local fs_type="$1"
     local drive="$2"
 
-    echo -e "${COLOR_CYAN}Mounting system for Cachyos installation...${COLOR_RESET}"
-
-    execute_command "mount ${drive}2 /mnt"
-    execute_command "mount ${drive}1 /mnt/boot/efi"
-    execute_command "mount --bind /dev /mnt/dev"
-    execute_command "mount --bind /dev/pts /mnt/dev/pts"
-    execute_command "mount --bind /proc /mnt/proc"
-    execute_command "mount --bind /sys /mnt/sys"
-    execute_command "mount --bind /run /mnt/run"
-    # Step 1: Download and setup CachyOS repositories
-    execute_command "sudo curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz"
-    execute_command "sudo tar xvf cachyos-repo.tar.xz && cd cachyos-repo"
-    execute_command "sudo ./cachyos-repo.sh"
-
+    echo -e "${COLOR_CYAN}Installing CachyOS...${COLOR_RESET}"
+    
+    # Prepare partitions
+    prepare_target_partitions "$drive" "ext4"
+    local efi_part="${drive}1"
+    local root_part="${drive}2"
+    
+    # Setup filesystem
+    setup_ext4_filesystem "$root_part"
+    
+    # Install base system
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober"
+    
+    # Mount EFI partition
+    execute_command "mount $efi_part /mnt/boot/efi"
+    
+    # Install GRUB
+    install_grub_ext4 "$drive"
+    
+    # Change username
+    change_username "$fs_type" "$drive"
+    
+    # Download and setup CachyOS repositories
+    execute_command "curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz"
+    execute_command "tar xvf cachyos-repo.tar.xz && cd cachyos-repo"
+    execute_command "./cachyos-repo.sh"
 
     # Check if cachyosmenu.sh exists in current directory
     if [ -f "cachyosmenu.sh" ]; then
@@ -403,15 +633,27 @@ install_claudemods_distribution() {
     local fs_type="$1"
     local drive="$2"
 
-    echo -e "${COLOR_CYAN}Mounting system for claudemods distribution installation...${COLOR_RESET}"
-
-    execute_command "mount ${drive}2 /mnt"
-    execute_command "mount ${drive}1 /mnt/boot/efi"
-    execute_command "mount --bind /dev /mnt/dev"
-    execute_command "mount --bind /dev/pts /mnt/dev/pts"
-    execute_command "mount --bind /proc /mnt/proc"
-    execute_command "mount --bind /sys /mnt/sys"
-    execute_command "mount --bind /run /mnt/run"
+    echo -e "${COLOR_CYAN}Installing claudemods distribution...${COLOR_RESET}"
+    
+    # Prepare partitions
+    prepare_target_partitions "$drive" "ext4"
+    local efi_part="${drive}1"
+    local root_part="${drive}2"
+    
+    # Setup filesystem
+    setup_ext4_filesystem "$root_part"
+    
+    # Install base system
+    execute_command "pacstrap /mnt base grub efibootmgr os-prober"
+    
+    # Mount EFI partition
+    execute_command "mount $efi_part /mnt/boot/efi"
+    
+    # Install GRUB
+    install_grub_ext4 "$drive"
+    
+    # Change username
+    change_username "$fs_type" "$drive"
 
     # Check if claudemods-distributions.sh exists in current directory
     if [ -f "claudemods-distributions.sh" ]; then

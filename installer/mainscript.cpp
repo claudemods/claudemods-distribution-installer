@@ -33,6 +33,8 @@ int execute_command(const std::string& cmd) {
     int c;
     while ((c = fgetc(pipe)) != EOF) {
         std::cout << (char)c;
+        // Flush output to ensure interactive prompts work
+        fflush(stdout);
     }
     std::cout << COLOR_RESET;
     

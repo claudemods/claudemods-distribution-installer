@@ -39,6 +39,44 @@ private:
         return pclose(pipe);
     }
 
+    // Function to check if path is a block device
+    bool is_block_device(const std::string& path) {
+        std::string cmd = "test -b " + path;
+        std::cout << COLOR_CYAN;
+        bool result = system(cmd.c_str()) == 0;
+        std::cout << COLOR_RESET;
+        return result;
+    }
+
+    // Function to check if directory exists
+    bool directory_exists(const std::string& path) {
+        std::string cmd = "test -d " + path;
+        std::cout << COLOR_CYAN;
+        bool result = system(cmd.c_str()) == 0;
+        std::cout << COLOR_RESET;
+        return result;
+    }
+
+    // Function to get UK date time
+    std::string get_uk_date_time() {
+        std::string cmd = "date +\"%d-%m-%Y_%I:%M%P\"";
+        std::string result;
+        char buffer[128];
+        std::cout << COLOR_CYAN;
+        FILE* pipe = popen(cmd.c_str(), "r");
+        if (!pipe) return "";
+        while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+            result += buffer;
+        }
+        pclose(pipe);
+        std::cout << COLOR_RESET;
+        // Remove newline
+        if (!result.empty() && result[result.length()-1] == '\n') {
+            result.erase(result.length()-1);
+        }
+        return result;
+    }
+
     // Function to display available drives - SHOW DRIVES IN CYAN
     void display_available_drives() {
         std::cout << COLOR_YELLOW;
@@ -56,8 +94,6 @@ private:
         std::cout << COLOR_RESET << std::endl;
     }
 
-    // Rest of the class remains exactly the same...
-    // [Include all the other functions exactly as they were in your original code]
     // Function to display header
     void display_header() {
         std::cout << COLOR_RED;
@@ -83,7 +119,9 @@ private:
         execute_command("partprobe " + drive);
         
         // Sleep for 2 seconds
+        std::cout << COLOR_CYAN;
         system("sleep 2");
+        std::cout << COLOR_RESET;
 
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";

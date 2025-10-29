@@ -29,14 +29,12 @@ int execute_command(const std::string& cmd) {
     FILE* pipe = popen(full_cmd.c_str(), "r");
     if (!pipe) return -1;
     
-    char buffer[128];
     std::cout << COLOR_CYAN;
-    while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-        std::cout << buffer;
-        fflush(stdout); // Force immediate output
+    int c;
+    while ((c = fgetc(pipe)) != EOF) {
+        std::cout << (char)c;
     }
     std::cout << COLOR_RESET;
-    fflush(stdout);
     
     return pclose(pipe);
 }

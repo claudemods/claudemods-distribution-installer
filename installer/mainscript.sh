@@ -283,11 +283,7 @@ install_desktop() {
             echo -e "${COLOR_CYAN}Setting up filesystem...${COLOR_RESET}"
             setup_ext4_filesystem "$root_part"
             # Install GRUB
-             echo -e "${COLOR_CYAN}Installing GRUB...${COLOR_RESET}"
-            install_grub_ext4 "$drive"
-            # Change username
-            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
-            change_username "$fs_type" "$drive"
+             echo -e "${COLOR_CYAN}Installing Stuff...${COLOR_RESET}"
             execute_command "mount ${drive}2 /mnt"
             execute_command "mount ${drive}1 /mnt/boot/efi"
             execute_command "mount --bind /dev /mnt/dev"
@@ -295,9 +291,11 @@ install_desktop() {
             execute_command "mount --bind /proc /mnt/proc"
             execute_command "mount --bind /sys /mnt/sys"
             execute_command "mount --bind /run /mnt/run"
-}
-            
-            execute_command "sudo pacstrap /mnt gnome gnome-extra gdm"
+            execute_command "sudo pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober"
+            install_grub_ext4 "$drive"
+            # Change username
+            echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+            change_username "$fs_type" "$drive"
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable gdm\""
             ;;
         3)

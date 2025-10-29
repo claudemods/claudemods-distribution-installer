@@ -208,27 +208,37 @@ change_username() {
     echo -e "${COLOR_GREEN}Username changed from 'arch' to '$new_username'${COLOR_RESET}"
 }
 
-# Function to chroot into the new system
-chroot_into_system() {
-    local fs_type="$1"
-    local drive="$2"
+# Function to install arch tty grub (complete installation)
+install_arch_tty_grub() {
+    local drive="$1"
+    local fs_type="ext4"
 
-    echo -e "${COLOR_CYAN}Mounting the new system for chroot...${COLOR_RESET}"
-
-    execute_command "mount ${drive}2 /mnt"
-    execute_command "mount ${drive}1 /mnt/boot/efi"
-    execute_command "mount --bind /dev /mnt/dev"
-    execute_command "mount --bind /dev/pts /mnt/dev/pts"
-    execute_command "mount --bind /proc /mnt/proc"
-    execute_command "mount --bind /sys /mnt/sys"
-    execute_command "mount --bind /run /mnt/run"
-
-    echo -e "${COLOR_GREEN}Entering chroot environment...${COLOR_RESET}"
-    echo -e "${COLOR_YELLOW}Type 'exit' when done to return to the menu.${COLOR_RESET}"
-    execute_command "chroot /mnt /bin/bash"
-
-    echo -e "${COLOR_CYAN}Cleaning up chroot environment...${COLOR_RESET}"
-    execute_command "umount -R /mnt"
+    echo -e "${COLOR_CYAN}Starting Arch TTY Grub installation...${COLOR_RESET}"
+    
+    # Prepare partitions
+    echo -e "${COLOR_CYAN}Preparing partitions...${COLOR_RESET}"
+    prepare_target_partitions "$drive" "$fs_type"
+    
+    local efi_part="${drive}1"
+    local root_part="${drive}2"
+    
+    # Setup filesystem
+    echo -e "${COLOR_CYAN}Setting up filesystem...${COLOR_RESET}"
+    setup_ext4_filesystem "$root_part"
+    
+    # Copy system
+    echo -e "${COLOR_CYAN}Copying system...${COLOR_RESET}"
+    copy_system "$efi_part"
+    
+    # Install GRUB
+    echo -e "${COLOR_CYAN}Installing GRUB...${COLOR_RESET}"
+    install_grub_ext4 "$drive"
+    
+    # Change username
+    echo -e "${COLOR_CYAN}Setting up user account...${COLOR_RESET}"
+    change_username "$fs_type" "$drive"
+    
+    echo -e "${COLOR_GREEN}Arch TTY Grub installation completed successfully!${COLOR_RESET}"
 }
 
 # Function to install desktop environments
@@ -246,12 +256,12 @@ install_desktop() {
     execute_command "mount --bind /sys /mnt/sys"
     execute_command "mount --bind /run /mnt/run"
 
-    # Display desktop options - Arch TTY GRUB at the top
+    # Display desktop options - Top 10 Arch package list
     echo -e "${COLOR_CYAN}"
     echo "╔══════════════════════════════════════════════════════════════╗"
     echo "║                   Desktop Environments                       ║"
     echo "╠══════════════════════════════════════════════════════════════╣"
-    echo "║  1. Arch TTY GRUB                                           ║"
+    echo "║  1. Arch TTY Grub (Complete Installation)                   ║"
     echo "║  2. GNOME                                                   ║"
     echo "║  3. KDE Plasma                                              ║"
     echo "║  4. XFCE                                                    ║"
@@ -271,34 +281,8 @@ install_desktop() {
 
     case $desktop_choice in
         1)
-            echo -e "${COLOR_CYAN}Running Arch TTY GRUB installation...${COLOR_RESET}"
-            
-            # Run the EXACT installation process
-            echo -e "${COLOR_CYAN}Starting installation process...${COLOR_RESET}"
-            
-            # Prepare partitions
-            prepare_target_partitions "$drive" "$fs_type"
-            
-            local efi_part="${drive}1"
-            local root_part="${drive}2"
-            
-            # Setup filesystem
-            setup_ext4_filesystem "$root_part"
-            
-            # Copy system using rsync
-            copy_system "$efi_part"
-            
-            # Install GRUB
-            install_grub_ext4 "$drive"
-            
-            # Change username
-            change_username "$fs_type" "$drive"
-            
-            # Cleanup
-            execute_command "umount -R /mnt"
-            
-            echo -e "${COLOR_GREEN}Arch TTY GRUB installation completed successfully!${COLOR_RESET}"
-            echo -e "${COLOR_GREEN}System will boot to terminal with GRUB.${COLOR_RESET}"
+            echo -e "${COLOR_CYAN}Starting Arch TTY Grub installation...${COLOR_RESET}"
+            install_arch_tty_grub "$drive"
             ;;
         2)
             echo -e "${COLOR_CYAN}Installing GNOME Desktop...${COLOR_RESET}"
@@ -437,14 +421,14 @@ install_claudemods_distribution() {
 }
 
 # Function to display main menu
-display_main_menu() {
+main_menu() {
     local fs_type="$1"
     local drive="$2"
 
     while true; do
         echo -e "${COLOR_CYAN}"
         echo "╔══════════════════════════════════════╗"
-        echo "║             Main Menu                ║"
+        echo "║              Main Menu               ║"
         echo "╠══════════════════════════════════════╣"
         echo "║ 1. Install Vanilla Arch Desktop      ║"
         echo "║ 2. Vanilla Cachyos Options           ║"
@@ -492,7 +476,6 @@ main() {
     display_header
     display_available_drives
 
-    # ASK FOR DRIVE FIRST
     echo -e "${COLOR_CYAN}Enter target drive (e.g., /dev/sda): ${COLOR_RESET}"
     read -r drive
     if ! is_block_device "$drive"; then
@@ -500,7 +483,6 @@ main() {
         exit 1
     fi
 
-    # ASK FOR FILESYSTEM SECOND
     echo -e "${COLOR_CYAN}Choose filesystem type (ext4/btrfs): ${COLOR_RESET}"
     read -r fs_type
 
@@ -511,8 +493,8 @@ main() {
         exit 0
     fi
 
-    # SHOW MAIN MENU THIRD
-    display_main_menu "$fs_type" "$drive"
+    # Show main menu for ext4
+    main_menu "$fs_type" "$drive"
 }
 
 # Run main function

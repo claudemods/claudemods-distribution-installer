@@ -208,27 +208,43 @@ change_username() {
     echo -e "${COLOR_GREEN}Username changed from 'arch' to '$new_username'${COLOR_RESET}"
 }
 
-# Function to chroot into the new system
-chroot_into_system() {
-    local fs_type="$1"
-    local drive="$2"
-
-    echo -e "${COLOR_CYAN}Mounting the new system for chroot...${COLOR_RESET}"
-
-    execute_command "mount ${drive}2 /mnt"
-    execute_command "mount ${drive}1 /mnt/boot/efi"
-    execute_command "mount --bind /dev /mnt/dev"
-    execute_command "mount --bind /dev/pts /mnt/dev/pts"
-    execute_command "mount --bind /proc /mnt/proc"
-    execute_command "mount --bind /sys /mnt/sys"
-    execute_command "mount --bind /run /mnt/run"
-
-    echo -e "${COLOR_GREEN}Entering chroot environment...${COLOR_RESET}"
-    echo -e "${COLOR_YELLOW}Type 'exit' when done to return to the menu.${COLOR_RESET}"
-    execute_command "chroot /mnt /bin/bash"
-
-    echo -e "${COLOR_CYAN}Cleaning up chroot environment...${COLOR_RESET}"
+# Function to install Arch TTY GRUB (Full installation process)
+install_arch_tty_grub() {
+    local drive="$1"
+    local fs_type="ext4"
+    
+    echo -e "${COLOR_CYAN}Starting Arch TTY GRUB installation...${COLOR_RESET}"
+    echo -e "${COLOR_YELLOW}Target drive: $drive${COLOR_RESET}"
+    echo -e "${COLOR_YELLOW}Filesystem: $fs_type${COLOR_RESET}"
+    
+    # Step 1: Prepare partitions
+    echo -e "${COLOR_CYAN}Step 1: Preparing partitions...${COLOR_RESET}"
+    prepare_target_partitions "$drive" "$fs_type"
+    
+    local efi_part="${drive}1"
+    local root_part="${drive}2"
+    
+    # Step 2: Setup filesystem
+    echo -e "${COLOR_CYAN}Step 2: Setting up filesystem...${COLOR_RESET}"
+    setup_ext4_filesystem "$root_part"
+    
+    # Step 3: Copy system using rsync
+    echo -e "${COLOR_CYAN}Step 3: Copying system using rsync...${COLOR_RESET}"
+    copy_system "$efi_part"
+    
+    # Step 4: Install GRUB
+    echo -e "${COLOR_CYAN}Step 4: Installing GRUB...${COLOR_RESET}"
+    install_grub_ext4 "$drive"
+    
+    # Step 5: Change username
+    echo -e "${COLOR_CYAN}Step 5: Setting up user account...${COLOR_RESET}"
+    change_username "$fs_type" "$drive"
+    
+    # Cleanup
     execute_command "umount -R /mnt"
+    
+    echo -e "${COLOR_GREEN}Arch TTY GRUB installation completed successfully!${COLOR_RESET}"
+    echo -e "${COLOR_GREEN}System will boot to terminal with GRUB.${COLOR_RESET}"
 }
 
 # Function to install desktop environments
@@ -246,81 +262,85 @@ install_desktop() {
     execute_command "mount --bind /sys /mnt/sys"
     execute_command "mount --bind /run /mnt/run"
 
-    # Display desktop options - Top 10 Arch package list
+    # Display desktop options - Arch TTY GRUB at the top
     echo -e "${COLOR_CYAN}"
     echo "╔══════════════════════════════════════════════════════════════╗"
     echo "║                   Desktop Environments                       ║"
     echo "╠══════════════════════════════════════════════════════════════╣"
-    echo "║  1. GNOME                                                   ║"
-    echo "║  2. KDE Plasma                                              ║"
-    echo "║  3. XFCE                                                    ║"
-    echo "║  4. LXQt                                                   ║"
-    echo "║  5. Cinnamon                                                ║"
-    echo "║  6. MATE                                                    ║"
-    echo "║  7. Budgie                                                  ║"
-    echo "║  8. i3 (tiling WM)                                          ║"
-    echo "║  9. Sway (Wayland tiling)                                   ║"
-    echo "║ 10. Hyprland (Wayland)                                      ║"
-    echo "║ 11. Return to Main Menu                                     ║"
+    echo "║  1. Arch TTY GRUB                                            ║"
+    echo "║  2. GNOME                                                   ║"
+    echo "║  3. KDE Plasma                                              ║"
+    echo "║  4. XFCE                                                    ║"
+    echo "║  5. LXQt                                                   ║"
+    echo "║  6. Cinnamon                                                ║"
+    echo "║  7. MATE                                                    ║"
+    echo "║  8. Budgie                                                  ║"
+    echo "║  9. i3 (tiling WM)                                          ║"
+    echo "║ 10. Sway (Wayland tiling)                                   ║"
+    echo "║ 11. Hyprland (Wayland)                                      ║"
+    echo "║ 12. Return to Main Menu                                     ║"
     echo "╚══════════════════════════════════════════════════════════════╝"
     echo -e "${COLOR_RESET}"
 
-    echo -e "${COLOR_CYAN}Select desktop environment (1-11): ${COLOR_RESET}"
+    echo -e "${COLOR_CYAN}Select desktop environment (1-12): ${COLOR_RESET}"
     read -r desktop_choice
 
     case $desktop_choice in
         1)
+            install_arch_tty_grub "$drive"
+            ;;
+        2)
             echo -e "${COLOR_CYAN}Installing GNOME Desktop...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm gnome gnome-extra gdm\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable gdm\""
             ;;
-        2)
+        3)
             echo -e "${COLOR_CYAN}Installing KDE Plasma...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm plasma-desktop sddm dolphin konsole\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable sddm\""
             ;;
-        3)
+        4)
             echo -e "${COLOR_CYAN}Installing XFCE...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm xfce4 xfce4-goodies lightdm lightdm-gtk-greeter\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
             ;;
-        4)
+        5)
             echo -e "${COLOR_CYAN}Installing LXQt...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm lxqt sddm\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable sddm\""
             ;;
-        5)
+        6)
             echo -e "${COLOR_CYAN}Installing Cinnamon...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm cinnamon lightdm lightdm-gtk-greeter\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
             ;;
-        6)
+        7)
             echo -e "${COLOR_CYAN}Installing MATE...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm mate mate-extra lightdm lightdm-gtk-greeter\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
             ;;
-        7)
+        8)
             echo -e "${COLOR_CYAN}Installing Budgie...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm budgie-desktop lightdm lightdm-gtk-greeter\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
             ;;
-        8)
+        9)
             echo -e "${COLOR_CYAN}Installing i3 (tiling WM)...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
             ;;
-        9)
+        10)
             echo -e "${COLOR_CYAN}Installing Sway (Wayland tiling)...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm sway swaybg waybar wofi lightdm lightdm-gtk-greeter\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable lightdm\""
             ;;
-        10)
+        11)
             echo -e "${COLOR_PURPLE}Installing Hyprland (Modern Wayland Compositor)...${COLOR_RESET}"
             execute_command "chroot /mnt /bin/bash -c \"pacman -S --noconfirm hyprland waybar rofi wl-clipboard sddm\""
             execute_command "chroot /mnt /bin/bash -c \"systemctl enable sddm\""
             echo -e "${COLOR_PURPLE}Hyprland installed! Note: You may need to configure ~/.config/hypr/hyprland.conf${COLOR_RESET}"
             ;;
-        11)
+        12)
             echo -e "${COLOR_CYAN}Returning to main menu...${COLOR_RESET}"
             ;;
         *)
@@ -405,47 +425,43 @@ install_claudemods_distribution() {
     execute_command "umount -R /mnt"
 }
 
-# Function to display post-install menu
-post_install_menu() {
+# Function to display main menu
+display_main_menu() {
     local fs_type="$1"
     local drive="$2"
 
     while true; do
         echo -e "${COLOR_CYAN}"
         echo "╔══════════════════════════════════════╗"
-        echo "║         Post-Install Menu           ║"
+        echo "║             Main Menu                ║"
         echo "╠══════════════════════════════════════╣"
-        echo "║ 1. Chroot into New System           ║"
-        echo "║ 2. Install Vanilla Arch Desktop     ║"
-        echo "║ 3. Vanilla Cachyos Options          ║"
-        echo "║ 4. Claudemods Distribution Options  ║"
-        echo "║ 5. Reboot System                    ║"
-        echo "║ 6. Exit                             ║"
+        echo "║ 1. Install Vanilla Arch Desktop      ║"
+        echo "║ 2. Vanilla Cachyos Options           ║"
+        echo "║ 3. Claudemods Distribution Options   ║"
+        echo "║ 4. Reboot System                     ║"
+        echo "║ 5. Exit                              ║"
         echo "╚══════════════════════════════════════╝"
         echo -e "${COLOR_RESET}"
 
-        echo -e "${COLOR_CYAN}Select an option (1-6): ${COLOR_RESET}"
+        echo -e "${COLOR_CYAN}Select an option (1-5): ${COLOR_RESET}"
         read -r choice
 
         case $choice in
             1)
-                chroot_into_system "$fs_type" "$drive"
-                ;;
-            2)
                 install_desktop "$fs_type" "$drive"
                 ;;
-            3)
+            2)
                 install_cachyos_options "$fs_type" "$drive"
                 ;;
-            4)
+            3)
                 install_claudemods_distribution "$fs_type" "$drive"
                 ;;
-            5)
+            4)
                 echo -e "${COLOR_GREEN}Rebooting system...${COLOR_RESET}"
                 execute_command "umount -R /mnt 2>/dev/null || true"
                 sudo reboot
                 ;;
-            6)
+            5)
                 echo -e "${COLOR_GREEN}Exiting. Goodbye!${COLOR_RESET}"
                 exit 0
                 ;;
@@ -482,8 +498,8 @@ main() {
         exit 0
     fi
 
-    # Show post-install menu for ext4
-    post_install_menu "$fs_type" "$drive"
+    # Show main menu for ext4
+    display_main_menu "$fs_type" "$drive"
 }
 
 # Run main function

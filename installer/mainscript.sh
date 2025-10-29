@@ -241,21 +241,6 @@ install_arch_tty_grub() {
     echo -e "${COLOR_GREEN}Arch TTY Grub installation completed successfully!${COLOR_RESET}"
 }
 
-# Function to install desktop environments
-install_desktop() {
-    local fs_type="$1"
-    local drive="$2"
-
-    echo -e "${COLOR_CYAN}Mounting system for desktop installation...${COLOR_RESET}"
-
-    execute_command "mount ${drive}2 /mnt"
-    execute_command "mount ${drive}1 /mnt/boot/efi"
-    execute_command "mount --bind /dev /mnt/dev"
-    execute_command "mount --bind /dev/pts /mnt/dev/pts"
-    execute_command "mount --bind /proc /mnt/proc"
-    execute_command "mount --bind /sys /mnt/sys"
-    execute_command "mount --bind /run /mnt/run"
-
     # Display desktop options - Top 10 Arch package list
     echo -e "${COLOR_CYAN}"
     echo "╔══════════════════════════════════════════════════════════════╗"

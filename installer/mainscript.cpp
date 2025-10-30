@@ -178,10 +178,11 @@ private:
             std::cout << "║  2. linux-lts (Long Term Support)                           ║" << std::endl;
             std::cout << "║  3. linux-zen (Tuned for desktop performance)               ║" << std::endl;
             std::cout << "║  4. linux-hardened (Security-focused)                       ║" << std::endl;
+            std::cout << "║  5. Return to Main Menu                                     ║" << std::endl;
             std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
             std::cout << COLOR_RESET;
 
-            std::cout << COLOR_CYAN << "Select kernel (1-4): " << COLOR_RESET;
+            std::cout << COLOR_CYAN << "Select kernel (1-5): " << COLOR_RESET;
             std::string kernel_choice;
             std::getline(std::cin, kernel_choice);
 
@@ -197,8 +198,11 @@ private:
             } else if (kernel_choice == "4") {
                 selected_kernel = "linux-hardened";
                 break;
+            } else if (kernel_choice == "5") {
+                std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
+                break;
             } else {
-                std::cout << COLOR_RED << "Invalid selection. Please enter a number between 1-4." << COLOR_RESET << std::endl;
+                std::cout << COLOR_RED << "Invalid selection. Please enter a number between 1-5." << COLOR_RESET << std::endl;
             }
         }
         std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
@@ -380,8 +384,6 @@ private:
         // Apply stored timezone and keyboard settings
         apply_timezone_keyboard_settings();
 
-        execute_command("umount -R /mnt");
-
         std::cout << COLOR_GREEN << "Username changed from 'arch' to '" + new_username + "'" << COLOR_RESET << std::endl;
     }
 
@@ -403,15 +405,22 @@ private:
         // Apply stored timezone and keyboard settings
         apply_timezone_keyboard_settings();
 
-        execute_command("umount -R /mnt");
-
         std::cout << COLOR_GREEN << "User '" + new_username + "' created successfully with sudo privileges" << COLOR_RESET << std::endl;
         
         return new_username;
     }
 
+    // Function to unmount all mounted partitions before reboot
+    void unmount_all_partitions() {
+        std::cout << COLOR_CYAN << "Unmounting all partitions..." << COLOR_RESET << std::endl;
+        execute_command("umount -R /mnt 2>/dev/null || true");
+    }
+
     // Function to prompt for reboot
     void prompt_reboot() {
+        // Unmount all partitions before reboot prompt
+        unmount_all_partitions();
+        
         std::cout << COLOR_CYAN << "Installation completed successfully! Would you like to reboot now? (yes/no): " << COLOR_RESET;
         std::string reboot_choice;
         std::getline(std::cin, reboot_choice);
@@ -733,8 +742,6 @@ private:
         
         create_new_user("ext4", drive);
         
-        execute_command("umount -R /mnt");
-
         std::cout << COLOR_GREEN << "CachyOS TTY Grub installation completed!" << COLOR_RESET << std::endl;
         
         prompt_reboot();
@@ -771,8 +778,7 @@ private:
         execute_command("sudo chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config/autostart/cachyoskdebgrub.desktop");
         execute_command("sudo chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdebgrub.desktop");
         execute_command("sudo chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
-        execute_command("umount -R /mnt");
-
+        
         std::cout << COLOR_GREEN << "CachyOS KDE Part 1 installation completed!" << COLOR_RESET << std::endl;
         std::cout << COLOR_GREEN << " For CachyOS KDE Part 2 installation Please Reboot And login To Run Next Script!" << COLOR_RESET << std::endl;
         
@@ -802,8 +808,6 @@ private:
         
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
         
-        execute_command("umount -R /mnt");
-
         std::cout << COLOR_GREEN << "CachyOS GNOME installation completed!" << COLOR_RESET << std::endl;
         
         prompt_reboot();
@@ -865,9 +869,6 @@ private:
         
         std::cout << COLOR_ORANGE << "Setting up Spitfire CKGE repositories..." << COLOR_RESET << std::endl;
         
-        
-        execute_command("umount -R /mnt");
-
         std::cout << COLOR_ORANGE << "Spitfire CKGE installation completed!" << COLOR_RESET << std::endl;
         
         prompt_reboot();
@@ -896,9 +897,6 @@ private:
         
         std::cout << COLOR_PURPLE << "Setting up Apex CKGE repositories..." << COLOR_RESET << std::endl;
       
-        
-        execute_command("umount -R /mnt");
-
         std::cout << COLOR_PURPLE << "Apex CKGE installation completed!" << COLOR_RESET << std::endl;
         
         prompt_reboot();

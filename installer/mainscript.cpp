@@ -900,11 +900,11 @@ private:
         }
     }
 
-    // Function to install claudemods distribution options
-    void install_claudemods_distribution(const std::string& fs_type, const std::string& drive) {
-        std::cout << COLOR_CYAN << "Installing claudemods distribution..." << COLOR_RESET << std::endl;
+    // Function to install Spitfire CKGE
+    void install_spitfire_ckge(const std::string& drive) {
+        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE..." << COLOR_RESET << std::endl;
         
-        // Kernel selection for CachyOS
+        // Kernel selection for Spitfire CKGE
         std::string selected_kernel = select_kernel();
         std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
         
@@ -916,8 +916,11 @@ private:
         // Setup filesystem
         setup_ext4_filesystem(root_part);
         
-        // Install base system with selected kernel
-        execute_command("pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        // Install base system with KDE and selected kernel
+        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        
+        // Enable services immediately after pacstrap
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         
         // Mount EFI partition
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -925,12 +928,12 @@ private:
         // Install GRUB
         install_grub_ext4(drive);
         
-        // Create new user (using new method for desktop environments)
+        // Create new user
         std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
-        create_new_user(fs_type, drive);
+        create_new_user("ext4", drive);
         
-        // Remount system for CachyOS setup
-        std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
+        // Remount system for Spitfire CKGE setup
+        std::cout << COLOR_ORANGE << "Setting up Spitfire CKGE repositories..." << COLOR_RESET << std::endl;
         execute_command("mount " + drive + "2 /mnt");
         execute_command("mount " + drive + "1 /mnt/boot/efi");
         execute_command("mount --bind /dev /mnt/dev");
@@ -939,28 +942,104 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
         
-        // Download and setup CachyOS repositories in chroot
+        // Download and setup CachyOS repositories in chroot (similar to CachyOS setup)
         execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
         execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
         execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
-
-        // Check if claudemods-distributions exists in current directory
-        if (system("test -f claudemods-distributions.sh") == 0) {
-            std::cout << COLOR_GREEN << "Copying claudemods-distributions to chroot..." << COLOR_RESET << std::endl;
-            execute_command("cp claudemods-distributions.sh /mnt");
-            execute_command("chmod +x /mnt/claudemods-distributions.sh");
-            
-            // We need to get the username from somewhere - for now using a placeholder
-            std::cout << COLOR_GREEN << "Executing claudemods-distributions.sh with username..." << COLOR_RESET << std::endl;
-            execute_command("chroot /mnt /bin/bash -c \"/claudemods-distributions.sh $new_username\"");
-            std::cout << COLOR_GREEN << "claudemods installation completed!" << COLOR_RESET << std::endl;
-        } else {
-            std::cout << COLOR_RED << "Error: claudemods-distributions not found in current directory" << COLOR_RESET << std::endl;
-            std::cout << COLOR_YELLOW << "Please ensure cachyosmenu.sh is in the same directory as this script" << COLOR_RESET << std::endl;
-        }
         
         // Cleanup
         execute_command("umount -R /mnt");
+
+        std::cout << COLOR_ORANGE << "Spitfire CKGE installation completed!" << COLOR_RESET << std::endl;
+        
+        // Prompt for reboot
+        prompt_reboot();
+    }
+
+    // Function to install Apex CKGE
+    void install_apex_ckge(const std::string& drive) {
+        std::cout << COLOR_PURPLE << "Installing Apex CKGE..." << COLOR_RESET << std::endl;
+        
+        // Kernel selection for Apex CKGE
+        std::string selected_kernel = select_kernel();
+        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
+        
+        // Prepare partitions
+        prepare_target_partitions(drive, "ext4");
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+        
+        // Setup filesystem
+        setup_ext4_filesystem(root_part);
+        
+        // Install base system with KDE and selected kernel
+        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        
+        // Enable services immediately after pacstrap
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+        
+        // Mount EFI partition
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+        
+        // Install GRUB
+        install_grub_ext4(drive);
+        
+        // Create new user
+        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
+        create_new_user("ext4", drive);
+        
+        // Remount system for Apex CKGE setup
+        std::cout << COLOR_PURPLE << "Setting up Apex CKGE repositories..." << COLOR_RESET << std::endl;
+        execute_command("mount " + drive + "2 /mnt");
+        execute_command("mount " + drive + "1 /mnt/boot/efi");
+        execute_command("mount --bind /dev /mnt/dev");
+        execute_command("mount --bind /dev/pts /mnt/dev/pts");
+        execute_command("mount --bind /proc /mnt/proc");
+        execute_command("mount --bind /sys /mnt/sys");
+        execute_command("mount --bind /run /mnt/run");
+        
+        // Download and setup CachyOS repositories in chroot (similar to CachyOS setup)
+        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
+        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
+        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
+        
+        // Cleanup
+        execute_command("umount -R /mnt");
+
+        std::cout << COLOR_PURPLE << "Apex CKGE installation completed!" << COLOR_RESET << std::endl;
+        
+        // Prompt for reboot
+        prompt_reboot();
+    }
+
+    // Function to display Claudemods Distribution menu
+    void display_claudemods_menu(const std::string& fs_type, const std::string& drive) {
+        while (true) {
+            std::cout << COLOR_CYAN;
+            std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
+            std::cout << "║               Claudemods Distribution Options               ║" << std::endl;
+            std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
+            std::cout << "║  1. Install Spitfire CKGE                                  ║" << std::endl;
+            std::cout << "║  2. Install Apex CKGE                                      ║" << std::endl;
+            std::cout << "║  3. Return to Main Menu                                    ║" << std::endl;
+            std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
+            std::cout << COLOR_RESET;
+
+            std::cout << COLOR_CYAN << "Select Claudemods option (1-3): " << COLOR_RESET;
+            std::string claudemods_choice;
+            std::getline(std::cin, claudemods_choice);
+
+            if (claudemods_choice == "1") {
+                install_spitfire_ckge(drive);
+            } else if (claudemods_choice == "2") {
+                install_apex_ckge(drive);
+            } else if (claudemods_choice == "3") {
+                std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
+                break;
+            } else {
+                std::cout << COLOR_RED << "Invalid option. Please try again." << COLOR_RESET << std::endl;
+            }
+        }
     }
 
     // Function to display main menu
@@ -987,7 +1066,7 @@ private:
             } else if (choice == "2") {
                 display_cachyos_menu(fs_type, drive);
             } else if (choice == "3") {
-                install_claudemods_distribution(fs_type, drive);
+                display_claudemods_menu(fs_type, drive);
             } else if (choice == "4") {
                 std::cout << COLOR_GREEN << "Rebooting system..." << COLOR_RESET << std::endl;
                 execute_command("sudo reboot");

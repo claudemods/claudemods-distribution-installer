@@ -1,4 +1,4 @@
-nothing working so far need to look at pacstrap options complete recode needed not impossible but not easy for sure
+cachyos and claudemods distros still being worked on arch options work fine
 
 
 # claudemods Distribution Installer 🚀

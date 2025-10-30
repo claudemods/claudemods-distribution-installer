@@ -724,10 +724,7 @@ private:
         execute_command("mount --bind /proc /mnt/proc");
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
-        
-        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
-        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
-        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
+        execute_command("cp -r /opt/claudemods-dsitribution-installer /mnt/opt");
         
         execute_command("umount -R /mnt");
 
@@ -769,14 +766,13 @@ private:
         execute_command("mount --bind /proc /mnt/proc");
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
-        
-        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
-        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
-        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
+        execute_command("cp -r /opt/claudemods-dsitribution-installer /mnt/opt");
+        execute_command("cp -r /opt/claudemods-dsitribution-installer/cachyoskdebgrub.desktop /home/$USER/.config/autostart");
         
         execute_command("umount -R /mnt");
 
-        std::cout << COLOR_GREEN << "CachyOS KDE installation completed!" << COLOR_RESET << std::endl;
+        std::cout << COLOR_GREEN << "CachyOS KDE Part 1 installation completed!" << COLOR_RESET << std::endl;
+        std::cout << COLOR_GREEN << " For CachyOS KDE Part 2 installation Please Reboot And login To Run Next Script!" << COLOR_RESET << std::endl;
         
         prompt_reboot();
     }
@@ -814,10 +810,7 @@ private:
         execute_command("mount --bind /proc /mnt/proc");
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
-        
-        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
-        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
-        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
+        execute_command("cp -r /opt/claudemods-dsitribution-installer /mnt/opt");
         
         execute_command("umount -R /mnt");
 

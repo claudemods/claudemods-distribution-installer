@@ -434,7 +434,6 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -461,7 +460,6 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -488,7 +486,6 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -515,7 +512,6 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -542,7 +538,6 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -569,7 +564,7 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
+            
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -596,7 +591,6 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -623,7 +617,6 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -650,7 +643,6 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -677,7 +669,6 @@ private:
             
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -750,7 +741,6 @@ private:
         
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
         
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         
@@ -758,16 +748,9 @@ private:
         
         create_new_user("ext4", drive);
         
-        std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
-        execute_command("mount " + drive + "2 /mnt");
-        execute_command("mount " + drive + "1 /mnt/boot/efi");
-        execute_command("mount --bind /dev /mnt/dev");
-        execute_command("mount --bind /dev/pts /mnt/dev/pts");
-        execute_command("mount --bind /proc /mnt/proc");
-        execute_command("mount --bind /sys /mnt/sys");
-        execute_command("mount --bind /run /mnt/run");
-        execute_command("cp -r /opt/claudemods-dsitribution-installer /mnt/opt");
-        execute_command("cp -r /opt/claudemods-dsitribution-installer/install-fullkde-grub/cachyoskdebgrub.desktop /home/$USER/.config/autostart");
+        std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
+        execute_command("cp -r /opt/claudemods-distribution-installer /mnt/opt");
+        execute_command("cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/cachyoskdebgrub.desktop /home/$USER/.config/autostart");
         
         execute_command("umount -R /mnt");
 
@@ -794,7 +777,6 @@ private:
         
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
         
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         
@@ -802,15 +784,7 @@ private:
         
         create_new_user("ext4", drive);
         
-        std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
-        execute_command("mount " + drive + "2 /mnt");
-        execute_command("mount " + drive + "1 /mnt/boot/efi");
-        execute_command("mount --bind /dev /mnt/dev");
-        execute_command("mount --bind /dev/pts /mnt/dev/pts");
-        execute_command("mount --bind /proc /mnt/proc");
-        execute_command("mount --bind /sys /mnt/sys");
-        execute_command("mount --bind /run /mnt/run");
-        execute_command("cp -r /opt/claudemods-dsitribution-installer /mnt/opt");
+        std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
         
         execute_command("umount -R /mnt");
 
@@ -869,7 +843,6 @@ private:
         
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
         
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         
@@ -878,17 +851,7 @@ private:
         create_new_user("ext4", drive);
         
         std::cout << COLOR_ORANGE << "Setting up Spitfire CKGE repositories..." << COLOR_RESET << std::endl;
-        execute_command("mount " + drive + "2 /mnt");
-        execute_command("mount " + drive + "1 /mnt/boot/efi");
-        execute_command("mount --bind /dev /mnt/dev");
-        execute_command("mount --bind /dev/pts /mnt/dev/pts");
-        execute_command("mount --bind /proc /mnt/proc");
-        execute_command("mount --bind /sys /mnt/sys");
-        execute_command("mount --bind /run /mnt/run");
         
-        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
-        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
-        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
         
         execute_command("umount -R /mnt");
 
@@ -923,17 +886,7 @@ private:
         create_new_user("ext4", drive);
         
         std::cout << COLOR_PURPLE << "Setting up Apex CKGE repositories..." << COLOR_RESET << std::endl;
-        execute_command("mount " + drive + "2 /mnt");
-        execute_command("mount " + drive + "1 /mnt/boot/efi");
-        execute_command("mount --bind /dev /mnt/dev");
-        execute_command("mount --bind /dev/pts /mnt/dev/pts");
-        execute_command("mount --bind /proc /mnt/proc");
-        execute_command("mount --bind /sys /mnt/sys");
-        execute_command("mount --bind /run /mnt/run");
-        
-        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
-        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
-        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
+      
         
         execute_command("umount -R /mnt");
 

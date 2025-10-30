@@ -877,7 +877,6 @@ private:
         
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
         
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         

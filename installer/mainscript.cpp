@@ -702,9 +702,207 @@ private:
         }
     }
 
-    // Function to install Cachyos options
-    void install_cachyos_options(const std::string& fs_type, const std::string& drive) {
-        std::cout << COLOR_CYAN << "Installing CachyOS..." << COLOR_RESET << std::endl;
+    // Function to install CachyOS TTY Grub
+    void install_cachyos_tty_grub(const std::string& drive) {
+        std::cout << COLOR_CYAN << "Installing CachyOS TTY Grub..." << COLOR_RESET << std::endl;
+        
+        // Kernel selection for CachyOS
+        std::string selected_kernel = select_kernel();
+        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
+        
+        // Prepare partitions
+        prepare_target_partitions(drive, "ext4");
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+        
+        // Setup filesystem
+        setup_ext4_filesystem(root_part);
+        
+        // Install base system with selected kernel
+        execute_command("pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        
+        // Mount EFI partition
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+        
+        // Install GRUB
+        install_grub_ext4(drive);
+        
+        // Create new user
+        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
+        create_new_user("ext4", drive);
+        
+        // Remount system for CachyOS setup
+        std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
+        execute_command("mount " + drive + "2 /mnt");
+        execute_command("mount " + drive + "1 /mnt/boot/efi");
+        execute_command("mount --bind /dev /mnt/dev");
+        execute_command("mount --bind /dev/pts /mnt/dev/pts");
+        execute_command("mount --bind /proc /mnt/proc");
+        execute_command("mount --bind /sys /mnt/sys");
+        execute_command("mount --bind /run /mnt/run");
+        
+        // Download and setup CachyOS repositories in chroot
+        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
+        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
+        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
+        
+        // Cleanup
+        execute_command("umount -R /mnt");
+
+        std::cout << COLOR_GREEN << "CachyOS TTY Grub installation completed!" << COLOR_RESET << std::endl;
+        
+        // Prompt for reboot
+        prompt_reboot();
+    }
+
+    // Function to install CachyOS KDE
+    void install_cachyos_kde(const std::string& drive) {
+        std::cout << COLOR_CYAN << "Installing CachyOS KDE..." << COLOR_RESET << std::endl;
+        
+        // Kernel selection for CachyOS
+        std::string selected_kernel = select_kernel();
+        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
+        
+        // Prepare partitions
+        prepare_target_partitions(drive, "ext4");
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+        
+        // Setup filesystem
+        setup_ext4_filesystem(root_part);
+        
+        // Install base system with KDE and selected kernel
+        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        
+        // Enable services immediately after pacstrap
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+        
+        // Mount EFI partition
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+        
+        // Install GRUB
+        install_grub_ext4(drive);
+        
+        // Create new user
+        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
+        create_new_user("ext4", drive);
+        
+        // Remount system for CachyOS setup
+        std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
+        execute_command("mount " + drive + "2 /mnt");
+        execute_command("mount " + drive + "1 /mnt/boot/efi");
+        execute_command("mount --bind /dev /mnt/dev");
+        execute_command("mount --bind /dev/pts /mnt/dev/pts");
+        execute_command("mount --bind /proc /mnt/proc");
+        execute_command("mount --bind /sys /mnt/sys");
+        execute_command("mount --bind /run /mnt/run");
+        
+        // Download and setup CachyOS repositories in chroot
+        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
+        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
+        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
+        
+        // Cleanup
+        execute_command("umount -R /mnt");
+
+        std::cout << COLOR_GREEN << "CachyOS KDE installation completed!" << COLOR_RESET << std::endl;
+        
+        // Prompt for reboot
+        prompt_reboot();
+    }
+
+    // Function to install CachyOS GNOME
+    void install_cachyos_gnome(const std::string& drive) {
+        std::cout << COLOR_CYAN << "Installing CachyOS GNOME..." << COLOR_RESET << std::endl;
+        
+        // Kernel selection for CachyOS
+        std::string selected_kernel = select_kernel();
+        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
+        
+        // Prepare partitions
+        prepare_target_partitions(drive, "ext4");
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+        
+        // Setup filesystem
+        setup_ext4_filesystem(root_part);
+        
+        // Install base system with GNOME and selected kernel
+        execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        
+        // Enable services immediately after pacstrap
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
+        
+        // Mount EFI partition
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+        
+        // Install GRUB
+        install_grub_ext4(drive);
+        
+        // Create new user
+        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
+        create_new_user("ext4", drive);
+        
+        // Remount system for CachyOS setup
+        std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
+        execute_command("mount " + drive + "2 /mnt");
+        execute_command("mount " + drive + "1 /mnt/boot/efi");
+        execute_command("mount --bind /dev /mnt/dev");
+        execute_command("mount --bind /dev/pts /mnt/dev/pts");
+        execute_command("mount --bind /proc /mnt/proc");
+        execute_command("mount --bind /sys /mnt/sys");
+        execute_command("mount --bind /run /mnt/run");
+        
+        // Download and setup CachyOS repositories in chroot
+        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
+        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
+        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
+        
+        // Cleanup
+        execute_command("umount -R /mnt");
+
+        std::cout << COLOR_GREEN << "CachyOS GNOME installation completed!" << COLOR_RESET << std::endl;
+        
+        // Prompt for reboot
+        prompt_reboot();
+    }
+
+    // Function to display Cachyos menu
+    void display_cachyos_menu(const std::string& fs_type, const std::string& drive) {
+        while (true) {
+            std::cout << COLOR_CYAN;
+            std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
+            std::cout << "║                    CachyOS Options                          ║" << std::endl;
+            std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
+            std::cout << "║  1. Install CachyOS TTY Grub                               ║" << std::endl;
+            std::cout << "║  2. Install CachyOS KDE Grub                               ║" << std::endl;
+            std::cout << "║  3. Install CachyOS GNOME Grub                             ║" << std::endl;
+            std::cout << "║  4. Return to Main Menu                                    ║" << std::endl;
+            std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
+            std::cout << COLOR_RESET;
+
+            std::cout << COLOR_CYAN << "Select CachyOS option (1-4): " << COLOR_RESET;
+            std::string cachyos_choice;
+            std::getline(std::cin, cachyos_choice);
+
+            if (cachyos_choice == "1") {
+                install_cachyos_tty_grub(drive);
+            } else if (cachyos_choice == "2") {
+                install_cachyos_kde(drive);
+            } else if (cachyos_choice == "3") {
+                install_cachyos_gnome(drive);
+            } else if (cachyos_choice == "4") {
+                std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
+                break;
+            } else {
+                std::cout << COLOR_RED << "Invalid option. Please try again." << COLOR_RESET << std::endl;
+            }
+        }
+    }
+
+    // Function to install claudemods distribution options
+    void install_claudemods_distribution(const std::string& fs_type, const std::string& drive) {
+        std::cout << COLOR_CYAN << "Installing claudemods distribution..." << COLOR_RESET << std::endl;
         
         // Kernel selection for CachyOS
         std::string selected_kernel = select_kernel();
@@ -731,68 +929,38 @@ private:
         std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
         create_new_user(fs_type, drive);
         
-        // Download and setup CachyOS repositories
-        execute_command("curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
-        execute_command("tar xvf cachyos-repo.tar.xz && cd cachyos-repo");
-        execute_command("./cachyos-repo.sh");
+        // Remount system for CachyOS setup
+        std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
+        execute_command("mount " + drive + "2 /mnt");
+        execute_command("mount " + drive + "1 /mnt/boot/efi");
+        execute_command("mount --bind /dev /mnt/dev");
+        execute_command("mount --bind /dev/pts /mnt/dev/pts");
+        execute_command("mount --bind /proc /mnt/proc");
+        execute_command("mount --bind /sys /mnt/sys");
+        execute_command("mount --bind /run /mnt/run");
+        
+        // Download and setup CachyOS repositories in chroot
+        execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
+        execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
+        execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
 
-        // Check if cachyosmenu.sh exists in current directory
-        if (system("test -f cachyosmenu.sh") == 0) {
-            std::cout << COLOR_GREEN << "Copying cachyosmenu.sh to chroot..." << COLOR_RESET << std::endl;
-            execute_command("cp cachyosmenu.sh /mnt");
-            execute_command("chmod +x /mnt/cachyosmenu.sh");
-            
-            // We need to get the username from somewhere - for now using a placeholder
-            std::cout << COLOR_GREEN << "Executing cachyosmenu.sh with username..." << COLOR_RESET << std::endl;
-            execute_command("chroot /mnt /bin/bash -c \"/cachyosmenu.sh $new_username\"");
-            std::cout << COLOR_GREEN << "Cachyos installation completed!" << COLOR_RESET << std::endl;
-        } else {
-            std::cout << COLOR_RED << "Error: cachyosmenu.sh not found in current directory" << COLOR_RESET << std::endl;
-            std::cout << COLOR_YELLOW << "Please ensure cachyosmenu.sh is in the same directory as this script" << COLOR_RESET << std::endl;
-        }
-    }
-
-    // Function to install claudemods distribution options
-    void install_claudemods_distribution(const std::string& fs_type, const std::string& drive) {
-        std::cout << COLOR_CYAN << "Installing claudemods distribution..." << COLOR_RESET << std::endl;
-        
-        // Kernel selection for claudemods distribution
-        std::string selected_kernel = select_kernel();
-        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
-        
-        // Prepare partitions
-        prepare_target_partitions(drive, "ext4");
-        std::string efi_part = drive + "1";
-        std::string root_part = drive + "2";
-        
-        // Setup filesystem
-        setup_ext4_filesystem(root_part);
-        
-        // Install base system with selected kernel
-        execute_command("pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
-        
-        // Mount EFI partition
-        execute_command("mount " + efi_part + " /mnt/boot/efi");
-        
-        // Install GRUB
-        install_grub_ext4(drive);
-        
-        // Create new user (using new method for desktop environments)
-        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
-        create_new_user(fs_type, drive);
-
-        // Check if claudemods-distributions.sh exists in current directory
+        // Check if claudemods-distributions exists in current directory
         if (system("test -f claudemods-distributions.sh") == 0) {
-            std::cout << COLOR_GREEN << "Copying claudemods-distributions.sh to chroot..." << COLOR_RESET << std::endl;
+            std::cout << COLOR_GREEN << "Copying claudemods-distributions to chroot..." << COLOR_RESET << std::endl;
             execute_command("cp claudemods-distributions.sh /mnt");
             execute_command("chmod +x /mnt/claudemods-distributions.sh");
+            
+            // We need to get the username from somewhere - for now using a placeholder
             std::cout << COLOR_GREEN << "Executing claudemods-distributions.sh with username..." << COLOR_RESET << std::endl;
             execute_command("chroot /mnt /bin/bash -c \"/claudemods-distributions.sh $new_username\"");
-            std::cout << COLOR_GREEN << "Claudemods distribution installation completed!" << COLOR_RESET << std::endl;
+            std::cout << COLOR_GREEN << "claudemods installation completed!" << COLOR_RESET << std::endl;
         } else {
-            std::cout << COLOR_RED << "Error: claudemods-distributions.sh not found in current directory" << COLOR_RESET << std::endl;
-            std::cout << COLOR_YELLOW << "Please ensure claudemods-distributions.sh is in the same directory as this script" << COLOR_RESET << std::endl;
+            std::cout << COLOR_RED << "Error: claudemods-distributions not found in current directory" << COLOR_RESET << std::endl;
+            std::cout << COLOR_YELLOW << "Please ensure cachyosmenu.sh is in the same directory as this script" << COLOR_RESET << std::endl;
         }
+        
+        // Cleanup
+        execute_command("umount -R /mnt");
     }
 
     // Function to display main menu
@@ -817,7 +985,7 @@ private:
             if (choice == "1") {
                 install_desktop(fs_type, drive);
             } else if (choice == "2") {
-                install_cachyos_options(fs_type, drive);
+                display_cachyos_menu(fs_type, drive);
             } else if (choice == "3") {
                 install_claudemods_distribution(fs_type, drive);
             } else if (choice == "4") {

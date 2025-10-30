@@ -1,4 +1,4 @@
-#include <iostream>
+analyze this script #include <iostream>
 #include <string>
 #include <vector>
 #include <cstdlib>
@@ -314,8 +314,6 @@ private:
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_GREEN << "User '" << new_username << "' created successfully with sudo privileges" << COLOR_RESET << std::endl;
-        
-        return new_username;
     }
 
     // Function to prompt for reboot
@@ -386,7 +384,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user(fs_type, drive);
+        create_new_user(fs_type, drive);
         
         std::cout << COLOR_GREEN << "Arch TTY Grub installation completed successfully!" << COLOR_RESET << std::endl;
         
@@ -441,7 +439,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "GNOME installation completed!" << COLOR_RESET << std::endl;
             
@@ -467,7 +465,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "KDE Plasma installation completed!" << COLOR_RESET << std::endl;
             
@@ -493,7 +491,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "XFCE installation completed!" << COLOR_RESET << std::endl;
             
@@ -519,7 +517,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "LXQt installation completed!" << COLOR_RESET << std::endl;
             
@@ -545,7 +543,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Cinnamon installation completed!" << COLOR_RESET << std::endl;
             
@@ -572,7 +570,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "MATE installation completed!" << COLOR_RESET << std::endl;
             
@@ -598,7 +596,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Budgie installation completed!" << COLOR_RESET << std::endl;
             
@@ -624,7 +622,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "i3 installation completed!" << COLOR_RESET << std::endl;
             
@@ -650,7 +648,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Sway installation completed!" << COLOR_RESET << std::endl;
             
@@ -676,7 +674,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_PURPLE << "Hyprland installed! Note: You may need to configure ~/.config/hypr/hyprland.conf" << COLOR_RESET << std::endl;
             
@@ -707,7 +705,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         execute_command("umount -R /mnt");
 
@@ -738,7 +736,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
         execute_command("mkdir /mnt/home/" + new_username + "/.config/autostart");
@@ -775,7 +773,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
         
@@ -841,7 +839,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         std::cout << COLOR_ORANGE << "Setting up Spitfire CKGE repositories..." << COLOR_RESET << std::endl;
         
@@ -875,7 +873,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         std::cout << COLOR_PURPLE << "Setting up Apex CKGE repositories..." << COLOR_RESET << std::endl;
       

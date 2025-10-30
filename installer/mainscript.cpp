@@ -346,6 +346,9 @@ private:
             // Install base system with GNOME and selected kernel
             execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -356,11 +359,6 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable gdm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_GREEN << "GNOME installation completed!" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "3") {
             std::cout << COLOR_CYAN << "Installing KDE Plasma..." << COLOR_RESET << std::endl;
@@ -380,6 +378,9 @@ private:
             // Install base system with KDE and selected kernel
             execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -390,11 +391,6 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable sddm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_GREEN << "KDE Plasma installation completed!" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "4") {
             std::cout << COLOR_CYAN << "Installing XFCE..." << COLOR_RESET << std::endl;
@@ -414,6 +410,9 @@ private:
             // Install base system with XFCE and selected kernel
             execute_command("pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -424,11 +423,6 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_GREEN << "XFCE installation completed!" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "5") {
             std::cout << COLOR_CYAN << "Installing LXQt..." << COLOR_RESET << std::endl;
@@ -448,6 +442,9 @@ private:
             // Install base system with LXQt and selected kernel
             execute_command("pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -458,11 +455,6 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable sddm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_GREEN << "LXQt installation completed!" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "6") {
             std::cout << COLOR_CYAN << "Installing Cinnamon..." << COLOR_RESET << std::endl;
@@ -482,6 +474,9 @@ private:
             // Install base system with Cinnamon and selected kernel
             execute_command("pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -492,11 +487,6 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_GREEN << "Cinnamon installation completed!" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "7") {
             std::cout << COLOR_CYAN << "Installing MATE..." << COLOR_RESET << std::endl;
@@ -516,6 +506,9 @@ private:
             // Install base system with MATE and selected kernel
             execute_command("pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -526,11 +519,6 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_GREEN << "MATE installation completed!" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "8") {
             std::cout << COLOR_CYAN << "Installing Budgie..." << COLOR_RESET << std::endl;
@@ -550,6 +538,9 @@ private:
             // Install base system with Budgie and selected kernel
             execute_command("pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -560,11 +551,6 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_GREEN << "Budgie installation completed!" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "9") {
             std::cout << COLOR_CYAN << "Installing i3 (tiling WM)..." << COLOR_RESET << std::endl;
@@ -584,6 +570,9 @@ private:
             // Install base system with i3 and selected kernel
             execute_command("pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -594,11 +583,6 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_GREEN << "i3 installation completed!" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "10") {
             std::cout << COLOR_CYAN << "Installing Sway (Wayland tiling)..." << COLOR_RESET << std::endl;
@@ -618,6 +602,9 @@ private:
             // Install base system with Sway and selected kernel
             execute_command("pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -628,11 +615,6 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable lightdm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_GREEN << "Sway installation completed!" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "11") {
             std::cout << COLOR_PURPLE << "Installing Hyprland (Modern Wayland Compositor)..." << COLOR_RESET << std::endl;
@@ -652,6 +634,9 @@ private:
             // Install base system with Hyprland and selected kernel
             execute_command("pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
             
+            // Enable services immediately after pacstrap
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+            
             // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
@@ -662,21 +647,12 @@ private:
             std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
-            // Enable services
-            execute_command("chroot /mnt /bin/bash -c systemctl enable sddm");
-            
-            // Cleanup
-            execute_command("umount -R /mnt");
             std::cout << COLOR_PURPLE << "Hyprland installed! Note: You may need to configure ~/.config/hypr/hyprland.conf" << COLOR_RESET << std::endl;
         } else if (desktop_choice == "12") {
             std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
         } else {
             std::cout << COLOR_RED << "Invalid option. Returning to main menu." << COLOR_RESET << std::endl;
         }
-
-        // Cleanup
-        std::cout << COLOR_CYAN << "Cleaning up..." << COLOR_RESET << std::endl;
-        execute_command("umount -R /mnt");
     }
 
     // Function to install Cachyos options
@@ -727,10 +703,6 @@ private:
             std::cout << COLOR_RED << "Error: cachyosmenu.sh not found in current directory" << COLOR_RESET << std::endl;
             std::cout << COLOR_YELLOW << "Please ensure cachyosmenu.sh is in the same directory as this script" << COLOR_RESET << std::endl;
         }
-
-        // Cleanup
-        std::cout << COLOR_CYAN << "Cleaning up..." << COLOR_RESET << std::endl;
-        execute_command("umount -R /mnt");
     }
 
     // Function to install claudemods distribution options
@@ -774,10 +746,6 @@ private:
             std::cout << COLOR_RED << "Error: claudemods-distributions.sh not found in current directory" << COLOR_RESET << std::endl;
             std::cout << COLOR_YELLOW << "Please ensure claudemods-distributions.sh is in the same directory as this script" << COLOR_RESET << std::endl;
         }
-
-        // Cleanup
-        std::cout << COLOR_CYAN << "Cleaning up..." << COLOR_RESET << std::endl;
-        execute_command("umount -R /mnt");
     }
 
     // Function to display main menu

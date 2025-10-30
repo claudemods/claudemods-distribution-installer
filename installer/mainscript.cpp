@@ -767,7 +767,7 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
         execute_command("cp -r /opt/claudemods-dsitribution-installer /mnt/opt");
-        execute_command("cp -r /opt/claudemods-dsitribution-installer/cachyoskdebgrub.desktop /home/$USER/.config/autostart");
+        execute_command("cp -r /opt/claudemods-dsitribution-installer/install-fullkde-grub/cachyoskdebgrub.desktop /home/$USER/.config/autostart");
         
         execute_command("umount -R /mnt");
 

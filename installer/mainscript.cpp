@@ -140,6 +140,104 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"mkinitcpio -P\"");
     }
 
+    // Function to setup timezone and keyboard after username
+    void setup_timezone_keyboard(const std::string& fs_type, const std::string& drive) {
+        // Timezone setup
+        std::cout << COLOR_CYAN;
+        std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
+        std::cout << "║                      Timezone Setup                          ║" << std::endl;
+        std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
+        std::cout << "║  1. Europe/London (UK)                                      ║" << std::endl;
+        std::cout << "║  2. America/New_York (Eastern)                              ║" << std::endl;
+        std::cout << "║  3. America/Los_Angeles (Pacific)                           ║" << std::endl;
+        std::cout << "║  4. Europe/Paris (Central European)                         ║" << std::endl;
+        std::cout << "║  5. Asia/Tokyo (Japan)                                      ║" << std::endl;
+        std::cout << "║  6. Australia/Sydney                                        ║" << std::endl;
+        std::cout << "║  7. Other (manual entry)                                    ║" << std::endl;
+        std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
+        std::cout << COLOR_RESET;
+
+        std::string timezone_choice;
+        std::string timezone;
+
+        std::cout << COLOR_CYAN << "Select timezone (1-7): " << COLOR_RESET;
+        std::getline(std::cin, timezone_choice);
+
+        if (timezone_choice == "1") {
+            timezone = "Europe/London";
+        } else if (timezone_choice == "2") {
+            timezone = "America/New_York";
+        } else if (timezone_choice == "3") {
+            timezone = "America/Los_Angeles";
+        } else if (timezone_choice == "4") {
+            timezone = "Europe/Paris";
+        } else if (timezone_choice == "5") {
+            timezone = "Asia/Tokyo";
+        } else if (timezone_choice == "6") {
+            timezone = "Australia/Sydney";
+        } else if (timezone_choice == "7") {
+            std::cout << COLOR_CYAN << "Enter timezone (e.g., Europe/Berlin): " << COLOR_RESET;
+            std::getline(std::cin, timezone);
+        } else {
+            std::cout << COLOR_RED << "Invalid selection. Using default: Europe/London" << COLOR_RESET << std::endl;
+            timezone = "Europe/London";
+        }
+
+        std::cout << COLOR_CYAN << "Setting timezone to: " << timezone << COLOR_RESET << std::endl;
+        execute_command("chroot /mnt /bin/bash -c \"ln -sf /usr/share/zoneinfo/" + timezone + " /etc/localtime\"");
+        execute_command("chroot /mnt /bin/bash -c \"hwclock --systohc\"");
+
+        // Keyboard layout setup
+        std::cout << COLOR_CYAN;
+        std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
+        std::cout << "║                    Keyboard Layout Setup                     ║" << std::endl;
+        std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
+        std::cout << "║  1. us (US English)                                         ║" << std::endl;
+        std::cout << "║  2. uk (UK English)                                         ║" << std::endl;
+        std::cout << "║  3. de (German)                                             ║" << std::endl;
+        std::cout << "║  4. fr (French)                                             ║" << std::endl;
+        std::cout << "║  5. es (Spanish)                                            ║" << std::endl;
+        std::cout << "║  6. it (Italian)                                            ║" << std::endl;
+        std::cout << "║  7. jp (Japanese)                                           ║" << std::endl;
+        std::cout << "║  8. Other (manual entry)                                    ║" << std::endl;
+        std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
+        std::cout << COLOR_RESET;
+
+        std::string keyboard_choice;
+        std::string keyboard_layout;
+
+        std::cout << COLOR_CYAN << "Select keyboard layout (1-8): " << COLOR_RESET;
+        std::getline(std::cin, keyboard_choice);
+
+        if (keyboard_choice == "1") {
+            keyboard_layout = "us";
+        } else if (keyboard_choice == "2") {
+            keyboard_layout = "uk";
+        } else if (keyboard_choice == "3") {
+            keyboard_layout = "de";
+        } else if (keyboard_choice == "4") {
+            keyboard_layout = "fr";
+        } else if (keyboard_choice == "5") {
+            keyboard_layout = "es";
+        } else if (keyboard_choice == "6") {
+            keyboard_layout = "it";
+        } else if (keyboard_choice == "7") {
+            keyboard_layout = "jp";
+        } else if (keyboard_choice == "8") {
+            std::cout << COLOR_CYAN << "Enter keyboard layout (e.g., br, ru, pt): " << COLOR_RESET;
+            std::getline(std::cin, keyboard_layout);
+        } else {
+            std::cout << COLOR_RED << "Invalid selection. Using default: us" << COLOR_RESET << std::endl;
+            keyboard_layout = "us";
+        }
+
+        std::cout << COLOR_CYAN << "Setting keyboard layout to: " << keyboard_layout << COLOR_RESET << std::endl;
+        execute_command("chroot /mnt /bin/bash -c \"echo 'KEYMAP=" + keyboard_layout + "' > /etc/vconsole.conf\"");
+        execute_command("chroot /mnt /bin/bash -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"");
+        execute_command("chroot /mnt /bin/bash -c \"echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen\"");
+        execute_command("chroot /mnt /bin/bash -c \"locale-gen\"");
+    }
+
     // Function to change username in the new system (for Arch TTY Grub)
     void change_username(const std::string& fs_type, const std::string& drive) {
         std::string new_username;
@@ -158,33 +256,25 @@ private:
 
         std::cout << COLOR_CYAN << "Changing username from 'arch' to '" << new_username << "'..." << COLOR_RESET << std::endl;
 
-        // Change username from arch to new username
         execute_command("chroot /mnt /bin/bash -c \"usermod -l " + new_username + " arch\"");
-        
-        // Change home directory name
         execute_command("chroot /mnt /bin/bash -c \"mv /home/arch /home/" + new_username + "\"");
-        
-        // Change home directory in passwd
         execute_command("chroot /mnt /bin/bash -c \"usermod -d /home/" + new_username + " " + new_username + "\"");
-        
-        // Change group name
         execute_command("chroot /mnt /bin/bash -c \"groupmod -n " + new_username + " arch\"");
 
         std::cout << COLOR_CYAN << "Adding " << new_username << " to sudo group..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"gpasswd -a " + new_username + " wheel\"");
 
-        // Set password for root
         std::cout << COLOR_CYAN << "Setting password for user 'root'..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"passwd root\"");
         
-        // Set password for the new user
         std::cout << COLOR_CYAN << "Setting password for user '" << new_username << "'..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"passwd " + new_username + "\"");
         
-        // Configure sudo for wheel group if not already configured
         execute_command("chroot /mnt /bin/bash -c \"echo '%wheel ALL=(ALL:ALL) ALL' | tee -a /etc/sudoers\"");
 
-        // Cleanup
+        // TIMEZONE AND KEYBOARD SETUP AFTER USERNAME
+        setup_timezone_keyboard(fs_type, drive);
+
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_GREEN << "Username changed from 'arch' to '" << new_username << "'" << COLOR_RESET << std::endl;
@@ -208,21 +298,19 @@ private:
 
         std::cout << COLOR_CYAN << "Creating new user '" << new_username << "'..." << COLOR_RESET << std::endl;
 
-        // Create new user with home directory and wheel group
         execute_command("chroot /mnt /bin/bash -c \"useradd -m -G wheel -s /bin/bash " + new_username + "\"");
         
-        // Set password for root
         std::cout << COLOR_CYAN << "Setting password for user 'root'..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"passwd root\"");
         
-        // Set password for the new user
         std::cout << COLOR_CYAN << "Setting password for user '" << new_username << "'..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"passwd " + new_username + "\"");
 
-        // Configure sudo for wheel group if not already configured
         execute_command("chroot /mnt /bin/bash -c \"echo '%wheel ALL=(ALL:ALL) ALL' | tee -a /etc/sudoers\"");
 
-        // Cleanup
+        // TIMEZONE AND KEYBOARD SETUP AFTER USERNAME
+        setup_timezone_keyboard(fs_type, drive);
+
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_GREEN << "User '" << new_username << "' created successfully with sudo privileges" << COLOR_RESET << std::endl;
@@ -280,45 +368,31 @@ private:
 
         std::cout << COLOR_CYAN << "Starting Arch TTY Grub installation..." << COLOR_RESET << std::endl;
         
-        // Kernel selection for Arch TTY Grub
         std::string selected_kernel = select_kernel();
         std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
         
-        // Prepare partitions
-        std::cout << COLOR_CYAN << "Preparing partitions..." << COLOR_RESET << std::endl;
         prepare_target_partitions(drive, fs_type);
         
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
         
-        // Setup filesystem
-        std::cout << COLOR_CYAN << "Setting up filesystem..." << COLOR_RESET << std::endl;
         setup_ext4_filesystem(root_part);
         
-        // Install base system using pacstrap (like other desktop environments)
-        std::cout << COLOR_CYAN << "Installing base system with pacstrap..." << COLOR_RESET << std::endl;
-        execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion");
+        execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion networkmanager");
         
-        // Mount EFI partition
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         
-        // Install GRUB
-        std::cout << COLOR_CYAN << "Installing GRUB..." << COLOR_RESET << std::endl;
         install_grub_ext4(drive);
         
-        // Create new user (using new method like other desktop environments)
-        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
         create_new_user(fs_type, drive);
         
         std::cout << COLOR_GREEN << "Arch TTY Grub installation completed successfully!" << COLOR_RESET << std::endl;
         
-        // Prompt for reboot
         prompt_reboot();
     }
 
     // Function to install desktop environments
     void install_desktop(const std::string& fs_type, const std::string& drive) {
-        // Display desktop options - Top 10 Arch package list
         std::cout << COLOR_CYAN;
         std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
         std::cout << "║                   Desktop Environments                       ║" << std::endl;
@@ -343,357 +417,276 @@ private:
         std::getline(std::cin, desktop_choice);
 
         if (desktop_choice == "1") {
-            std::cout << COLOR_CYAN << "Starting Arch TTY Grub installation..." << COLOR_RESET << std::endl;
             install_arch_tty_grub(drive);
         } else if (desktop_choice == "2") {
             std::cout << COLOR_CYAN << "Installing GNOME Desktop..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with GNOME and selected kernel
-            execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "GNOME installation completed!" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "3") {
             std::cout << COLOR_CYAN << "Installing KDE Plasma..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with KDE and selected kernel
-            execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "KDE Plasma installation completed!" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "4") {
             std::cout << COLOR_CYAN << "Installing XFCE..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with XFCE and selected kernel
-            execute_command("pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "XFCE installation completed!" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "5") {
             std::cout << COLOR_CYAN << "Installing LXQt..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with LXQt and selected kernel
-            execute_command("pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "LXQt installation completed!" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "6") {
             std::cout << COLOR_CYAN << "Installing Cinnamon..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with Cinnamon and selected kernel
-            execute_command("pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Cinnamon installation completed!" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "7") {
             std::cout << COLOR_CYAN << "Installing MATE..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with MATE and selected kernel
-            execute_command("pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "MATE installation completed!" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "8") {
             std::cout << COLOR_CYAN << "Installing Budgie..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with Budgie and selected kernel
-            execute_command("pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Budgie installation completed!" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "9") {
             std::cout << COLOR_CYAN << "Installing i3 (tiling WM)..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with i3 and selected kernel
-            execute_command("pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "i3 installation completed!" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "10") {
             std::cout << COLOR_CYAN << "Installing Sway (Wayland tiling)..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with Sway and selected kernel
-            execute_command("pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Sway installation completed!" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "11") {
             std::cout << COLOR_PURPLE << "Installing Hyprland (Modern Wayland Compositor)..." << COLOR_RESET << std::endl;
             
-            // Kernel selection for desktop environments
             std::string selected_kernel = select_kernel();
             std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
-            // Prepare partitions
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
             
-            // Setup filesystem
             setup_ext4_filesystem(root_part);
             
-            // Install base system with Hyprland and selected kernel
-            execute_command("pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+            execute_command("pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
             
-            // Enable services immediately after pacstrap
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+            execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
             
-            // Mount EFI partition
             execute_command("mount " + efi_part + " /mnt/boot/efi");
             
-            // Install GRUB
             install_grub_ext4(drive);
             
-            // Create new user (using new method for desktop environments)
-            std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_PURPLE << "Hyprland installed! Note: You may need to configure ~/.config/hypr/hyprland.conf" << COLOR_RESET << std::endl;
             
-            // Prompt for reboot
             prompt_reboot();
         } else if (desktop_choice == "12") {
             std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
@@ -706,32 +699,23 @@ private:
     void install_cachyos_tty_grub(const std::string& drive) {
         std::cout << COLOR_CYAN << "Installing CachyOS TTY Grub..." << COLOR_RESET << std::endl;
         
-        // Kernel selection for CachyOS
         std::string selected_kernel = select_kernel();
         std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
         
-        // Prepare partitions
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
         
-        // Setup filesystem
         setup_ext4_filesystem(root_part);
         
-        // Install base system with selected kernel
-        execute_command("pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        execute_command("pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
         
-        // Mount EFI partition
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         
-        // Install GRUB
         install_grub_ext4(drive);
         
-        // Create new user
-        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
         create_new_user("ext4", drive);
         
-        // Remount system for CachyOS setup
         std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
         execute_command("mount " + drive + "2 /mnt");
         execute_command("mount " + drive + "1 /mnt/boot/efi");
@@ -741,17 +725,14 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
         
-        // Download and setup CachyOS repositories in chroot
         execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
         execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
         execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
         
-        // Cleanup
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_GREEN << "CachyOS TTY Grub installation completed!" << COLOR_RESET << std::endl;
         
-        // Prompt for reboot
         prompt_reboot();
     }
 
@@ -759,35 +740,27 @@ private:
     void install_cachyos_kde(const std::string& drive) {
         std::cout << COLOR_CYAN << "Installing CachyOS KDE..." << COLOR_RESET << std::endl;
         
-        // Kernel selection for CachyOS
         std::string selected_kernel = select_kernel();
         std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
         
-        // Prepare partitions
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
         
-        // Setup filesystem
         setup_ext4_filesystem(root_part);
         
-        // Install base system with KDE and selected kernel
-        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
         
-        // Enable services immediately after pacstrap
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
         
-        // Mount EFI partition
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         
-        // Install GRUB
         install_grub_ext4(drive);
         
-        // Create new user
-        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
         create_new_user("ext4", drive);
         
-        // Remount system for CachyOS setup
         std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
         execute_command("mount " + drive + "2 /mnt");
         execute_command("mount " + drive + "1 /mnt/boot/efi");
@@ -797,17 +770,14 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
         
-        // Download and setup CachyOS repositories in chroot
         execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
         execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
         execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
         
-        // Cleanup
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_GREEN << "CachyOS KDE installation completed!" << COLOR_RESET << std::endl;
         
-        // Prompt for reboot
         prompt_reboot();
     }
 
@@ -815,35 +785,27 @@ private:
     void install_cachyos_gnome(const std::string& drive) {
         std::cout << COLOR_CYAN << "Installing CachyOS GNOME..." << COLOR_RESET << std::endl;
         
-        // Kernel selection for CachyOS
         std::string selected_kernel = select_kernel();
         std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
         
-        // Prepare partitions
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
         
-        // Setup filesystem
         setup_ext4_filesystem(root_part);
         
-        // Install base system with GNOME and selected kernel
-        execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
         
-        // Enable services immediately after pacstrap
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
         
-        // Mount EFI partition
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         
-        // Install GRUB
         install_grub_ext4(drive);
         
-        // Create new user
-        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
         create_new_user("ext4", drive);
         
-        // Remount system for CachyOS setup
         std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
         execute_command("mount " + drive + "2 /mnt");
         execute_command("mount " + drive + "1 /mnt/boot/efi");
@@ -853,17 +815,14 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
         
-        // Download and setup CachyOS repositories in chroot
         execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
         execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
         execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
         
-        // Cleanup
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_GREEN << "CachyOS GNOME installation completed!" << COLOR_RESET << std::endl;
         
-        // Prompt for reboot
         prompt_reboot();
     }
 
@@ -904,35 +863,27 @@ private:
     void install_spitfire_ckge(const std::string& drive) {
         std::cout << COLOR_ORANGE << "Installing Spitfire CKGE..." << COLOR_RESET << std::endl;
         
-        // Kernel selection for Spitfire CKGE
         std::string selected_kernel = select_kernel();
         std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
         
-        // Prepare partitions
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
         
-        // Setup filesystem
         setup_ext4_filesystem(root_part);
         
-        // Install base system with KDE and selected kernel
-        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
         
-        // Enable services immediately after pacstrap
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
         
-        // Mount EFI partition
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         
-        // Install GRUB
         install_grub_ext4(drive);
         
-        // Create new user
-        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
         create_new_user("ext4", drive);
         
-        // Remount system for Spitfire CKGE setup
         std::cout << COLOR_ORANGE << "Setting up Spitfire CKGE repositories..." << COLOR_RESET << std::endl;
         execute_command("mount " + drive + "2 /mnt");
         execute_command("mount " + drive + "1 /mnt/boot/efi");
@@ -942,17 +893,14 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
         
-        // Download and setup CachyOS repositories in chroot (similar to CachyOS setup)
         execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
         execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
         execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
         
-        // Cleanup
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE installation completed!" << COLOR_RESET << std::endl;
         
-        // Prompt for reboot
         prompt_reboot();
     }
 
@@ -960,35 +908,27 @@ private:
     void install_apex_ckge(const std::string& drive) {
         std::cout << COLOR_PURPLE << "Installing Apex CKGE..." << COLOR_RESET << std::endl;
         
-        // Kernel selection for Apex CKGE
         std::string selected_kernel = select_kernel();
         std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
         
-        // Prepare partitions
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
         
-        // Setup filesystem
         setup_ext4_filesystem(root_part);
         
-        // Install base system with KDE and selected kernel
-        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo");
+        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
         
-        // Enable services immediately after pacstrap
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl start NetworkManager\"");
         
-        // Mount EFI partition
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         
-        // Install GRUB
         install_grub_ext4(drive);
         
-        // Create new user
-        std::cout << COLOR_CYAN << "Setting up user account..." << COLOR_RESET << std::endl;
         create_new_user("ext4", drive);
         
-        // Remount system for Apex CKGE setup
         std::cout << COLOR_PURPLE << "Setting up Apex CKGE repositories..." << COLOR_RESET << std::endl;
         execute_command("mount " + drive + "2 /mnt");
         execute_command("mount " + drive + "1 /mnt/boot/efi");
@@ -998,17 +938,14 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
         
-        // Download and setup CachyOS repositories in chroot (similar to CachyOS setup)
         execute_command("chroot /mnt /bin/bash -c \"curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o /cachyos-repo.tar.xz\"");
         execute_command("chroot /mnt /bin/bash -c \"tar xvf /cachyos-repo.tar.xz -C /\"");
         execute_command("chroot /mnt /bin/bash -c \"cd /cachyos-repo && ./cachyos-repo.sh\"");
         
-        // Cleanup
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_PURPLE << "Apex CKGE installation completed!" << COLOR_RESET << std::endl;
         
-        // Prompt for reboot
         prompt_reboot();
     }
 

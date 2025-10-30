@@ -100,7 +100,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods distribution installer v1.0 29-10-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods distribution installer v1.0 30-10-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Ext4 And Btrfs filesystems" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }
@@ -449,6 +449,8 @@ private:
         execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion networkmanager");
         
         execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
         
         install_grub_ext4(drive);
         
@@ -737,6 +739,8 @@ private:
         execute_command("pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
         
         execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
         
         install_grub_ext4(drive);
         
@@ -776,7 +780,7 @@ private:
         execute_command("chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config");
         execute_command("chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config/autostart");
         execute_command("chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config/autostart/cachyoskdebgrub.desktop");
-        execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdebgrub.desktop");
+        execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
         
         std::cout << COLOR_GREEN << "CachyOS KDE Part 1 installation completed!" << COLOR_RESET << std::endl;

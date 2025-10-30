@@ -707,16 +707,6 @@ private:
         
         create_new_user("ext4", drive);
         
-        std::cout << COLOR_CYAN << "Setting up CachyOS repositories..." << COLOR_RESET << std::endl;
-        execute_command("mount " + drive + "2 /mnt");
-        execute_command("mount " + drive + "1 /mnt/boot/efi");
-        execute_command("mount --bind /dev /mnt/dev");
-        execute_command("mount --bind /dev/pts /mnt/dev/pts");
-        execute_command("mount --bind /proc /mnt/proc");
-        execute_command("mount --bind /sys /mnt/sys");
-        execute_command("mount --bind /run /mnt/run");
-        execute_command("cp -r /opt/claudemods-dsitribution-installer /mnt/opt");
-        
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_GREEN << "CachyOS TTY Grub installation completed!" << COLOR_RESET << std::endl;
@@ -749,6 +739,7 @@ private:
         create_new_user("ext4", drive);
         
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
+        execute_command("mkdir /mnt/home/$USER/.config/autostart");
         execute_command("cp -r /opt/claudemods-distribution-installer /mnt/opt");
         execute_command("cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/cachyoskdebgrub.desktop /home/$USER/.config/autostart");
         

@@ -228,6 +228,20 @@ private:
         std::cout << COLOR_GREEN << "User '" << new_username << "' created successfully with sudo privileges" << COLOR_RESET << std::endl;
     }
 
+    // Function to prompt for reboot
+    void prompt_reboot() {
+        std::cout << COLOR_CYAN << "Installation completed successfully! Would you like to reboot now? (yes/no): " << COLOR_RESET;
+        std::string reboot_choice;
+        std::getline(std::cin, reboot_choice);
+        
+        if (reboot_choice == "yes" || reboot_choice == "y" || reboot_choice == "Y") {
+            std::cout << COLOR_GREEN << "Rebooting system..." << COLOR_RESET << std::endl;
+            execute_command("sudo reboot");
+        } else {
+            std::cout << COLOR_YELLOW << "You can reboot manually later using: sudo reboot" << COLOR_RESET << std::endl;
+        }
+    }
+
     // Function to select kernel for desktop installations
     std::string select_kernel() {
         while (true) {
@@ -297,6 +311,9 @@ private:
         create_new_user(fs_type, drive);
         
         std::cout << COLOR_GREEN << "Arch TTY Grub installation completed successfully!" << COLOR_RESET << std::endl;
+        
+        // Prompt for reboot
+        prompt_reboot();
     }
 
     // Function to install desktop environments
@@ -360,6 +377,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "GNOME installation completed!" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "3") {
             std::cout << COLOR_CYAN << "Installing KDE Plasma..." << COLOR_RESET << std::endl;
             
@@ -392,6 +412,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "KDE Plasma installation completed!" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "4") {
             std::cout << COLOR_CYAN << "Installing XFCE..." << COLOR_RESET << std::endl;
             
@@ -424,6 +447,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "XFCE installation completed!" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "5") {
             std::cout << COLOR_CYAN << "Installing LXQt..." << COLOR_RESET << std::endl;
             
@@ -456,6 +482,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "LXQt installation completed!" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "6") {
             std::cout << COLOR_CYAN << "Installing Cinnamon..." << COLOR_RESET << std::endl;
             
@@ -488,6 +517,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Cinnamon installation completed!" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "7") {
             std::cout << COLOR_CYAN << "Installing MATE..." << COLOR_RESET << std::endl;
             
@@ -520,6 +552,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "MATE installation completed!" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "8") {
             std::cout << COLOR_CYAN << "Installing Budgie..." << COLOR_RESET << std::endl;
             
@@ -552,6 +587,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Budgie installation completed!" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "9") {
             std::cout << COLOR_CYAN << "Installing i3 (tiling WM)..." << COLOR_RESET << std::endl;
             
@@ -584,6 +622,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "i3 installation completed!" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "10") {
             std::cout << COLOR_CYAN << "Installing Sway (Wayland tiling)..." << COLOR_RESET << std::endl;
             
@@ -616,6 +657,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Sway installation completed!" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "11") {
             std::cout << COLOR_PURPLE << "Installing Hyprland (Modern Wayland Compositor)..." << COLOR_RESET << std::endl;
             
@@ -648,6 +692,9 @@ private:
             create_new_user(fs_type, drive);
             
             std::cout << COLOR_PURPLE << "Hyprland installed! Note: You may need to configure ~/.config/hypr/hyprland.conf" << COLOR_RESET << std::endl;
+            
+            // Prompt for reboot
+            prompt_reboot();
         } else if (desktop_choice == "12") {
             std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
         } else {
@@ -775,8 +822,7 @@ private:
                 install_claudemods_distribution(fs_type, drive);
             } else if (choice == "4") {
                 std::cout << COLOR_GREEN << "Rebooting system..." << COLOR_RESET << std::endl;
-                execute_command("umount -R /mnt 2>/dev/null || true");
-                execute_command("reboot");
+                execute_command("sudo reboot");
             } else if (choice == "5") {
                 std::cout << COLOR_GREEN << "Exiting. Goodbye!" << COLOR_RESET << std::endl;
                 exit(0);

@@ -762,11 +762,15 @@ private:
         create_new_user("ext4", drive);
         
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
-        execute_command("mkdir /mnt/home/" + new_username + "/.config");
-        execute_command("mkdir /mnt/home/" + new_username + "/.config/autostart");
-        execute_command("cp -r /opt/claudemods-distribution-installer /mnt/opt");
-        execute_command("cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/cachyoskdebgrub.desktop /mnt/home/" + new_username + "/.config/autostart");
-        
+        execute_command("sudo mkdir /mnt/home/" + new_username + "/.config");
+        execute_command("sudo mkdir /mnt/home/" + new_username + "/.config/autostart");
+        execute_command("sudo cp -r /opt/claudemods-distribution-installer /mnt/opt");
+        execute_command("sudo cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/cachyoskdebgrub.desktop /mnt/home/" + new_username + "/.config/autostart");
+        execute_command("sudo chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config");
+        execute_command("sudo chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config/autostart");
+        execute_command("sudo chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config/autostart/cachyoskdebgrub.desktop");
+        execute_command("sudo chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdebgrub.desktop");
+        execute_command("sudo chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
         execute_command("umount -R /mnt");
 
         std::cout << COLOR_GREEN << "CachyOS KDE Part 1 installation completed!" << COLOR_RESET << std::endl;

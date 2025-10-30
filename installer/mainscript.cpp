@@ -22,6 +22,16 @@ const std::string COLOR_RESET = "\033[0m";
 
 class ArchInstaller {
 private:
+    // Store user inputs for use during installation
+    std::string selected_drive;
+    std::string fs_type;
+    std::string selected_kernel;
+    std::string new_username;
+    std::string timezone;
+    std::string keyboard_layout;
+    std::string root_password;
+    std::string user_password;
+
     // Function to execute commands with error handling
     int execute_command(const std::string& cmd) {
         std::cout << COLOR_CYAN;
@@ -140,52 +150,128 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"mkinitcpio -P\"");
     }
 
-    // Function to setup timezone and keyboard after username
-    void setup_timezone_keyboard(const std::string& fs_type, const std::string& drive) {
+    // Function to get drive selection (Step 1)
+    void get_drive_selection() {
+        display_available_drives();
+        std::cout << COLOR_CYAN << "Enter target drive (e.g., /dev/sda): " << COLOR_RESET;
+        std::getline(std::cin, selected_drive);
+        if (!is_block_device(selected_drive)) {
+            std::cerr << COLOR_RED << "Error: " << selected_drive << " is not a valid block device" << COLOR_RESET << std::endl;
+            exit(1);
+        }
+    }
+
+    // Function to get filesystem selection (Step 2)
+    void get_filesystem_selection() {
+        std::cout << COLOR_CYAN << "Choose filesystem type (ext4/btrfs): " << COLOR_RESET;
+        std::getline(std::cin, fs_type);
+    }
+
+    // Function to select kernel (Step 3)
+    void get_kernel_selection() {
+        while (true) {
+            std::cout << COLOR_CYAN;
+            std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
+            std::cout << "║                      Select Kernel                          ║" << std::endl;
+            std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
+            std::cout << "║  1. linux (Standard)                                        ║" << std::endl;
+            std::cout << "║  2. linux-lts (Long Term Support)                           ║" << std::endl;
+            std::cout << "║  3. linux-zen (Tuned for desktop performance)               ║" << std::endl;
+            std::cout << "║  4. linux-hardened (Security-focused)                       ║" << std::endl;
+            std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
+            std::cout << COLOR_RESET;
+
+            std::cout << COLOR_CYAN << "Select kernel (1-4): " << COLOR_RESET;
+            std::string kernel_choice;
+            std::getline(std::cin, kernel_choice);
+
+            if (kernel_choice == "1") {
+                selected_kernel = "linux";
+                break;
+            } else if (kernel_choice == "2") {
+                selected_kernel = "linux-lts";
+                break;
+            } else if (kernel_choice == "3") {
+                selected_kernel = "linux-zen";
+                break;
+            } else if (kernel_choice == "4") {
+                selected_kernel = "linux-hardened";
+                break;
+            } else {
+                std::cout << COLOR_RED << "Invalid selection. Please enter a number between 1-4." << COLOR_RESET << std::endl;
+            }
+        }
+        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
+    }
+
+    // Function to get new user credentials (Step 4)
+    void get_new_user_credentials() {
+        std::cout << COLOR_CYAN;
+        std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
+        std::cout << "║                    User Configuration                        ║" << std::endl;
+        std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
+        std::cout << "║  Please enter the following user details:                   ║" << std::endl;
+        std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
+        std::cout << COLOR_RESET;
+
+        // Get username
+        std::cout << COLOR_CYAN << "Enter new username: " << COLOR_RESET;
+        std::getline(std::cin, new_username);
+
+        // Get root password
+        std::cout << COLOR_CYAN << "Enter root password: " << COLOR_RESET;
+        std::getline(std::cin, root_password);
+
+        // Get user password
+        std::cout << COLOR_CYAN << "Enter password for user '" << new_username << "': " << COLOR_RESET;
+        std::getline(std::cin, user_password);
+
+        std::cout << COLOR_GREEN << "User credentials stored successfully!" << COLOR_RESET << std::endl;
+    }
+
+    // Function to setup timezone and keyboard (Step 5)
+    void get_timezone_keyboard_settings() {
         // Timezone setup
         std::cout << COLOR_CYAN;
         std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
         std::cout << "║                      Timezone Setup                          ║" << std::endl;
         std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
-        std::cout << "║  1. Europe/London (UK)                                      ║" << std::endl;
-        std::cout << "║  2. America/New_York (Eastern)                              ║" << std::endl;
-        std::cout << "║  3. America/Los_Angeles (Pacific)                           ║" << std::endl;
-        std::cout << "║  4. Europe/Paris (Central European)                         ║" << std::endl;
-        std::cout << "║  5. Asia/Tokyo (Japan)                                      ║" << std::endl;
-        std::cout << "║  6. Australia/Sydney                                        ║" << std::endl;
-        std::cout << "║  7. Other (manual entry)                                    ║" << std::endl;
+        std::cout << "║  1. America/New_York (US English)                           ║" << std::endl;
+        std::cout << "║  2. Europe/London (UK English)                              ║" << std::endl;
+        std::cout << "║  3. Europe/Berlin (German)                                  ║" << std::endl;
+        std::cout << "║  4. Europe/Paris (French)                                   ║" << std::endl;
+        std::cout << "║  5. Europe/Madrid (Spanish)                                 ║" << std::endl;
+        std::cout << "║  6. Europe/Rome (Italian)                                   ║" << std::endl;
+        std::cout << "║  7. Asia/Tokyo (Japanese)                                   ║" << std::endl;
+        std::cout << "║  8. Other (manual entry)                                    ║" << std::endl;
         std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
         std::cout << COLOR_RESET;
 
         std::string timezone_choice;
-        std::string timezone;
-
-        std::cout << COLOR_CYAN << "Select timezone (1-7): " << COLOR_RESET;
+        std::cout << COLOR_CYAN << "Select timezone (1-8): " << COLOR_RESET;
         std::getline(std::cin, timezone_choice);
 
         if (timezone_choice == "1") {
-            timezone = "Europe/London";
-        } else if (timezone_choice == "2") {
             timezone = "America/New_York";
+        } else if (timezone_choice == "2") {
+            timezone = "Europe/London";
         } else if (timezone_choice == "3") {
-            timezone = "America/Los_Angeles";
+            timezone = "Europe/Berlin";
         } else if (timezone_choice == "4") {
             timezone = "Europe/Paris";
         } else if (timezone_choice == "5") {
-            timezone = "Asia/Tokyo";
+            timezone = "Europe/Madrid";
         } else if (timezone_choice == "6") {
-            timezone = "Australia/Sydney";
+            timezone = "Europe/Rome";
         } else if (timezone_choice == "7") {
+            timezone = "Asia/Tokyo";
+        } else if (timezone_choice == "8") {
             std::cout << COLOR_CYAN << "Enter timezone (e.g., Europe/Berlin): " << COLOR_RESET;
             std::getline(std::cin, timezone);
         } else {
-            std::cout << COLOR_RED << "Invalid selection. Using default: Europe/London" << COLOR_RESET << std::endl;
-            timezone = "Europe/London";
+            std::cout << COLOR_RED << "Invalid selection. Using default: America/New_York" << COLOR_RESET << std::endl;
+            timezone = "America/New_York";
         }
-
-        std::cout << COLOR_CYAN << "Setting timezone to: " << timezone << COLOR_RESET << std::endl;
-        execute_command("chroot /mnt /bin/bash -c \"ln -sf /usr/share/zoneinfo/" + timezone + " /etc/localtime\"");
-        execute_command("chroot /mnt /bin/bash -c \"hwclock --systohc\"");
 
         // Keyboard layout setup
         std::cout << COLOR_CYAN;
@@ -204,8 +290,6 @@ private:
         std::cout << COLOR_RESET;
 
         std::string keyboard_choice;
-        std::string keyboard_layout;
-
         std::cout << COLOR_CYAN << "Select keyboard layout (1-8): " << COLOR_RESET;
         std::getline(std::cin, keyboard_choice);
 
@@ -231,6 +315,15 @@ private:
             keyboard_layout = "us";
         }
 
+        std::cout << COLOR_GREEN << "Timezone: " << timezone << ", Keyboard: " << keyboard_layout << COLOR_RESET << std::endl;
+    }
+
+    // Function to apply timezone and keyboard settings during installation
+    void apply_timezone_keyboard_settings() {
+        std::cout << COLOR_CYAN << "Setting timezone to: " << timezone << COLOR_RESET << std::endl;
+        execute_command("chroot /mnt /bin/bash -c \"ln -sf /usr/share/zoneinfo/" + timezone + " /etc/localtime\"");
+        execute_command("chroot /mnt /bin/bash -c \"hwclock --systohc\"");
+
         std::cout << COLOR_CYAN << "Setting keyboard layout to: " << keyboard_layout << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"echo 'KEYMAP=" + keyboard_layout + "' > /etc/vconsole.conf\"");
         execute_command("chroot /mnt /bin/bash -c \"echo 'LANG=en_US.UTF-8' > /etc/locale.conf\"");
@@ -238,12 +331,23 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"locale-gen\"");
     }
 
+    // Function to apply user credentials during installation
+    void apply_user_credentials() {
+        std::cout << COLOR_CYAN << "Creating user '" << new_username << "'..." << COLOR_RESET << std::endl;
+        execute_command("chroot /mnt /bin/bash -c \"useradd -m -G wheel -s /bin/bash " + new_username + "\"");
+        
+        // Set passwords using stored credentials
+        std::cout << COLOR_CYAN << "Setting root password..." << COLOR_RESET << std::endl;
+        execute_command("chroot /mnt /bin/bash -c \"echo 'root:" + root_password + "' | chpasswd\"");
+        
+        std::cout << COLOR_CYAN << "Setting password for user '" << new_username << "'..." << COLOR_RESET << std::endl;
+        execute_command("chroot /mnt /bin/bash -c \"echo '" + new_username + ":" + user_password + "' | chpasswd\"");
+
+        execute_command("chroot /mnt /bin/bash -c \"echo '%wheel ALL=(ALL:ALL) ALL' | tee -a /etc/sudoers\"");
+    }
+
     // Function to change username in the new system (for Arch TTY Grub)
     void change_username(const std::string& fs_type, const std::string& drive) {
-        std::string new_username;
-        std::cout << COLOR_CYAN << "Enter new username: " << COLOR_RESET;
-        std::getline(std::cin, new_username);
-
         std::cout << COLOR_CYAN << "Mounting system for username change..." << COLOR_RESET << std::endl;
 
         execute_command("mount " + drive + "2 /mnt");
@@ -254,38 +358,35 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
 
-        std::cout << COLOR_CYAN << "Changing username from 'arch' to '" << new_username << "'..." << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "Changing username from 'arch' to '" + new_username + "'..." << COLOR_RESET << std::endl;
 
         execute_command("chroot /mnt /bin/bash -c \"usermod -l " + new_username + " arch\"");
         execute_command("chroot /mnt /bin/bash -c \"mv /home/arch /home/" + new_username + "\"");
         execute_command("chroot /mnt /bin/bash -c \"usermod -d /home/" + new_username + " " + new_username + "\"");
         execute_command("chroot /mnt /bin/bash -c \"groupmod -n " + new_username + " arch\"");
 
-        std::cout << COLOR_CYAN << "Adding " << new_username << " to sudo group..." << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "Adding " + new_username + " to sudo group..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"gpasswd -a " + new_username + " wheel\"");
 
-        std::cout << COLOR_CYAN << "Setting password for user 'root'..." << COLOR_RESET << std::endl;
-        execute_command("chroot /mnt /bin/bash -c \"passwd root\"");
+        // Apply stored passwords
+        std::cout << COLOR_CYAN << "Setting root password..." << COLOR_RESET << std::endl;
+        execute_command("chroot /mnt /bin/bash -c \"echo 'root:" + root_password + "' | chpasswd\"");
         
-        std::cout << COLOR_CYAN << "Setting password for user '" << new_username << "'..." << COLOR_RESET << std::endl;
-        execute_command("chroot /mnt /bin/bash -c \"passwd " + new_username + "\"");
+        std::cout << COLOR_CYAN << "Setting password for user '" + new_username + "'..." << COLOR_RESET << std::endl;
+        execute_command("chroot /mnt /bin/bash -c \"echo '" + new_username + ":" + user_password + "' | chpasswd\"");
         
         execute_command("chroot /mnt /bin/bash -c \"echo '%wheel ALL=(ALL:ALL) ALL' | tee -a /etc/sudoers\"");
 
-        // TIMEZONE AND KEYBOARD SETUP AFTER USERNAME
-        setup_timezone_keyboard(fs_type, drive);
+        // Apply stored timezone and keyboard settings
+        apply_timezone_keyboard_settings();
 
         execute_command("umount -R /mnt");
 
-        std::cout << COLOR_GREEN << "Username changed from 'arch' to '" << new_username << "'" << COLOR_RESET << std::endl;
+        std::cout << COLOR_GREEN << "Username changed from 'arch' to '" + new_username + "'" << COLOR_RESET << std::endl;
     }
 
     // Function to create new user (for desktop environments)
     std::string create_new_user(const std::string& fs_type, const std::string& drive) {
-        std::string new_username;
-        std::cout << COLOR_CYAN << "Enter new username: " << COLOR_RESET;
-        std::getline(std::cin, new_username);
-
         std::cout << COLOR_CYAN << "Mounting system for user creation..." << COLOR_RESET << std::endl;
 
         execute_command("mount " + drive + "2 /mnt");
@@ -296,24 +397,15 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
 
-        std::cout << COLOR_CYAN << "Creating new user '" << new_username << "'..." << COLOR_RESET << std::endl;
+        // Apply stored user credentials
+        apply_user_credentials();
 
-        execute_command("chroot /mnt /bin/bash -c \"useradd -m -G wheel -s /bin/bash " + new_username + "\"");
-        
-        std::cout << COLOR_CYAN << "Setting password for user 'root'..." << COLOR_RESET << std::endl;
-        execute_command("chroot /mnt /bin/bash -c \"passwd root\"");
-        
-        std::cout << COLOR_CYAN << "Setting password for user '" << new_username << "'..." << COLOR_RESET << std::endl;
-        execute_command("chroot /mnt /bin/bash -c \"passwd " + new_username + "\"");
-
-        execute_command("chroot /mnt /bin/bash -c \"echo '%wheel ALL=(ALL:ALL) ALL' | tee -a /etc/sudoers\"");
-
-        // TIMEZONE AND KEYBOARD SETUP AFTER USERNAME
-        setup_timezone_keyboard(fs_type, drive);
+        // Apply stored timezone and keyboard settings
+        apply_timezone_keyboard_settings();
 
         execute_command("umount -R /mnt");
 
-        std::cout << COLOR_GREEN << "User '" << new_username << "' created successfully with sudo privileges" << COLOR_RESET << std::endl;
+        std::cout << COLOR_GREEN << "User '" + new_username + "' created successfully with sudo privileges" << COLOR_RESET << std::endl;
         
         return new_username;
     }
@@ -332,46 +424,11 @@ private:
         }
     }
 
-    // Function to select kernel for desktop installations
-    std::string select_kernel() {
-        while (true) {
-            std::cout << COLOR_CYAN;
-            std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
-            std::cout << "║                      Select Kernel                          ║" << std::endl;
-            std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
-            std::cout << "║  1. linux (Standard)                                        ║" << std::endl;
-            std::cout << "║  2. linux-lts (Long Term Support)                           ║" << std::endl;
-            std::cout << "║  3. linux-zen (Tuned for desktop performance)               ║" << std::endl;
-            std::cout << "║  4. linux-hardened (Security-focused)                       ║" << std::endl;
-            std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
-            std::cout << COLOR_RESET;
-
-            std::cout << COLOR_CYAN << "Select kernel (1-4): " << COLOR_RESET;
-            std::string kernel_choice;
-            std::getline(std::cin, kernel_choice);
-
-            if (kernel_choice == "1") {
-                return "linux";
-            } else if (kernel_choice == "2") {
-                return "linux-lts";
-            } else if (kernel_choice == "3") {
-                return "linux-zen";
-            } else if (kernel_choice == "4") {
-                return "linux-hardened";
-            } else {
-                std::cout << COLOR_RED << "Invalid selection. Please enter a number between 1-4." << COLOR_RESET << std::endl;
-            }
-        }
-    }
-
     // Function to install arch tty grub (complete installation) using pacstrap
     void install_arch_tty_grub(const std::string& drive) {
         std::string fs_type = "ext4";
 
         std::cout << COLOR_CYAN << "Starting Arch TTY Grub installation..." << COLOR_RESET << std::endl;
-        
-        std::string selected_kernel = select_kernel();
-        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
         
         prepare_target_partitions(drive, fs_type);
         
@@ -386,7 +443,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user(fs_type, drive);
+        create_new_user(fs_type, drive);
         
         std::cout << COLOR_GREEN << "Arch TTY Grub installation completed successfully!" << COLOR_RESET << std::endl;
         
@@ -423,9 +480,6 @@ private:
         } else if (desktop_choice == "2") {
             std::cout << COLOR_CYAN << "Installing GNOME Desktop..." << COLOR_RESET << std::endl;
             
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
-            
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
@@ -441,16 +495,13 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "GNOME installation completed!" << COLOR_RESET << std::endl;
             
             prompt_reboot();
         } else if (desktop_choice == "3") {
             std::cout << COLOR_CYAN << "Installing KDE Plasma..." << COLOR_RESET << std::endl;
-            
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
@@ -467,16 +518,13 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "KDE Plasma installation completed!" << COLOR_RESET << std::endl;
             
             prompt_reboot();
         } else if (desktop_choice == "4") {
             std::cout << COLOR_CYAN << "Installing XFCE..." << COLOR_RESET << std::endl;
-            
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
@@ -493,16 +541,13 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "XFCE installation completed!" << COLOR_RESET << std::endl;
             
             prompt_reboot();
         } else if (desktop_choice == "5") {
             std::cout << COLOR_CYAN << "Installing LXQt..." << COLOR_RESET << std::endl;
-            
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
@@ -519,16 +564,13 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "LXQt installation completed!" << COLOR_RESET << std::endl;
             
             prompt_reboot();
         } else if (desktop_choice == "6") {
             std::cout << COLOR_CYAN << "Installing Cinnamon..." << COLOR_RESET << std::endl;
-            
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
@@ -545,16 +587,13 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Cinnamon installation completed!" << COLOR_RESET << std::endl;
             
             prompt_reboot();
         } else if (desktop_choice == "7") {
             std::cout << COLOR_CYAN << "Installing MATE..." << COLOR_RESET << std::endl;
-            
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
@@ -572,16 +611,13 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "MATE installation completed!" << COLOR_RESET << std::endl;
             
             prompt_reboot();
         } else if (desktop_choice == "8") {
             std::cout << COLOR_CYAN << "Installing Budgie..." << COLOR_RESET << std::endl;
-            
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
@@ -598,16 +634,13 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Budgie installation completed!" << COLOR_RESET << std::endl;
             
             prompt_reboot();
         } else if (desktop_choice == "9") {
             std::cout << COLOR_CYAN << "Installing i3 (tiling WM)..." << COLOR_RESET << std::endl;
-            
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
@@ -624,16 +657,13 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "i3 installation completed!" << COLOR_RESET << std::endl;
             
             prompt_reboot();
         } else if (desktop_choice == "10") {
             std::cout << COLOR_CYAN << "Installing Sway (Wayland tiling)..." << COLOR_RESET << std::endl;
-            
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
@@ -650,16 +680,13 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_GREEN << "Sway installation completed!" << COLOR_RESET << std::endl;
             
             prompt_reboot();
         } else if (desktop_choice == "11") {
             std::cout << COLOR_PURPLE << "Installing Hyprland (Modern Wayland Compositor)..." << COLOR_RESET << std::endl;
-            
-            std::string selected_kernel = select_kernel();
-            std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
             
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
@@ -676,7 +703,7 @@ private:
             
             install_grub_ext4(drive);
             
-            std::string new_username = create_new_user(fs_type, drive);
+            create_new_user(fs_type, drive);
             
             std::cout << COLOR_PURPLE << "Hyprland installed! Note: You may need to configure ~/.config/hypr/hyprland.conf" << COLOR_RESET << std::endl;
             
@@ -692,9 +719,6 @@ private:
     void install_cachyos_tty_grub(const std::string& drive) {
         std::cout << COLOR_CYAN << "Installing CachyOS TTY Grub..." << COLOR_RESET << std::endl;
         
-        std::string selected_kernel = select_kernel();
-        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
-        
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
@@ -707,7 +731,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         execute_command("umount -R /mnt");
 
@@ -719,9 +743,6 @@ private:
     // Function to install CachyOS KDE
     void install_cachyos_kde(const std::string& drive) {
         std::cout << COLOR_CYAN << "Installing CachyOS KDE..." << COLOR_RESET << std::endl;
-        
-        std::string selected_kernel = select_kernel();
-        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
         
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
@@ -738,7 +759,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
         execute_command("mkdir /mnt/home/" + new_username + "/.config");
@@ -758,9 +779,6 @@ private:
     void install_cachyos_gnome(const std::string& drive) {
         std::cout << COLOR_CYAN << "Installing CachyOS GNOME..." << COLOR_RESET << std::endl;
         
-        std::string selected_kernel = select_kernel();
-        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
-        
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
@@ -776,7 +794,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
         
@@ -824,9 +842,6 @@ private:
     void install_spitfire_ckge(const std::string& drive) {
         std::cout << COLOR_ORANGE << "Installing Spitfire CKGE..." << COLOR_RESET << std::endl;
         
-        std::string selected_kernel = select_kernel();
-        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
-        
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
@@ -842,7 +857,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         std::cout << COLOR_ORANGE << "Setting up Spitfire CKGE repositories..." << COLOR_RESET << std::endl;
         
@@ -858,9 +873,6 @@ private:
     void install_apex_ckge(const std::string& drive) {
         std::cout << COLOR_PURPLE << "Installing Apex CKGE..." << COLOR_RESET << std::endl;
         
-        std::string selected_kernel = select_kernel();
-        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
-        
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
@@ -876,7 +888,7 @@ private:
         
         install_grub_ext4(drive);
         
-        std::string new_username = create_new_user("ext4", drive);
+        create_new_user("ext4", drive);
         
         std::cout << COLOR_PURPLE << "Setting up Apex CKGE repositories..." << COLOR_RESET << std::endl;
       
@@ -919,7 +931,7 @@ private:
     }
 
     // Function to display main menu
-    void main_menu(const std::string& fs_type, const std::string& drive) {
+    void main_menu() {
         while (true) {
             std::cout << COLOR_CYAN;
             std::cout << "╔══════════════════════════════════════╗" << std::endl;
@@ -938,11 +950,11 @@ private:
             std::getline(std::cin, choice);
 
             if (choice == "1") {
-                install_desktop(fs_type, drive);
+                install_desktop(fs_type, selected_drive);
             } else if (choice == "2") {
-                display_cachyos_menu(fs_type, drive);
+                display_cachyos_menu(fs_type, selected_drive);
             } else if (choice == "3") {
-                display_claudemods_menu(fs_type, drive);
+                display_claudemods_menu(fs_type, selected_drive);
             } else if (choice == "4") {
                 std::cout << COLOR_GREEN << "Rebooting system..." << COLOR_RESET << std::endl;
                 execute_command("sudo reboot");
@@ -964,29 +976,32 @@ public:
     // Main script
     void run() {
         display_header();
-        display_available_drives();
-
-        std::string drive;
-        std::cout << COLOR_CYAN << "Enter target drive (e.g., /dev/sda): " << COLOR_RESET;
-        std::getline(std::cin, drive);
-        if (!is_block_device(drive)) {
-            std::cerr << COLOR_RED << "Error: " << drive << " is not a valid block device" << COLOR_RESET << std::endl;
-            exit(1);
-        }
-
-        std::string fs_type;
-        std::cout << COLOR_CYAN << "Choose filesystem type (ext4/btrfs): " << COLOR_RESET;
-        std::getline(std::cin, fs_type);
-
+        
+        // Step 1: Drive selection
+        get_drive_selection();
+        
+        // Step 2: Filesystem selection
+        get_filesystem_selection();
+        
+        // Handle Btrfs case
         if (fs_type == "btrfs") {
-            std::cout << COLOR_CYAN << "Executing btrfsrsync.sh with drive: " << drive << COLOR_RESET << std::endl;
-            execute_command("./btrfsrsync.sh " + drive);
+            std::cout << COLOR_CYAN << "Executing btrfsrsync.sh with drive: " << selected_drive << COLOR_RESET << std::endl;
+            execute_command("./btrfsrsync.sh " + selected_drive);
             std::cout << COLOR_GREEN << "Btrfs installation complete!" << COLOR_RESET << std::endl;
             exit(0);
         }
-
+        
+        // Step 3: Kernel selection
+        get_kernel_selection();
+        
+        // Step 4: User credentials
+        get_new_user_credentials();
+        
+        // Step 5: Timezone and keyboard
+        get_timezone_keyboard_settings();
+        
         // Show main menu for ext4
-        main_menu(fs_type, drive);
+        main_menu();
     }
 };
 

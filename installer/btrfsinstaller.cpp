@@ -878,9 +878,9 @@ private:
         execute_command("mkdir /mnt/home/" + new_username + "/.config/autostart");
         execute_command("cp -r /opt/claudemods-distribution-installer /mnt/opt");
         execute_command("cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/cachyoskdegrub.desktop /mnt/home/" + new_username + "/.config/autostart");
-        execute_command("chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config");
-        execute_command("chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config/autostart");
-        execute_command("chown " + new_username + ":" + new_username + " /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
+        execute_command("chown " + new_username + "/mnt/home/" + new_username + "/.config");
+        execute_command("chown " + new_username + "/mnt/home/" + new_username + "/.config/autostart");
+        execute_command("chown " + new_username + "/mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
         

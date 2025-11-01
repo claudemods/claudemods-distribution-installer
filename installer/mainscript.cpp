@@ -779,10 +779,6 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
-        execute_command("tar xvf cachyos-repo.tar.xz && cd cachyos-repo");
-        execute_command("/opt/claudemods-distribution-installer/cachyos-repo/cachyos-repo.sh");
-
         execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
@@ -795,6 +791,9 @@ private:
         create_new_user("ext4", drive);
 
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
+        execute_command("cp -r /etc/resolv.conf /mnt/etc/resolv.conf");
+        execute_command("chroot /mnt curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
+        execute_command("chroot /mnt tar xvf cachyos-repo.tar.xz && cd cachyos-repo && ./cachyos-repo.sh");
         execute_command("mkdir /mnt/home/" + new_username + "/.config");
         execute_command("mkdir /mnt/home/" + new_username + "/.config/autostart");
         execute_command("cp -r /opt/claudemods-distribution-installer /mnt/opt");

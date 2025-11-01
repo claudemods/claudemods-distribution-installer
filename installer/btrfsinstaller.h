@@ -92,7 +92,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << "\033[38;2;0;255;255m" << "claudemods Distribution Installer Btrfs v1.0 27-10-2025" << "\033[0m" << std::endl;
+        std::cout << "\033[38;2;0;255;255m" << "claudemods Distribution Installer Btrfs v1.0 01-11-2025" << "\033[0m" << std::endl;
         std::cout << "\033[38;2;0;255;255m" << "Supports Btrfs (with Zstd compression 22) filesystem" << "\033[0m" << std::endl;
         std::cout << std::endl;
     }
@@ -870,9 +870,9 @@ private:
         execute_command("mkdir /mnt/home/" + new_username + "/.config/autostart");
         execute_command("cp -r /opt/claudemods-distribution-installer /mnt/opt");
         execute_command("cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/cachyoskdegrub.desktop /mnt/home/" + new_username + "/.config/autostart");
-        execute_command("chroot /mnt chown " + new_username + "/home/" + new_username + "/.config");
-        execute_command("chroot /mnt chown " + new_username + "/home/" + new_username + "/.config/autostart");
-        execute_command("chroot /mnt chown " + new_username + "/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
+        execute_command("chroot /mnt chown " + new_username + " /home/" + new_username + "/.config");
+        execute_command("chroot /mnt chown " + new_username + " /home/" + new_username + "/.config/autostart");
+        execute_command("chroot /mnt chown " + new_username + " /home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
 

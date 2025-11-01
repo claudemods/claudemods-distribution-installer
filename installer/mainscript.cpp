@@ -792,7 +792,8 @@ private:
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
         execute_command("cp -r /etc/resolv.conf /mnt/etc/resolv.conf");
         execute_command("chroot /mnt curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
-        execute_command("chroot /mnt tar xvf cachyos-repo.tar.xz && cd cachyos-repo && ./cachyos-repo.sh");
+        execute_command("chroot /mnt tar xvf cachyos-repo.tar.xz");
+        execute_command("chroot /mnt/cachyos-repo && ./cachyos-repo.sh");
         execute_command("mkdir /mnt/home/" + new_username + "/.config");
         execute_command("mkdir /mnt/home/" + new_username + "/.config/autostart");
         execute_command("cp -r /opt/claudemods-distribution-installer /mnt/opt");

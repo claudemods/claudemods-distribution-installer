@@ -101,7 +101,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods distribution installer v1.0 30-10-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods distribution installer v1.0 01-11-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Ext4 And Btrfs filesystems" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }
@@ -795,9 +795,9 @@ private:
         execute_command("mkdir /mnt/home/" + new_username + "/.config/autostart");
         execute_command("cp -r /opt/claudemods-distribution-installer /mnt/opt");
         execute_command("cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/cachyoskdegrub.desktop /mnt/home/" + new_username + "/.config/autostart");
-        execute_command("chroot /mnt /bin/bash -c chown " + new_username + "/home/" + new_username + "/.config");
-        execute_command("chroot /mnt /bin/bash -c chown " + new_username + "/home/" + new_username + "/.config/autostart");
-        execute_command("chown " + new_username + " /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
+        execute_command("chroot /mnt /bin/bash -c chown " + new_username + " /home/" + new_username + "/.config");
+        execute_command("chroot /mnt /bin/bash -c chown " + new_username + " /home/" + new_username + "/.config/autostart");
+        execute_command("chroot /mnt /bin/bash -c chown " + new_username + " /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
 

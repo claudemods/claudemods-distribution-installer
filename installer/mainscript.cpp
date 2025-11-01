@@ -779,7 +779,7 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
+        execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr curl os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion networkmanager");
 
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");

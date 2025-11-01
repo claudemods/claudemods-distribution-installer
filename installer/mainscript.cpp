@@ -8,6 +8,7 @@
 #include <map>
 #include <algorithm>
 #include <functional>
+#include "btrfsinstaller.h"
 
 // Color definitions
 const std::string COLOR_CYAN = "\033[38;2;0;255;255m";
@@ -85,7 +86,7 @@ private:
 
         std::cout << COLOR_CYAN;
         system("sudo lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE,MODEL | grep -v \"loop\"");
-        
+
         std::cout << COLOR_YELLOW;
         std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
         std::cout << COLOR_RESET << std::endl;
@@ -114,7 +115,7 @@ private:
         execute_command("parted -s " + drive + " mkpart primary " + fs_type + " 551MiB 100%");
         execute_command("parted -s " + drive + " set 1 esp on");
         execute_command("partprobe " + drive);
-        
+
         // Sleep for 2 seconds
         system("sleep 2");
 
@@ -165,6 +166,23 @@ private:
     void get_filesystem_selection() {
         std::cout << COLOR_CYAN << "Choose filesystem type (ext4/btrfs): " << COLOR_RESET;
         std::getline(std::cin, fs_type);
+
+        // Handle Btrfs case immediately
+        if (fs_type == "btrfs") {
+            std::cout << COLOR_CYAN << "Executing btrfsinstaller with drive: " << selected_drive << COLOR_RESET << std::endl;
+
+            // Convert to char* array for the btrfs installer
+            char* argv[2];
+            argv[0] = const_cast<char*>("btrfsinstaller");
+            argv[1] = const_cast<char*>(selected_drive.c_str());
+
+            // Create and run Btrfs installer
+            BtrfsInstaller btrfs_installer;
+            btrfs_installer.run(2, argv);
+
+            std::cout << COLOR_GREEN << "Btrfs installation complete!" << COLOR_RESET << std::endl;
+            exit(0);
+        }
     }
 
     // Function to select kernel (Step 3)
@@ -339,11 +357,11 @@ private:
     void apply_user_credentials() {
         std::cout << COLOR_CYAN << "Creating user '" << new_username << "'..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"useradd -m -G wheel -s /bin/bash " + new_username + "\"");
-        
+
         // Set passwords using stored credentials
         std::cout << COLOR_CYAN << "Setting root password..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"echo 'root:" + root_password + "' | chpasswd\"");
-        
+
         std::cout << COLOR_CYAN << "Setting password for user '" << new_username << "'..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"echo '" + new_username + ":" + user_password + "' | chpasswd\"");
 
@@ -375,10 +393,10 @@ private:
         // Apply stored passwords
         std::cout << COLOR_CYAN << "Setting root password..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"echo 'root:" + root_password + "' | chpasswd\"");
-        
+
         std::cout << COLOR_CYAN << "Setting password for user '" + new_username + "'..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"echo '" + new_username + ":" + user_password + "' | chpasswd\"");
-        
+
         execute_command("chroot /mnt /bin/bash -c \"echo '%wheel ALL=(ALL:ALL) ALL' | tee -a /etc/sudoers\"");
 
         // Apply stored timezone and keyboard settings
@@ -406,7 +424,7 @@ private:
         apply_timezone_keyboard_settings();
 
         std::cout << COLOR_GREEN << "User '" + new_username + "' created successfully with sudo privileges" << COLOR_RESET << std::endl;
-        
+
         return new_username;
     }
 
@@ -420,11 +438,11 @@ private:
     void prompt_reboot() {
         // Unmount all partitions before reboot prompt
         unmount_all_partitions();
-        
+
         std::cout << COLOR_CYAN << "Installation completed successfully! Would you like to reboot now? (yes/no): " << COLOR_RESET;
         std::string reboot_choice;
         std::getline(std::cin, reboot_choice);
-        
+
         if (reboot_choice == "yes" || reboot_choice == "y" || reboot_choice == "Y") {
             std::cout << COLOR_GREEN << "Rebooting system..." << COLOR_RESET << std::endl;
             execute_command("sudo reboot");
@@ -438,26 +456,26 @@ private:
         std::string fs_type = "ext4";
 
         std::cout << COLOR_CYAN << "Starting Arch TTY Grub installation..." << COLOR_RESET << std::endl;
-        
+
         prepare_target_partitions(drive, fs_type);
-        
+
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
-        
+
         setup_ext4_filesystem(root_part);
-        
+
         execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion networkmanager");
-        
+
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        
+
         install_grub_ext4(drive);
-        
+
         create_new_user(fs_type, drive);
-        
+
         std::cout << COLOR_GREEN << "Arch TTY Grub installation completed successfully!" << COLOR_RESET << std::endl;
-        
+
         prompt_reboot();
     }
 
@@ -490,234 +508,234 @@ private:
             install_arch_tty_grub(drive);
         } else if (desktop_choice == "2") {
             std::cout << COLOR_CYAN << "Installing GNOME Desktop..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_GREEN << "GNOME installation completed!" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "3") {
             std::cout << COLOR_CYAN << "Installing KDE Plasma..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_GREEN << "KDE Plasma installation completed!" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "4") {
             std::cout << COLOR_CYAN << "Installing XFCE..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_GREEN << "XFCE installation completed!" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "5") {
             std::cout << COLOR_CYAN << "Installing LXQt..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_GREEN << "LXQt installation completed!" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "6") {
             std::cout << COLOR_CYAN << "Installing Cinnamon..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_GREEN << "Cinnamon installation completed!" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "7") {
             std::cout << COLOR_CYAN << "Installing MATE..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
-            
+
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_GREEN << "MATE installation completed!" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "8") {
             std::cout << COLOR_CYAN << "Installing Budgie..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_GREEN << "Budgie installation completed!" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "9") {
             std::cout << COLOR_CYAN << "Installing i3 (tiling WM)..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_GREEN << "i3 installation completed!" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "10") {
             std::cout << COLOR_CYAN << "Installing Sway (Wayland tiling)..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_GREEN << "Sway installation completed!" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "11") {
             std::cout << COLOR_PURPLE << "Installing Hyprland (Modern Wayland Compositor)..." << COLOR_RESET << std::endl;
-            
+
             prepare_target_partitions(drive, "ext4");
             std::string efi_part = drive + "1";
             std::string root_part = drive + "2";
-            
+
             setup_ext4_filesystem(root_part);
-            
+
             execute_command("pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-            
+
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-            
+
             execute_command("mount " + efi_part + " /mnt/boot/efi");
-            
+
             install_grub_ext4(drive);
-            
+
             create_new_user(fs_type, drive);
-            
+
             std::cout << COLOR_PURPLE << "Hyprland installed! Note: You may need to configure ~/.config/hypr/hyprland.conf" << COLOR_RESET << std::endl;
-            
+
             prompt_reboot();
         } else if (desktop_choice == "12") {
             std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
@@ -729,49 +747,49 @@ private:
     // Function to install CachyOS TTY Grub
     void install_cachyos_tty_grub(const std::string& drive) {
         std::cout << COLOR_CYAN << "Installing CachyOS TTY Grub..." << COLOR_RESET << std::endl;
-        
+
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
-        
+
         setup_ext4_filesystem(root_part);
-        
+
         execute_command("pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-        
+
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        
+
         install_grub_ext4(drive);
-        
+
         create_new_user("ext4", drive);
-        
+
         std::cout << COLOR_GREEN << "CachyOS TTY Grub installation completed!" << COLOR_RESET << std::endl;
-        
+
         prompt_reboot();
     }
 
     // Function to install CachyOS KDE
     void install_cachyos_kde(const std::string& drive) {
         std::cout << COLOR_CYAN << "Installing CachyOS KDE..." << COLOR_RESET << std::endl;
-        
+
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
-        
+
         setup_ext4_filesystem(root_part);
-        
+
         execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-        
+
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        
+
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-        
+
         install_grub_ext4(drive);
-        
+
         create_new_user("ext4", drive);
-        
+
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
         execute_command("mkdir /mnt/home/" + new_username + "/.config");
         execute_command("mkdir /mnt/home/" + new_username + "/.config/autostart");
@@ -782,38 +800,38 @@ private:
         execute_command("chown " + new_username + " /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
-        
+
         std::cout << COLOR_GREEN << "CachyOS KDE Part 1 installation completed!" << COLOR_RESET << std::endl;
         std::cout << COLOR_GREEN << " For CachyOS KDE Part 2 installation Please Reboot And login To Run Next Script!" << COLOR_RESET << std::endl;
-        
+
         prompt_reboot();
     }
 
     // Function to install CachyOS GNOME
     void install_cachyos_gnome(const std::string& drive) {
         std::cout << COLOR_CYAN << "Installing CachyOS GNOME..." << COLOR_RESET << std::endl;
-        
+
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
-        
+
         setup_ext4_filesystem(root_part);
-        
+
         execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-        
+
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        
+
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-        
+
         install_grub_ext4(drive);
-        
+
         create_new_user("ext4", drive);
-        
+
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
-        
+
         std::cout << COLOR_GREEN << "CachyOS GNOME installation completed!" << COLOR_RESET << std::endl;
-        
+
         prompt_reboot();
     }
 
@@ -853,56 +871,56 @@ private:
     // Function to install Spitfire CKGE
     void install_spitfire_ckge(const std::string& drive) {
         std::cout << COLOR_ORANGE << "Installing Spitfire CKGE..." << COLOR_RESET << std::endl;
-        
+
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
-        
+
         setup_ext4_filesystem(root_part);
-        
+
         execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-        
+
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        
+
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-        
+
         install_grub_ext4(drive);
-        
+
         create_new_user("ext4", drive);
-        
+
         std::cout << COLOR_ORANGE << "Setting up Spitfire CKGE repositories..." << COLOR_RESET << std::endl;
-        
+
         std::cout << COLOR_ORANGE << "Spitfire CKGE installation completed!" << COLOR_RESET << std::endl;
-        
+
         prompt_reboot();
     }
 
     // Function to install Apex CKGE
     void install_apex_ckge(const std::string& drive) {
         std::cout << COLOR_PURPLE << "Installing Apex CKGE..." << COLOR_RESET << std::endl;
-        
+
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
-        
+
         setup_ext4_filesystem(root_part);
-        
+
         execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-        
+
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-        
+
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-        
+
         install_grub_ext4(drive);
-        
+
         create_new_user("ext4", drive);
-        
+
         std::cout << COLOR_PURPLE << "Setting up Apex CKGE repositories..." << COLOR_RESET << std::endl;
-      
+
         std::cout << COLOR_PURPLE << "Apex CKGE installation completed!" << COLOR_RESET << std::endl;
-        
+
         prompt_reboot();
     }
 
@@ -982,36 +1000,28 @@ public:
     // Main script
     void run() {
         display_header();
-        
+
         // Step 1: Drive selection
         get_drive_selection();
-        
+
         // Step 2: Filesystem selection
         get_filesystem_selection();
-        
-        // Handle Btrfs case
-        if (fs_type == "btrfs") {
-            std::cout << COLOR_CYAN << "Executing btrfsrsync.sh with drive: " << selected_drive << COLOR_RESET << std::endl;
-            execute_command("./btrfsinstaller " + selected_drive);
-            std::cout << COLOR_GREEN << "Btrfs installation complete!" << COLOR_RESET << std::endl;
-            exit(0);
-        }
-        
+
         // Step 3: Kernel selection
         get_kernel_selection();
-        
+
         // Step 4: User credentials
         get_new_user_credentials();
-        
+
         // Step 5: Timezone and keyboard
         get_timezone_keyboard_settings();
-        
+
         // Show main menu for ext4
         main_menu();
     }
 };
 
-int main(int argc, char* argv[]) {
+int main() {
     ArchInstaller installer;
     installer.run();
     return 0;

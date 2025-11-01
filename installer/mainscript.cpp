@@ -779,7 +779,7 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("ccurl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
+        execute_command("curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
         execute_command("tar xvf cachyos-repo.tar.xz && cd cachyos-repo");
         execute_command("./cachyos-repo.sh");
 

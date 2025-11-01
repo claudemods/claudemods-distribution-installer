@@ -779,9 +779,9 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("chroot /mnt curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
-        execute_command("chroot /mnt tar xvf cachyos-repo.tar.xz && cd cachyos-repo");
-        execute_command("chroot /mnt ./cachyos-repo.sh");
+        execute_command("ccurl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
+        execute_command("tar xvf cachyos-repo.tar.xz && cd cachyos-repo");
+        execute_command("./cachyos-repo.sh");
 
         execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 

@@ -779,6 +779,10 @@ private:
 
         setup_ext4_filesystem(root_part);
 
+        execute_command("chroot /mnt curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
+        execute_command("chroot /mnt tar xvf cachyos-repo.tar.xz && cd cachyos-repo");
+        execute_command("chroot /mnt ./cachyos-repo.sh");
+
         execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
@@ -799,7 +803,7 @@ private:
         execute_command("chroot /mnt chown " + new_username + " /home/" + new_username + "/.config/autostart");
         execute_command("chroot /mnt chown " + new_username + " /home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
-        execute_command("chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
+        execute_command("chroot /mnt chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
 
         std::cout << COLOR_GREEN << "CachyOS KDE Part 1 installation completed!" << COLOR_RESET << std::endl;
         std::cout << COLOR_GREEN << " For CachyOS KDE Part 2 installation Please Reboot And login To Run Next Script!" << COLOR_RESET << std::endl;

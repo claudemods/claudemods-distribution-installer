@@ -902,7 +902,7 @@ private:
         execute_command("wget --show-progress --no-check-certificate 'https://drive.usercontent.google.com/download?id=1hu-2iRiJ0bFGK0Na5NzIlcHNgQQ5V90J&export=download&authuser=0&confirm=t&uuid=13272b82-4d80-4b24-94dd-723d66506aef&at=AKSUxGM1CkztZN2R0FiFt3pZ3Z6X:1762356023814'");
         execute_cd_command("cd mnt && sudo mv download* /mnt/rootfs.img >/dev/null 2>&1");
         execute_cd_command("cd /mnt && sudo unsquashfs -f -d /mnt /mnt/rootfs.img");
-        execute_command("sudo rm -rf /mnt/rootfs.img");
+        execute_command("rm -rf /mnt/rootfs.img");
         
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -932,7 +932,7 @@ private:
         execute_command("wget --show-progress --no-check-certificate 'https://drive.usercontent.google.com/download?id=1hu-2iRiJ0bFGK0Na5NzIlcHNgQQ5V90J&export=download&authuser=0&confirm=t&uuid=13272b82-4d80-4b24-94dd-723d66506aef&at=AKSUxGM1CkztZN2R0FiFt3pZ3Z6X:1762356023814'");
         execute_cd_command("cd mnt && sudo mv download* /mnt/rootfs.img >/dev/null 2>&1");
         execute_cd_command("cd /mnt && sudo unsquashfs -f -d /mnt /mnt/rootfs.img");
-        execute_command("sudo rm -rf /mnt/rootfs.img");
+        execute_command("rm -rf /mnt/rootfs.img");
 
         change_username("ext4", drive);
 

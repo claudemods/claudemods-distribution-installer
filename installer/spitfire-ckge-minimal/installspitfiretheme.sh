@@ -185,9 +185,7 @@ install_backup() {
     done
 
     LOG_TEXT+="Applying KDE configurations...\n"
-    qdbus6 org.kde.KWin /KWin reconfigure
-    kquitapp6 plasmashell
-    cd /home/$USER/vanillaarch-or-cachyos-to-claudemods-spitfire-ckge/kdegrub-minimal && ./start.sh > /dev/null 2>&1
+    cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./start.sh > /dev/null 2>&1
     LOG_TEXT+="✓ KDE configuration applied successfully\n"
 }
 

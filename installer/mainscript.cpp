@@ -398,10 +398,10 @@ private:
 
         std::cout << COLOR_CYAN << "Changing username from 'arch' to '" + new_username + "'..." << COLOR_RESET << std::endl;
 
-        execute_command("chroot /mnt /bin/bash -c \"usermod -l " + new_username + " arch\"");
+        execute_command("chroot /mnt /bin/bash -c \"usermod -l " + new_username + " cachyos\"");
         execute_command("chroot /mnt /bin/bash -c \"mv /home/arch /home/" + new_username + "\"");
         execute_command("chroot /mnt /bin/bash -c \"usermod -d /home/" + new_username + " " + new_username + "\"");
-        execute_command("chroot /mnt /bin/bash -c \"groupmod -n " + new_username + " arch\"");
+        execute_command("chroot /mnt /bin/bash -c \"groupmod -n " + new_username + " cachyos\"");
 
         std::cout << COLOR_CYAN << "Adding " + new_username + " to sudo group..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"gpasswd -a " + new_username + " wheel\"");
@@ -900,17 +900,16 @@ private:
         // Use execute_cd_command for cd commands
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate 'https://drive.usercontent.google.com/download?id=1hu-2iRiJ0bFGK0Na5NzIlcHNgQQ5V90J&export=download&authuser=0&confirm=t&uuid=13272b82-4d80-4b24-94dd-723d66506aef&at=AKSUxGM1CkztZN2R0FiFt3pZ3Z6X:1762356023814'");
-        execute_command("cd mnt && mv download* /mnt/rootfs.img >/dev/null 2>&1");
-        execute_cd_command("cd /mnt");
-        execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
-        execute_command("rm -rf /mnt/rootfs.img");
+        execute_cd_command("cd mnt && sudo mv download* /mnt/rootfs.img >/dev/null 2>&1");
+        execute_cd_command("cd /mnt && sudo unsquashfs -f -d /mnt /mnt/rootfs.img");
+        execute_command("sudo rm -rf /mnt/rootfs.img");
         
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
         install_grub_ext4(drive);
 
-        create_new_user("ext4", drive);
+        change_username("ext4", drive);
 
         std::cout << COLOR_ORANGE << "Setting up Spitfire CKGE repositories..." << COLOR_RESET << std::endl;
 
@@ -929,16 +928,17 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate 'https://drive.usercontent.google.com/download?id=1hu-2iRiJ0bFGK0Na5NzIlcHNgQQ5V90J&export=download&authuser=0&confirm=t&uuid=13272b82-4d80-4b24-94dd-723d66506aef&at=AKSUxGM1CkztZN2R0FiFt3pZ3Z6X:1762356023814'");
+        execute_cd_command("cd mnt && sudo mv download* /mnt/rootfs.img >/dev/null 2>&1");
+        execute_cd_command("cd /mnt && sudo unsquashfs -f -d /mnt /mnt/rootfs.img");
+        execute_command("sudo rm -rf /mnt/rootfs.img");
 
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+        change_username("ext4", drive);
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
         install_grub_ext4(drive);
-
-        create_new_user("ext4", drive);
 
         std::cout << COLOR_PURPLE << "Setting up Apex CKGE repositories..." << COLOR_RESET << std::endl;
 

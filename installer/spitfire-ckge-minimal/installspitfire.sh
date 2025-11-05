@@ -108,7 +108,6 @@ unzip /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-mini
 sudo chmod +x /home/$USER/.local/.config/autostart
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip theme.zip -d /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
 plasma-apply-colorscheme SpitFire > /dev/null 2>&1
-mkdir /home/$USER/.icons
 unzip Windows10Dark.zip -d /home/$USER/.icons > /dev/null 2>&1
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/aurorae /home/$USER/.local/share
 print_status "Proceeding..."

@@ -881,10 +881,10 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+        execute_command("cd /mnt && wget --show-progress --no-check-certificate 'https://drive.usercontent.google.com/download?id=1hu-2iRiJ0bFGK0Na5NzIlcHNgQQ5V90J&export=download&authuser=0&confirm=t&uuid=13272b82-4d80-4b24-94dd-723d66506aef&at=AKSUxGM1CkztZN2R0FiFt3pZ3Z6X:1762356023814'");
+        execute_command("cd mnt && mv download* /mnt/rootfs.img >/dev/null 2>&1");
+        execute_command("cd /mnt && unsquashfs -f -d /mnt /mnt/rootfs.img");
+        
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 

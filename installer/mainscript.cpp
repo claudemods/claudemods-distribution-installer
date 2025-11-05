@@ -8,6 +8,7 @@
 #include <map>
 #include <algorithm>
 #include <functional>
+#include <unistd.h>
 #include "btrfsinstaller.h"
 
 // Color definitions
@@ -44,6 +45,21 @@ private:
             exit(1);
         }
         return status;
+    }
+
+    // Special function for CD commands only
+    int execute_cd_command(const std::string& cmd) {
+        if (cmd.find("cd ") == 0) {
+            std::string path = cmd.substr(3);
+            if (chdir(path.c_str()) == 0) {
+                std::cout << COLOR_CYAN << "Changed directory to: " << path << COLOR_RESET << std::endl;
+                return 0;
+            } else {
+                std::cerr << COLOR_RED << "Error changing directory to: " << path << COLOR_RESET << std::endl;
+                return -1;
+            }
+        }
+        return execute_command(cmd); // Fall back to original for non-cd commands
     }
 
     // Function to check if path is a block device
@@ -881,9 +897,12 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("cd /mnt && wget --show-progress --no-check-certificate 'https://drive.usercontent.google.com/download?id=1hu-2iRiJ0bFGK0Na5NzIlcHNgQQ5V90J&export=download&authuser=0&confirm=t&uuid=13272b82-4d80-4b24-94dd-723d66506aef&at=AKSUxGM1CkztZN2R0FiFt3pZ3Z6X:1762356023814'");
+        // Use execute_cd_command for cd commands
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate 'https://drive.usercontent.google.com/download?id=1hu-2iRiJ0bFGK0Na5NzIlcHNgQQ5V90J&export=download&authuser=0&confirm=t&uuid=13272b82-4d80-4b24-94dd-723d66506aef&at=AKSUxGM1CkztZN2R0FiFt3pZ3Z6X:1762356023814'");
         execute_command("cd mnt && mv download* /mnt/rootfs.img >/dev/null 2>&1");
-        execute_command("cd /mnt && unsquashfs -f -d /mnt /mnt/rootfs.img");
+        execute_cd_command("cd /mnt");
+        execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
         execute_command("rm -rf /mnt/rootfs.img");
         
 

@@ -399,7 +399,7 @@ private:
         std::cout << COLOR_CYAN << "Changing username from 'arch' to '" + new_username + "'..." << COLOR_RESET << std::endl;
 
         execute_command("chroot /mnt /bin/bash -c \"usermod -l " + new_username + " cachyos\"");
-        execute_command("chroot /mnt /bin/bash -c \"mv /home/arch /home/" + new_username + "\"");
+        execute_command("chroot /mnt /bin/bash -c \"mv /home/cachyos /home/" + new_username + "\"");
         execute_command("chroot /mnt /bin/bash -c \"usermod -d /home/" + new_username + " " + new_username + "\"");
         execute_command("chroot /mnt /bin/bash -c \"groupmod -n " + new_username + " cachyos\"");
 

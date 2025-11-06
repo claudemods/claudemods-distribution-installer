@@ -899,8 +899,8 @@ private:
 
         // Use execute_cd_command for cd commands
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate https://claudemodsreloaded.co.uk/rootfs.img");
-        execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
+        execute_command("wget --show-progress --no-check-certificate https://claudemodsreloaded.co.uk/claudemods-v1.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
         execute_command("rm -rf /mnt/rootfs.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
@@ -931,8 +931,8 @@ private:
         setup_ext4_filesystem(root_part);
 
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate https://claudemodsreloaded.co.uk/rootfs.img");
-        execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
+        execute_command("wget --show-progress --no-check-certificate https://claudemodsreloaded.co.uk/claudemods-v1.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
         execute_command("rm -rf /mnt/rootfs.img");
         execute_command("cp -r /etc/resolv.conf /mnt/etc");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");

@@ -104,8 +104,6 @@ print_status "Fish configuration applied"
 print_info "Apply Cachyos Kde Theme..."
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S unzip SpitFireLogin.zip -d /usr/share/sddm/themes
 sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
-unzip /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/autostart.zip -d /home/$USER/.config
-sudo -S chmod +x /home/$USER/.local/.config/autostart
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip theme.zip -d /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
 plasma-apply-colorscheme SpitFire > /dev/null 2>&1
 unzip Windows10Dark.zip -d /home/$USER/.icons > /dev/null 2>&1

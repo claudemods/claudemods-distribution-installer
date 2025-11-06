@@ -1,0 +1,4 @@
+#!/bin/bash
+plasma-apply-wallpaperimage -f stretch /opt/Arch-Systemtool/systemtool-extras/SpitFire/spitfire.png > /dev/null 2>&1
+cd /home/$USER/claudemods-distribution-installer/installer && chmod +x cleanup.sh
+cd /home/$USER/claudemods-distribution-installer/installer && ./cleanup.sh

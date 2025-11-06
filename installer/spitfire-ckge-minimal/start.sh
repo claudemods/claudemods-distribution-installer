@@ -5,4 +5,4 @@ sleep 1
 plasma-apply-wallpaperimage -f stretch /opt/Arch-Systemtool/systemtool-extras/SpitFire/spitfire.png > /dev/null 2>&1
 plasma-apply-colorscheme SpitFire > /dev/null 2>&1
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/konsolerc /home/$USER/.config
-sudo rm -rf /home/$USER/claudemods-distribution-installer
+sudo -S rm -rf /home/$USER/claudemods-distribution-installer

@@ -107,27 +107,10 @@ print_status "Proceeding..."
 sudo -S chmod +x /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/installspitfiretheme.sh
 sudo -S chmod +x /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/start.sh
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfiretheme.sh
-cd / && sudo -S rm -rf claudemods-v1.img
-sudo -S rm -rf /home/$USER/claudemods-distribution-installer
 
 print_info "Theme Applied..."
 
 print_section "CachyOS Conversion Complete!!"
 echo -e "${GREEN}${BOLD}"
-echo "Conversion to CachyOS has been completed successfully!"
-sudo -S rm -rf /home/$USER/claudemods-distribution-installer
+echo "Conversion to Spitfire has been completed successfully!"
 echo -e "${NC}"
-
-# Reboot prompt
-echo ""
-echo -e "${YELLOW}${BOLD}System conversion completed successfully!${NC}"
-read -p "Do you want to reboot now to apply all changes? (yes/no): " reboot_confirm
-
-if [[ $reboot_confirm == "yes" || $reboot_confirm == "y" ]]; then
-    print_info "Rebooting system in 5 seconds... Press Ctrl+C to cancel."
-    sleep 3
-    sudo -S reboot
-else
-    print_warning "Please remember to reboot your system later to apply all changes."
-    print_info "You can manually reboot with: sudo reboot"
-fi

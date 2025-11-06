@@ -910,7 +910,7 @@ private:
         change_username("ext4", drive);
         execute_command("cp -r /etc/resolv.conf /mnt/etc");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'rm -rf /home/" + new_username + "/claudemods-distribution-installer'\"");
 

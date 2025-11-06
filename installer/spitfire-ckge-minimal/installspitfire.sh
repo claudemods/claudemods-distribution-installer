@@ -21,7 +21,7 @@ cat << "EOF"
 EOF
 
 echo -e "${CYAN}"
-echo "           claudemods Vanilla Arch Kde Grub to Spitfire CKGE Minimal v1.01 04-11-2025"
+echo "           claudemods Spitfire CKGE Minimal v1.03.1 06-11-2025"
 echo -e "${NC}"
 echo "================================================================================"
 echo ""
@@ -56,18 +56,15 @@ fi
 # Warning message
 echo -e "${YELLOW}${BOLD}"
 echo "WARNING: This script will perform major system modifications including:"
-echo "• Adding CachyOS repositories"
-echo "• Installing 1000+ packages"
 echo "• Modifying bootloader configuration"
 echo "• Changing system themes and configurations"
 echo -e "${NC}"
-echo -e "${RED}${BOLD}Ensure you have backups and understand the risks before proceeding!${NC}"
 echo ""
 
 # Automatic execution - removed yes/no prompt
-echo -e "${GREEN}${BOLD}Starting automated installation in 5 seconds...${NC}"
+echo -e "${GREEN}${BOLD}Starting automated installation in 1 seconds...${NC}"
 echo -e "${YELLOW}Press Ctrl+C to cancel now...${NC}"
-sleep 5
+sleep 1
 
 print_info "Configuration started..."
 

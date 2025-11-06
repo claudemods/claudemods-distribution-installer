@@ -105,7 +105,7 @@ void* execute_update_thread(void* /*arg*/) {
     
     // GET INSTALLED VERSION
     try {
-        std::string installed_version_output = run_command("cat /home/$USER/.config/cmi/version.txt");
+        std::string installed_version_output = run_command("cat /opt/claudemods-distribution-installer/version.txt");
         strncpy(installed_version, installed_version_output.c_str(), sizeof(installed_version) - 1);
     } catch (...) {
         strcpy(installed_version, "unknown");

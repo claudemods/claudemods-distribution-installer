@@ -108,7 +108,6 @@ unzip -uo Windows10Dark.zip -d /home/$TARGET_USER/.icons > /dev/null 2>&1
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/aurorae /home/$TARGET_USER/.local/share
 print_status "Proceeding..."
 sudo -S chmod +x /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/installspitfiretheme.sh
-sudo -S chmod +x /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/start.sh
 cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfiretheme.sh $TARGET_USER
 
 print_info "Theme Applied..."

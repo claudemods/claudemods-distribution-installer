@@ -89,7 +89,7 @@ void* execute_update_thread(void* /*arg*/) {
     
     // INSTALLATION PROCESS
     run_command("sudo rm -rf /opt/claudemods-distribution-installer/mainscript");
-    un_command("sudo rm -rf /opt/claudemods-distribution-installer/updater");
+    run_command("sudo rm -rf /opt/claudemods-distribution-installer/updater");
     
     // ARCH AND CACHYOS INSTALLATION
     if (strcmp(detected_distro, "arch") == 0 || strcmp(detected_distro, "cachyos") == 0) {

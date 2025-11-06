@@ -64,12 +64,12 @@ echo -e "${NC}"
 echo -e "${RED}${BOLD}Ensure you have backups and understand the risks before proceeding!${NC}"
 echo ""
 
-read -p "Do you want to continue? (yes/no): " confirm
-if [[ $confirm != "yes" ]]; then
-    print_error "Installation cancelled by user."
-    exit 0
-fi
+# Automatic execution - removed yes/no prompt
+echo -e "${GREEN}${BOLD}Starting automated installation in 5 seconds...${NC}"
+echo -e "${YELLOW}Press Ctrl+C to cancel now...${NC}"
+sleep 5
 
+print_info "Configuration started..."
 
 print_info "Configuring GRUB bootloader..."
 sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/grub /etc/default
@@ -98,10 +98,10 @@ cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-mini
 print_status "Fish configuration applied"
 
 print_info "Apply Cachyos Kde Theme..."
-cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S unzip SpitFireLogin.zip -d /usr/share/sddm/themes
+cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S unzip -uo SpitFireLogin.zip -d /usr/share/sddm/themes
 sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
-cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip theme.zip -d /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
-unzip Windows10Dark.zip -d /home/$USER/.icons > /dev/null 2>&1
+cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip -uo theme.zip -d /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
+unzip -uo Windows10Dark.zip -d /home/$USER/.icons > /dev/null 2>&1
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/aurorae /home/$USER/.local/share
 print_status "Proceeding..."
 sudo -S chmod +x /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/installspitfiretheme.sh
@@ -112,6 +112,19 @@ print_info "Theme Applied..."
 print_section "CachyOS Conversion Complete!!"
 echo -e "${GREEN}${BOLD}"
 echo "Conversion to CachyOS has been completed successfully!"
-sudo -S rm -rf /home/$USER/vanillaarch-to-cachyos
-echo "Please reboot your system to apply all changes."
+sudo -S rm -rf /home/$USER/claudemods-distribution-installer
 echo -e "${NC}"
+
+# Reboot prompt
+echo ""
+echo -e "${YELLOW}${BOLD}System conversion completed successfully!${NC}"
+read -p "Do you want to reboot now to apply all changes? (yes/no): " reboot_confirm
+
+if [[ $reboot_confirm == "yes" || $reboot_confirm == "y" ]]; then
+    print_info "Rebooting system in 5 seconds... Press Ctrl+C to cancel."
+    sleep 3
+    sudo -S reboot
+else
+    print_warning "Please remember to reboot your system later to apply all changes."
+    print_info "You can manually reboot with: sudo reboot"
+fi

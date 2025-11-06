@@ -92,7 +92,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << "\033[38;2;0;255;255m" << "claudemods Distribution Installer Btrfs v1.0 01-11-2025" << "\033[0m" << std::endl;
+        std::cout << "\033[38;2;0;255;255m" << "claudemods Distribution Installer Btrfs v1.0 06-11-2025" << "\033[0m" << std::endl;
         std::cout << "\033[38;2;0;255;255m" << "Supports Btrfs (with Zstd compression 22) filesystem" << "\033[0m" << std::endl;
         std::cout << std::endl;
     }

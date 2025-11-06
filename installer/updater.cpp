@@ -54,7 +54,7 @@ void* execute_update_thread(void* /*arg*/) {
     
     // 2. CURRENT VERSION
     try {
-        std::string version_output = run_command("cat /opt/claudemods-distribution-installer/installer/version.txt");
+        std::string version_output = run_command("cat /opt/claudemods-distribution-installer/version.txt");
         strncpy(current_version, version_output.empty() ? "not installed" : version_output.c_str(), 
                 sizeof(current_version) - 1);
     } catch (...) {
@@ -88,12 +88,16 @@ void* execute_update_thread(void* /*arg*/) {
     }
     
     // INSTALLATION PROCESS
-    run_command("sudo rm -rf /opt/claudemods-distribution-installer/installer/mainscript");
+    run_command("sudo rm -rf /opt/claudemods-distribution-installer/mainscript");
+    un_command("sudo rm -rf /opt/claudemods-distribution-installer/updater");
     
     // ARCH AND CACHYOS INSTALLATION
     if (strcmp(detected_distro, "arch") == 0 || strcmp(detected_distro, "cachyos") == 0) {
-        silent_command("cp -r /home/$USER/claudemods-distribution-installer/installer//version.txt /opt/claudemods-distribution-installer/installer");
-        silent_command("sudo cp /home/$USER/claudemods-distribution-installer/installer/mainscript /home/$USER/claudemods-distribution-installer/installer/mainscript");
+        silent_command("cp -r /home/$USER/claudemods-distribution-installer/installer//version.txt /opt/claudemods-distribution-installer");
+        silent_command("cd /home/$USER/claudemods-distribution-installer/installer/mainscript sudo g++ -o mainscript mainscript.cpp -std=c++23");
+        silent_command("cd /home/$USER/claudemods-distribution-installer/installer/mainscript sudo g++ -o updater updater.cpp -std=c++23");
+        silent_command("sudo cp /home/$USER/claudemods-distribution-installer/installer/mainscript /home/$USER/claudemods-distribution-installer/mainscript");
+        silent_command("sudo cp /home/$USER/claudemods-distribution-installer/installer/updater /home/$USER/claudemods-distribution-installer/updater");
     }
     
     // Cleanup

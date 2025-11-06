@@ -1,4 +1,5 @@
-cachyos needs to be implemented claudemods distros spitfires work but apex is being tested now arch options work fine also .....
+arch options work fine and claudemods spitfire works fine
+cachyos needs to be implemented and claudemods apex is being tested and updated right now
 
 
 # claudemods Distribution Installer 🚀

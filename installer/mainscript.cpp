@@ -911,9 +911,9 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && unzip -o dolphinfixes.zip'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo rm -rf /home/" + new_username + "/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'rm -rf /home/" + new_username + "/claudemods-distribution-installer'\"");
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE installation completed!" << COLOR_RESET << std::endl;
 
@@ -936,9 +936,9 @@ private:
         execute_command("rm -rf /mnt/rootfs.img");
         execute_command("cp -r /etc/resolv.conf /mnt/etc");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && unzip -o dolphinfixes.zip'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo rm -rf /home/" + new_username + "/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'rm -rf /home/" + new_username + "/claudemods-distribution-installer'\"");
         change_username("ext4", drive);
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");

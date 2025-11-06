@@ -913,6 +913,7 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'rm -rf /home/" + new_username + "/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sed -i \\'s/cachyos/" + new_username + "/g\\' /home/" + new_username + "/.local/share/user-places.xbel'\"");
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE installation completed!" << COLOR_RESET << std::endl;
 
@@ -934,6 +935,7 @@ private:
         execute_command("mv download* /mnt/rootfs.img >/dev/null 2>&1");
         execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
         execute_command("rm -rf /mnt/rootfs.img");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sed -i \\'s/cachyos/" + new_username + "/g\\' /home/" + new_username + "/.local/share/user-places.xbel'\"");
 
         change_username("ext4", drive);
 

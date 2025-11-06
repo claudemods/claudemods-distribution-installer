@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <functional>
 #include <unistd.h>
+#include <fstream>
 #include "btrfsinstaller.h"
 
 // Color definitions
@@ -45,6 +46,88 @@ private:
             exit(1);
         }
         return status;
+    }
+
+    // Function to check for updates automatically
+    bool check_for_updates() {
+        std::cout << COLOR_CYAN << "Checking for updates..." << COLOR_RESET << std::endl;
+
+        // Paths
+        std::string local_version_file = "/opt/claudemods-distribution-installer/version.txt";
+        std::string remote_version_url = "https://claudemodsreloaded.co.uk/version.txt";
+        std::string updater_script = "/opt/claudemods-distribution-installer/updater";
+
+        // Download remote version using wget
+        std::string download_cmd = "wget -qO- " + remote_version_url + " 2>/dev/null";
+        FILE* pipe = popen(download_cmd.c_str(), "r");
+        if (!pipe) {
+            std::cout << COLOR_YELLOW << "Failed to check for updates. Continuing..." << COLOR_RESET << std::endl;
+            return false;
+        }
+
+        char buffer[128];
+        std::string remote_version = "";
+        while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+            remote_version += buffer;
+        }
+        pclose(pipe);
+
+        // Remove only newlines, keep spaces
+        remote_version.erase(std::remove(remote_version.begin(), remote_version.end(), '\n'), remote_version.end());
+        remote_version.erase(std::remove(remote_version.begin(), remote_version.end(), '\r'), remote_version.end());
+
+        if (remote_version.empty()) {
+            std::cout << COLOR_YELLOW << "Failed to retrieve remote version. Continuing..." << COLOR_RESET << std::endl;
+            return false;
+        }
+
+        // Read local version
+        std::string local_version = "";
+        std::ifstream local_file(local_version_file);
+        if (local_file.is_open()) {
+            std::getline(local_file, local_version);
+            local_file.close();
+            // Remove only newlines, keep spaces
+            local_version.erase(std::remove(local_version.begin(), local_version.end(), '\n'), local_version.end());
+            local_version.erase(std::remove(local_version.begin(), local_version.end(), '\r'), local_version.end());
+        } else {
+            std::cout << COLOR_YELLOW << "No local version found. First run?" << COLOR_RESET << std::endl;
+            local_version = "0";
+        }
+
+        // Print versions with their original formatting
+        std::cout << COLOR_CYAN << "Local version: " << local_version << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "Remote version: " << remote_version << COLOR_RESET << std::endl;
+
+        // Compare versions (simple string comparison)
+        if (remote_version > local_version) {
+            std::cout << COLOR_GREEN << "New version available!" << COLOR_RESET << std::endl;
+
+            // Ask user if they want to update
+            std::cout << COLOR_CYAN << "Do you want to update? (yes/no): " << COLOR_RESET;
+            std::string response;
+            std::getline(std::cin, response);
+
+            if (response == "yes" || response == "y" || response == "Y") {
+                std::cout << COLOR_GREEN << "Running updater..." << COLOR_RESET << std::endl;
+                std::string update_cmd = updater_script;
+                int update_status = system(update_cmd.c_str());
+
+                if (update_status == 0) {
+                    std::cout << COLOR_GREEN << "Update completed successfully! Restarting..." << COLOR_RESET << std::endl;
+                    return true;
+                } else {
+                    std::cout << COLOR_RED << "Update failed. Continuing with current version." << COLOR_RESET << std::endl;
+                    return false;
+                }
+            } else {
+                std::cout << COLOR_YELLOW << "Update cancelled. Continuing with current version." << COLOR_RESET << std::endl;
+                return false;
+            }
+        } else {
+            std::cout << COLOR_GREEN << "You are running the latest version." << COLOR_RESET << std::endl;
+            return false;
+        }
     }
 
     // Special function for CD commands only
@@ -943,7 +1026,7 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
 
-        
+
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
 
@@ -1027,6 +1110,12 @@ private:
 public:
     // Main script
     void run() {
+        // Check for updates first
+        if (check_for_updates()) {
+            // If update was successful and returned true, exit so the updated version can run
+            exit(0);
+        }
+
         display_header();
 
         // Step 1: Drive selection

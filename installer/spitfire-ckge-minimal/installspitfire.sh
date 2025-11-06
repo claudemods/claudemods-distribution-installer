@@ -98,6 +98,9 @@ cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ck
 print_status "Fish configuration applied"
 
 print_info "Apply Cachyos Kde Theme..."
+cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/wallpaper.desktop /home/$TARGET_USER/.config/autostart
+sudo -S chmod +x /home/$TARGET_USER/.config/autostart/wallpaper.desktop
+sudo -S chown $TARGET_USER /home/$TARGET_USER/.config/autostart/wallpaper.desktop
 cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S unzip -uo SpitFireLogin.zip -d /usr/share/sddm/themes
 sudo -S cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
 cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip -uo theme.zip -d /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal

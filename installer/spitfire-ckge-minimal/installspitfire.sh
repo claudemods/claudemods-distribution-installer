@@ -72,23 +72,23 @@ fi
 
 
 print_info "Configuring GRUB bootloader..."
-sudo cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/grub /etc/default
+sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/grub /etc/default
 print_status "GRUB configuration copied"
 
 print_info "Generating new GRUB configuration..."
-sudo cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/10_linux /etc/grub.d
-sudo cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/grub.cfg /boot/grub
-sudo cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/cachyos /usr/share/grub/themes
-sudo grub-mkconfig -o /boot/grub/grub.cfg
+sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/10_linux /etc/grub.d
+sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/grub.cfg /boot/grub
+sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/cachyos /usr/share/grub/themes
+sudo -S grub-mkconfig -o /boot/grub/grub.cfg
 print_status "GRUB configuration updated"
 
 print_info "Setting Plymouth boot animation..."
-sudo cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/cachyos-bootanimation /usr/share/plymouth/themes/
-sudo cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/term.sh /usr/local/bin
-sudo chmod +x /usr/local/bin/term.sh
-sudo cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/term.service /etc/systemd/system/
-sudo systemctl enable term.service >/dev/null 2>&1
-sudo plymouth-set-default-theme -R cachyos-bootanimation
+sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/cachyos-bootanimation /usr/share/plymouth/themes/
+sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/term.sh /usr/local/bin
+sudo -S chmod +x /usr/local/bin/term.sh
+sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/term.service /etc/systemd/system/
+sudo -S systemctl enable term.service >/dev/null 2>&1
+sudo -S plymouth-set-default-theme -R cachyos-bootanimation
 print_status "Plymouth theme configured"
 
 print_info "Configuring Fish shell..."
@@ -97,28 +97,28 @@ cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-mini
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/konsolerc /home/$USER/.config
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/config.fish /home/$USER/.config/fish/config.fish
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/.zshrc /home/$USER/.zshrc
-sudo chmod +X /home/$USER/.config/fish/config.fish
+sudo -S chmod +X /home/$USER/.config/fish/config.fish
 chsh -s $(which fish)
 print_status "Fish configuration applied"
 
 print_info "Apply Cachyos Kde Theme..."
-cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo unzip SpitFireLogin.zip -d /usr/share/sddm/themes
-sudo cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
+cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S unzip SpitFireLogin.zip -d /usr/share/sddm/themes
+sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
 unzip /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/autostart.zip -d /home/$USER/.config
-sudo chmod +x /home/$USER/.local/.config/autostart
+sudo -S chmod +x /home/$USER/.local/.config/autostart
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip theme.zip -d /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
 plasma-apply-colorscheme SpitFire > /dev/null 2>&1
 unzip Windows10Dark.zip -d /home/$USER/.icons > /dev/null 2>&1
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/aurorae /home/$USER/.local/share
 print_status "Proceeding..."
-sudo chmod +x /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/installspitfiretheme.sh
-sudo chmod +x /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/start.sh
+sudo -S chmod +x /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/installspitfiretheme.sh
+sudo -S chmod +x /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/start.sh
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfiretheme.sh
 print_info "Theme Applied..."
 
 print_section "CachyOS Conversion Complete!!"
 echo -e "${GREEN}${BOLD}"
 echo "Conversion to CachyOS has been completed successfully!"
-sudo rm -rf /home/$USER/vanillaarch-to-cachyos
+sudo -S rm -rf /home/$USER/vanillaarch-to-cachyos
 echo "Please reboot your system to apply all changes."
 echo -e "${NC}"

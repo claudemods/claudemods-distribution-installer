@@ -198,32 +198,3 @@ install_backup() {
     cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./start.sh > /dev/null 2>&1
     LOG_TEXT+="✓ KDE configuration applied successfully\n"
 }
-
-install_theme() {
-    LOG_TEXT+="Starting Installation...\n"
-    progress_bar "Installing Cachyos Theme" 3.5 "#50C878"
-    echo -e "${CYAN}\rInstallation complete! Theme successfully installed.${NC}"
-    echo -e "${CYAN}\rConversion to CachyOS has been completed successfully!${NC}"
-    echo -e "${CYAN}\rPlease reboot your system to apply all changes.${NC}"
-    install_backup "$CONFIG_FOLDER" "$CONFIG_PATH" "$DATA_PATH"
-    echo -e "${CYAN}\rInstallation complete! Theme successfully installed.${NC}"
-    LOG_TEXT+="✓ Theme installed successfully\n"
-}
-
-# Main execution
-update_status "Starting automatic KDE Plasma theme installation..."
-install_theme
-
-# Reboot prompt
-echo ""
-echo -e "${YELLOW}${BOLD}System conversion completed successfully!${NC}"
-read -p "Do you want to reboot now to apply all changes? (yes/no): " reboot_confirm
-
-if [[ $reboot_confirm == "yes" || $reboot_confirm == "y" ]]; then
-    print_info "Rebooting system in 5 seconds... Press Ctrl+C to cancel."
-    sleep 3
-    sudo -S reboot
-else
-    print_warning "Please remember to reboot your system later to apply all changes."
-    print_info "You can manually reboot with: sudo reboot"
-fi

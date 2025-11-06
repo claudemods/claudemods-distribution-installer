@@ -195,7 +195,7 @@ install_backup() {
     done
 
     LOG_TEXT+="Applying KDE configurations...\n"
-    cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo ./start.sh
+    cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S ./start.sh
     LOG_TEXT+="✓ KDE configuration applied successfully\n"
 }
 

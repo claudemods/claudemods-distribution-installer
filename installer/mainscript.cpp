@@ -933,16 +933,17 @@ private:
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-v1.img");
         execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        install_grub_ext4(drive);
+
         change_username("ext4", drive);
         execute_command("cp -r /etc/resolv.conf /mnt/etc");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
 
-        execute_command("mount " + efi_part + " /mnt/boot/efi");
-
-        install_grub_ext4(drive);
-
+        
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
 

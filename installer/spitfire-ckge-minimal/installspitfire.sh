@@ -109,8 +109,3 @@ sudo -S chmod +x /home/$USER/claudemods-distribution-installer/installer/spitfir
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfiretheme.sh
 
 print_info "Theme Applied..."
-
-print_section "CachyOS Conversion Complete!!"
-echo -e "${GREEN}${BOLD}"
-echo "Conversion to Spitfire has been completed successfully!"
-echo -e "${NC}"

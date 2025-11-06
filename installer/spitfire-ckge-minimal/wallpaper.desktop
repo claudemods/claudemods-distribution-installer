@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment[en_GB]=
 Comment=
-Exec=/opt/Arch-Systemtool/desktop.sh
+Exec=konsole -e /opt/Arch-Systemtool/desktop.sh
 GenericName[en_GB]=
 GenericName=
 Icon=

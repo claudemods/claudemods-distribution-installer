@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Set output color to cyan
+# Set output colors
 CYAN='\033[0;36m'
+YELLOW='\033[1;33m'
+BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 SCRIPT_DIR=$(pwd)
@@ -14,6 +16,14 @@ LOG_TEXT=""
 update_status() {
     echo -e "${CYAN}> $1${NC}"
     LOG_TEXT+="> $1\n"
+}
+
+print_info() {
+    echo -e "${CYAN}$1${NC}"
+}
+
+print_warning() {
+    echo -e "${YELLOW}$1${NC}"
 }
 
 progress_bar() {
@@ -203,3 +213,17 @@ install_theme() {
 # Main execution
 update_status "Starting automatic KDE Plasma theme installation..."
 install_theme
+
+# Reboot prompt
+echo ""
+echo -e "${YELLOW}${BOLD}System conversion completed successfully!${NC}"
+read -p "Do you want to reboot now to apply all changes? (yes/no): " reboot_confirm
+
+if [[ $reboot_confirm == "yes" || $reboot_confirm == "y" ]]; then
+    print_info "Rebooting system in 5 seconds... Press Ctrl+C to cancel."
+    sleep 3
+    sudo -S reboot
+else
+    print_warning "Please remember to reboot your system later to apply all changes."
+    print_info "You can manually reboot with: sudo reboot"
+fi

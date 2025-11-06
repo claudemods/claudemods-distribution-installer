@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment[en_GB]=
+Comment=
+Exec=/opt/Arch-Systemtool/desktop.sh
+GenericName[en_GB]=
+GenericName=
+Icon=
+MimeType=
+Name[en_GB]=kdeupdater-v1.03
+Name=kdeupdater-v1.03
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

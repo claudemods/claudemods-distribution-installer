@@ -1,4 +1,4 @@
-cachyos and claudemods distros still being worked on arch options work fine
+cachyos needs to be implemented and claudemods distros still being worked on e.g add my files to new website arch options work fine.....
 
 
 # claudemods Distribution Installer 🚀

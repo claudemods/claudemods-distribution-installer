@@ -91,14 +91,10 @@ sudo -S systemctl enable term.service >/dev/null 2>&1
 sudo -S plymouth-set-default-theme -R cachyos-bootanimation
 print_status "Plymouth theme configured"
 
-print_info "Configuring Fish shell..."
+print_info "Configuring Fish color scheme..."
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /home/$USER/.local/share/konsole
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/claudemods-cyan.profile /home/$USER/.local/share/konsole
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/konsolerc /home/$USER/.config
-cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/config.fish /home/$USER/.config/fish/config.fish
-cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/.zshrc /home/$USER/.zshrc
-sudo -S chmod +X /home/$USER/.config/fish/config.fish
-chsh -s $(which fish)
 print_status "Fish configuration applied"
 
 print_info "Apply Cachyos Kde Theme..."

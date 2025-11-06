@@ -1,6 +1,6 @@
-arch options work fine and claudemods spitfire works fine
+arch options work fine and claudemods spitfire and apex works fine
 
-cachyos needs to be implemented and claudemods apex is being tested and updated right now
+cachyos needs to be implemented but i will be making the iso first
 
 
 # claudemods Distribution Installer 🚀

@@ -412,10 +412,10 @@ private:
 
         std::cout << "\033[38;2;0;255;255m" << "Changing username from 'arch' to '" + new_username + "'..." << "\033[0m" << std::endl;
 
-        execute_command("chroot /mnt /bin/bash -c \"usermod -l " + new_username + " arch\"");
-        execute_command("chroot /mnt /bin/bash -c \"mv /home/arch /home/" + new_username + "\"");
+        execute_command("chroot /mnt /bin/bash -c \"usermod -l " + new_username + " cachyos\"");
+        execute_command("chroot /mnt /bin/bash -c \"mv /home/cachyos /home/" + new_username + "\"");
         execute_command("chroot /mnt /bin/bash -c \"usermod -d /home/" + new_username + " " + new_username + "\"");
-        execute_command("chroot /mnt /bin/bash -c \"groupmod -n " + new_username + " arch\"");
+        execute_command("chroot /mnt /bin/bash -c \"groupmod -n " + new_username + " cachyos\"");
 
         std::cout << "\033[38;2;0;255;255m" << "Adding " + new_username + " to sudo group..." << "\033[0m" << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"gpasswd -a " + new_username + " wheel\"");
@@ -949,64 +949,65 @@ private:
 
     // Function to install Spitfire CKGE
     void install_spitfire_ckge(const std::string& drive) {
-        std::cout << "\033[38;5;208m" << "Installing Spitfire CKGE..." << "\033[0m" << std::endl;
+        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE..." << COLOR_RESET << std::endl;
 
-        prepare_target_partitions(drive);
+        prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
 
-        setup_btrfs_subvolumes(root_part);
+        setup_ext4_filesystem(root_part);
 
-        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-
-        // Copy btrfsfstabcompressed.sh to the new system
-        execute_command("cp btrfsfstabcompressed.sh /mnt/opt");
-        execute_command("chmod +x /mnt/opt/btrfsfstabcompressed.sh");
-
+        // Use execute_cd_command for cd commands
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-v1.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
-        install_grub_btrfs(drive);
+        install_grub_ext4(drive);
 
-        create_new_user("btrfs", drive);
+        change_username("ext4", drive);
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktop.sh /mnt/opt/Arch-Systemtool");
+        execute_command("chmod +x /mnt/opt/Arch-Systemtool/desktop.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh " + new_username + "'\"");
 
-        std::cout << "\033[38;5;208m" << "Setting up Spitfire CKGE repositories..." << "\033[0m" << std::endl;
-
-        std::cout << "\033[38;5;208m" << "Spitfire CKGE installation completed!" << "\033[0m" << std::endl;
+        std::cout << COLOR_ORANGE << "Spitfire CKGE installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();
     }
 
     // Function to install Apex CKGE
     void install_apex_ckge(const std::string& drive) {
-        std::cout << "\033[38;5;93m" << "Installing Apex CKGE..." << "\033[0m" << std::endl;
+        std::cout << COLOR_PURPLE << "Installing Apex CKGE..." << COLOR_RESET << std::endl;
 
-        prepare_target_partitions(drive);
+        prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
 
-        setup_btrfs_subvolumes(root_part);
+        setup_ext4_filesystem(root_part);
 
-        execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-
-        // Copy btrfsfstabcompressed.sh to the new system
-        execute_command("cp btrfsfstabcompressed.sh /mnt/opt");
-        execute_command("chmod +x /mnt/opt/btrfsfstabcompressed.sh");
-
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-v1.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
-        install_grub_btrfs(drive);
+        install_grub_ext4(drive);
 
-        create_new_user("btrfs", drive);
+        change_username("ext4", drive);
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
 
-        std::cout << "\033[38;5;93m" << "Setting up Apex CKGE repositories..." << "\033[0m" << std::endl;
 
-        std::cout << "\033[38;5;93m" << "Apex CKGE installation completed!" << "\033[0m" << std::endl;
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
+
+        std::cout << COLOR_PURPLE << "Apex CKGE installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();
     }

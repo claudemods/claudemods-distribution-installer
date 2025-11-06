@@ -102,8 +102,6 @@ cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
 sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip -uo theme.zip -d /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
 unzip -uo Windows10Dark.zip -d /home/$USER/.icons > /dev/null 2>&1
-unzip -uo /home/$USER/claudemods-distribution-installer/installer/dolphinfixes.zip -d /home/$USER/claudemods-distribution-installer/installer > /dev/null 2>&1
-cd /home/$USER/claudemods-distribution-installer/installer && ./dolphinfixes.sh
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/aurorae /home/$USER/.local/share
 print_status "Proceeding..."
 sudo -S chmod +x /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/installspitfiretheme.sh

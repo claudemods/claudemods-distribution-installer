@@ -26,29 +26,6 @@ print_warning() {
     echo -e "${YELLOW}$1${NC}"
 }
 
-progress_bar() {
-    local description="$1"
-    local total_time="$2"
-    local color_code="$3"
-
-    for i in {0..100}; do
-        echo -ne "${CYAN}\r$description: ${i}%${NC}"
-        sleep 0.035  # 3.5 * 10 / 1000 = 0.035
-    done
-    echo -e "${CYAN}\r$description: 100%${NC}"
-}
-
-update_progress() {
-    local description="$1"
-    local percentage="$2"
-    local color_code="$3"
-
-    echo -ne "${CYAN}\r$description: ${percentage}%${NC}"
-    if [ $percentage -eq 100 ]; then
-        echo
-    fi
-}
-
 copy_directory_recursive() {
     local fromDir="$1"
     local toDir="$2"
@@ -167,7 +144,6 @@ install_backup() {
         handle_directory "$srcDir" "$destDir"
     done
 
-    # YOUR EXACT FILE LIST
     local files=(
         "dolphinrc"
         "kactivitymanagerd-statsrc"
@@ -195,6 +171,28 @@ install_backup() {
     done
 
     LOG_TEXT+="Applying KDE configurations...\n"
-    cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./start.sh > /dev/null 2>&1
-    LOG_TEXT+="✓ KDE configuration applied successfully\n"
+    if [ -f "/home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/start.sh" ]; then
+        cd "/home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal" && ./start.sh > /dev/null 2>&1
+        LOG_TEXT+="✓ KDE configuration applied successfully\n"
+    else
+        LOG_TEXT+="✗ KDE configuration script not found\n"
+    fi
 }
+
+# MAIN EXECUTION START
+update_status "Starting theme installation..."
+
+if [ ! -d "$CONFIG_FOLDER" ]; then
+    update_status "Error: Theme folder not found at $CONFIG_FOLDER"
+    exit 1
+fi
+
+update_status "Installing from: $CONFIG_FOLDER"
+update_status "Config path: $CONFIG_PATH"
+update_status "Data path: $DATA_PATH"
+
+install_backup "$CONFIG_FOLDER" "$CONFIG_PATH" "$DATA_PATH"
+
+update_status "Installation complete!"
+echo -e "\n${CYAN}Installation log:${NC}"
+echo -e "$LOG_TEXT"

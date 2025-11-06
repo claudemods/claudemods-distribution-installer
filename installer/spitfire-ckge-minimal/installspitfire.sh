@@ -105,7 +105,6 @@ print_info "Apply Cachyos Kde Theme..."
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S unzip SpitFireLogin.zip -d /usr/share/sddm/themes
 sudo -S cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
 cd /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip theme.zip -d /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
-plasma-apply-colorscheme SpitFire > /dev/null 2>&1
 unzip Windows10Dark.zip -d /home/$USER/.icons > /dev/null 2>&1
 cp -r /home/$USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/aurorae /home/$USER/.local/share
 print_status "Proceeding..."

@@ -26,11 +26,14 @@ char downloaded_version[64] = "unknown";
 char installed_version[64] = "unknown";
 char username[256] = "";
 
-// Working method to get local username
+// Forward declaration
+std::string run_command(const char* cmd);
+
+// Working method to get local username using logname
 const char* get_username() {
     if (username[0] == '\0') {
-        const char* login_name = getlogin();
-        strncpy(username, login_name, sizeof(username) - 1);
+        std::string result = run_command("logname");
+        strncpy(username, result.c_str(), sizeof(username) - 1);
         username[sizeof(username) - 1] = '\0';
     }
     return username;

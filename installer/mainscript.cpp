@@ -615,11 +615,11 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion networkmanager");
+        execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion systemd networkmanager");
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
-        execute_command("touch /mnt/etc/vconsole.conf");        
+        execute_command("touch /etc/vconsole.conf");        
 
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
 

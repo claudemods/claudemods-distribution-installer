@@ -7,6 +7,11 @@ cachyos needs to be implemented but i will be making the iso first
 
 A 1gb Tty Grub-based Iso offering multiple Arch Linux and CachyOS installation options. 💻
 
+## Iso Theme
+
+<img width="1920" height="1080" alt="Screenshot_tty-grub-clone10-clone3_2025-11-07_01:24:39" src="https://github.com/user-attachments/assets/ea348ff6-6711-43b9-a2c5-618f40f4c071" />
+
+
 ext4 and btrfs supported 💿
 
 ## Installation Options

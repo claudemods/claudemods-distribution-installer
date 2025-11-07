@@ -25,19 +25,8 @@ char downloaded_version[64] = "unknown";
 char installed_version[64] = "unknown";
 char username[256] = "";
 
-std::string run_command(const char* cmd);
-
-// Function to get current username using whoami
 const char* get_username() {
-    if (username[0] == '\0') {
-        std::string user = run_command("whoami");
-        if (!user.empty()) {
-            strncpy(username, user.c_str(), sizeof(username) - 1);
-        } else {
-            strcpy(username, "unknown");
-        }
-    }
-    return username;
+    return getenv("USER");
 }
 
 void silent_command(const char* cmd) {

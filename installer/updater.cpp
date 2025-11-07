@@ -93,11 +93,11 @@ void* execute_update_thread(void* /*arg*/) {
     
     // ARCH AND CACHYOS INSTALLATION
     if (strcmp(detected_distro, "arch") == 0 || strcmp(detected_distro, "cachyos") == 0) {
-        silent_command("cp -r /home/$USER/claudemods-distribution-installer/installer//version.txt /opt/claudemods-distribution-installer");
+        silent_command("cp -r /home/$USER/claudemods-distribution-installer/installer/version.txt /opt/claudemods-distribution-installer");
         silent_command("cd /home/$USER/claudemods-distribution-installer/installer/mainscript sudo g++ -o mainscript mainscript.cpp -std=c++23");
         silent_command("cd /home/$USER/claudemods-distribution-installer/installer/mainscript sudo g++ -o updater updater.cpp -std=c++23");
-        silent_command("sudo cp /home/$USER/claudemods-distribution-installer/installer/mainscript /home/$USER/claudemods-distribution-installer/mainscript");
-        silent_command("sudo cp /home/$USER/claudemods-distribution-installer/installer/updater /home/$USER/claudemods-distribution-installer/updater");
+        silent_command("sudo cp /home/$USER/claudemods-distribution-installer/installer/mainscript /opt/claudemods-distribution-installer/mainscript/mainscript");
+        silent_command("sudo cp /home/$USER/claudemods-distribution-installer/installer/updater /opt/claudemods-distribution-installer/mainscript/updater");
     }
     
     // Cleanup
@@ -137,7 +137,7 @@ int main() {
     
     // >>> ORIGINAL SUMMARY <<<
     std::cout << COLOR_GREEN << "\nInstallation complete!\n" << COLOR_RESET;
-    std::cout << COLOR_GREEN << "Executable installed in location: /home/$USER/claudemods-distribution-installer/installer/mainscript\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "Executable installed in location: /opt/claudemods-distribution-installer/mainscript\n" << COLOR_RESET;
     std::cout << COLOR_GREEN << "Detected distro: " << detected_distro << COLOR_RESET << std::endl;
     std::cout << COLOR_GREEN << "Current version: " << current_version << COLOR_RESET << std::endl;
     std::cout << COLOR_GREEN << "Downloaded version: " << downloaded_version << COLOR_RESET << std::endl;
@@ -148,7 +148,7 @@ int main() {
     std::cin >> response;
     
     if (response == 'y' || response == 'Y') {
-        system("cd /home/$USER/claudemods-distribution-installer/installer && ./mainscript");
+        system("cd /opt/claudemods-distribution-installer/mainscript && ./mainscript");
     }
     
     return EXIT_SUCCESS;

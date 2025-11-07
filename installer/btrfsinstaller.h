@@ -951,11 +951,11 @@ private:
     void install_spitfire_ckge(const std::string& drive) {
         std::cout << COLOR_ORANGE << "Installing Spitfire CKGE..." << COLOR_RESET << std::endl;
 
-        prepare_target_partitions(drive, "ext4");
+        prepare_target_partitions(drive, "btrfs");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
 
-        setup_ext4_filesystem(root_part);
+        setup_btrfs_filesystem(root_part);
 
         // Use execute_cd_command for cd commands
         execute_cd_command("cd /mnt");
@@ -963,7 +963,7 @@ private:
         execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
-        install_grub_ext4(drive);
+        install_grub_btrfs(drive);
 
         change_username("ext4", drive);
         execute_command("cp -r /etc/resolv.conf /mnt/etc");
@@ -984,20 +984,20 @@ private:
     void install_apex_ckge(const std::string& drive) {
         std::cout << COLOR_PURPLE << "Installing Apex CKGE..." << COLOR_RESET << std::endl;
 
-        prepare_target_partitions(drive, "ext4");
+        prepare_target_partitions(drive, "btrfs");
         std::string efi_part = drive + "1";
         std::string root_part = drive + "2";
 
-        setup_ext4_filesystem(root_part);
+        setup_btrfs_filesystem(root_part);
 
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-v1.img");
         execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
-        install_grub_ext4(drive);
+        install_grub_btrfs(drive);
 
-        change_username("ext4", drive);
+        change_username("btrfs", drive);
         execute_command("cp -r /etc/resolv.conf /mnt/etc");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");

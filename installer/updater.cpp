@@ -5,7 +5,6 @@
 #include <pthread.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-#include <pwd.h>
 #include <array>
 #include <memory>
 #include <string>
@@ -26,20 +25,16 @@ char downloaded_version[64] = "unknown";
 char installed_version[64] = "unknown";
 char username[256] = "";
 
-// Function to get current username
+std::string run_command(const char* cmd);
+
+// Function to get current username using whoami
 const char* get_username() {
     if (username[0] == '\0') {
-        const char* user_env = getenv("USER");
-        if (user_env) {
-            strncpy(username, user_env, sizeof(username) - 1);
+        std::string user = run_command("whoami");
+        if (!user.empty()) {
+            strncpy(username, user.c_str(), sizeof(username) - 1);
         } else {
-            // Fallback to getpwuid if USER environment variable is not set
-            struct passwd *pw = getpwuid(getuid());
-            if (pw) {
-                strncpy(username, pw->pw_name, sizeof(username) - 1);
-            } else {
-                strcpy(username, "unknown");
-            }
+            strcpy(username, "unknown");
         }
     }
     return username;

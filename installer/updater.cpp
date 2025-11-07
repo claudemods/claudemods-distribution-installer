@@ -137,7 +137,7 @@ int main() {
     
     // >>> ORIGINAL SUMMARY <<<
     std::cout << COLOR_GREEN << "\nInstallation complete!\n" << COLOR_RESET;
-    std::cout << COLOR_GREEN << "Executable installed in location: /opt/claudemods-distribution-installer/installer/mainscript\n" << COLOR_RESET;
+    std::cout << COLOR_GREEN << "Executable installed in location: /opt/claudemods-distribution-installer/mainscript\n" << COLOR_RESET;
     std::cout << COLOR_GREEN << "Detected distro: " << detected_distro << COLOR_RESET << std::endl;
     std::cout << COLOR_GREEN << "Current version: " << current_version << COLOR_RESET << std::endl;
     std::cout << COLOR_GREEN << "Downloaded version: " << downloaded_version << COLOR_RESET << std::endl;

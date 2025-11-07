@@ -1,3 +1,5 @@
+~fixing compiling errors quick
+
 arch options work fine and claudemods spitfire and apex works fine
 
 cachyos needs to be implemented but i will be making the iso first

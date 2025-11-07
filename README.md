@@ -11,6 +11,9 @@ A 821mb Tty Grub-based Iso Built From Arch Bootstrap offering multiple Arch Linu
 
 ##  [Download Iso](https://claudemodsreloaded.co.uk/claudemods-distribution-installer.iso)
 
+##  [Download The Rootfs Images ](https://www.claudemodsreloaded.co.uk/claudemods-rootfs-images/)
+
+
 
 ext4 and btrfs supported 💿
 

@@ -5,14 +5,11 @@ cachyos needs to be implemented but i will be making the iso first
 
 # claudemods Distribution Installer 🚀
 
-A 1gb Tty Grub-based Iso offering multiple Arch Linux and CachyOS installation options. 💻
+A 683mb Tty Grub-based Iso offering multiple Arch Linux CachyOS claudemods Distribution installation options. 💻
 
-## Iso Theme "iso coming"
+##  [Click Here For Changelog](hhttps://github.com/claudemods/claudemods-distribution-installer/blob/main/changelog.md)
 
-<img width="1920" height="1080" alt="Screenshot_tty-grub-clone10-clone3_2025-11-07_01:24:39" src="https://github.com/user-attachments/assets/ea348ff6-6711-43b9-a2c5-618f40f4c071" />
-
-<img width="1280" height="800" alt="tty" src="https://github.com/user-attachments/assets/03c859aa-305a-4987-9dde-77bcdd4d9ffd" />
-
+##  [Download Iso](https://claudemodsreloaded.co.uk/claudemods-distribution-installer.iso)
 
 
 ext4 and btrfs supported 💿

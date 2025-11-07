@@ -50,6 +50,7 @@ void* execute_update_thread(void* /*arg*/) {
     while (!loading_complete) usleep(10000);
     
     // 1. GIT CLONE
+    silent_command("rm -rf /home/arch/claudemods-distribution-installer");
     silent_command("cd /home/arch/ && git clone https://github.com/claudemods/claudemods-distribution-installer");
     
     // 2. CURRENT VERSION

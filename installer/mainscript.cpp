@@ -26,26 +26,12 @@ char downloaded_version[64] = "unknown";
 char installed_version[64] = "unknown";
 char username[256] = "";
 
-// Fixed function to get current username - always uses getpwuid
+// Working method to get local username
 const char* get_username() {
     if (username[0] == '\0') {
-        uid_t uid = getuid();
-        struct passwd *pw = getpwuid(uid);
-        if (pw) {
-            strncpy(username, pw->pw_name, sizeof(username) - 1);
-            username[sizeof(username) - 1] = '\0'; // Ensure null termination
-        } else {
-            // Fallback: try effective UID if initial fails
-            uid_t euid = geteuid();
-            pw = getpwuid(euid);
-            if (pw) {
-                strncpy(username, pw->pw_name, sizeof(username) - 1);
-                username[sizeof(username) - 1] = '\0';
-            } else {
-                std::cout << COLOR_RED << "Error: Could not determine username" << COLOR_RESET << std::endl;
-                exit(EXIT_FAILURE);
-            }
-        }
+        const char* login_name = getlogin();
+        strncpy(username, login_name, sizeof(username) - 1);
+        username[sizeof(username) - 1] = '\0';
     }
     return username;
 }

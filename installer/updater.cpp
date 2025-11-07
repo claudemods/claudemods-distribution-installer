@@ -23,9 +23,29 @@ bool loading_complete = false;
 char current_version[64] = "unknown";
 char downloaded_version[64] = "unknown";
 char installed_version[64] = "unknown";
+char username[256] = "";
+
+// Function to get current username
+const char* get_username() {
+    if (username[0] == '\0') {
+        const char* user_env = getenv("USER");
+        if (user_env) {
+            strncpy(username, user_env, sizeof(username) - 1);
+        } else {
+            // Fallback to getpwuid if USER environment variable is not set
+            struct passwd *pw = getpwuid(getuid());
+            if (pw) {
+                strncpy(username, pw->pw_name, sizeof(username) - 1);
+            } else {
+                strcpy(username, "unknown");
+            }
+        }
+    }
+    return username;
+}
 
 void silent_command(const char* cmd) {
-    char full_cmd[512];
+    char full_cmd[1024];
     snprintf(full_cmd, sizeof(full_cmd), "%s >/dev/null 2>&1", cmd);
     system(full_cmd);
 }
@@ -49,8 +69,12 @@ std::string run_command(const char* cmd) {
 void* execute_update_thread(void* /*arg*/) {
     while (!loading_complete) usleep(10000);
     
+    const char* user = get_username();
+    
     // 1. GIT CLONE
-    silent_command("cd /home/$USER/ && git clone https://github.com/claudemods-distribution-installer.git");
+    char git_cmd[512];
+    snprintf(git_cmd, sizeof(git_cmd), "cd /home/%s/ && git clone https://github.com/claudemods-distribution-installer.git", user);
+    silent_command(git_cmd);
     
     // 2. CURRENT VERSION
     try {
@@ -79,8 +103,9 @@ void* execute_update_thread(void* /*arg*/) {
     // 4. DOWNLOADED VERSION
     if (strcmp(detected_distro, "arch") == 0 || strcmp(detected_distro, "cachyos") == 0) {
         try {
-            std::string version_output = run_command(
-                "cat /home/$USER/claudemods-distribution-installer/installer/version.txt");
+            char version_cmd[512];
+            snprintf(version_cmd, sizeof(version_cmd), "cat /home/%s/claudemods-distribution-installer/installer/version.txt", user);
+            std::string version_output = run_command(version_cmd);
             strncpy(downloaded_version, version_output.c_str(), sizeof(downloaded_version) - 1);
         } catch (...) {
             strcpy(downloaded_version, "unknown");
@@ -93,15 +118,31 @@ void* execute_update_thread(void* /*arg*/) {
     
     // ARCH AND CACHYOS INSTALLATION
     if (strcmp(detected_distro, "arch") == 0 || strcmp(detected_distro, "cachyos") == 0) {
-        silent_command("cp -r /home/$USER/claudemods-distribution-installer/installer/version.txt /opt/claudemods-distribution-installer");
-        silent_command("cd /home/$USER/claudemods-distribution-installer/installer && sudo g++ -o mainscript mainscript.cpp -std=c++23");
-        silent_command("cd /home/$USER/claudemods-distribution-installer/installer && sudo g++ -o updater updater.cpp -std=c++23");
-        silent_command("sudo cp /home/$USER/claudemods-distribution-installer/installer/mainscript /opt/claudemods-distribution-installer");
-        silent_command("sudo cp /home/$USER/claudemods-distribution-installer/installer/updater /opt/claudemods-distribution-installer");
+        char copy_version_cmd[512];
+        snprintf(copy_version_cmd, sizeof(copy_version_cmd), "cp -r /home/%s/claudemods-distribution-installer/installer/version.txt /opt/claudemods-distribution-installer", user);
+        silent_command(copy_version_cmd);
+        
+        char compile_main_cmd[512];
+        snprintf(compile_main_cmd, sizeof(compile_main_cmd), "cd /home/%s/claudemods-distribution-installer/installer && sudo g++ -o mainscript mainscript.cpp -std=c++23", user);
+        silent_command(compile_main_cmd);
+        
+        char compile_updater_cmd[512];
+        snprintf(compile_updater_cmd, sizeof(compile_updater_cmd), "cd /home/%s/claudemods-distribution-installer/installer && sudo g++ -o updater updater.cpp -std=c++23", user);
+        silent_command(compile_updater_cmd);
+        
+        char copy_main_cmd[512];
+        snprintf(copy_main_cmd, sizeof(copy_main_cmd), "sudo cp /home/%s/claudemods-distribution-installer/installer/mainscript /opt/claudemods-distribution-installer", user);
+        silent_command(copy_main_cmd);
+        
+        char copy_updater_cmd[512];
+        snprintf(copy_updater_cmd, sizeof(copy_updater_cmd), "sudo cp /home/%s/claudemods-distribution-installer/installer/updater /opt/claudemods-distribution-installer", user);
+        silent_command(copy_updater_cmd);
     }
     
     // Cleanup
-    silent_command("rm -rf /home/$USER/claudemods-multi-iso-konsole-script");
+    char cleanup_cmd[512];
+    snprintf(cleanup_cmd, sizeof(cleanup_cmd), "rm -rf /home/%s/claudemods-multi-iso-konsole-script", user);
+    silent_command(cleanup_cmd);
     
     // GET INSTALLED VERSION
     try {

@@ -62,7 +62,7 @@ void* execute_update_thread(void* /*arg*/) {
     
     // 1. GIT CLONE
     char git_cmd[512];
-    snprintf(git_cmd, sizeof(git_cmd), "cd /home/%s/ && git clone https://github.com/claudemods-distribution-installer.git", user);
+    snprintf(git_cmd, sizeof(git_cmd), "cd /home/%s/ && git clone https://github.com/claudemods/claudemods-distribution-installer", user);
     system(git_cmd);
     
     // 2. CURRENT VERSION

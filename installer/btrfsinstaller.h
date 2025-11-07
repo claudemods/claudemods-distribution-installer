@@ -37,6 +37,21 @@ private:
         return status;
     }
 
+// Special function for CD commands only
+    int execute_cd_command(const std::string& cmd) {
+        if (cmd.find("cd ") == 0) {
+            std::string path = cmd.substr(3);
+            if (chdir(path.c_str()) == 0) {
+                std::cout << COLOR_CYAN << "Changed directory to: " << path << COLOR_RESET << std::endl;
+                return 0;
+            } else {
+                std::cerr << COLOR_RED << "Error changing directory to: " << path << COLOR_RESET << std::endl;
+                return -1;
+            }
+        }
+        return execute_command(cmd); // Fall back to original for non-cd commands
+    }
+
     // Function to check if path is a block device
     bool is_block_device(const std::string& path) {
         std::string cmd = "test -b " + path;

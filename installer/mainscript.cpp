@@ -617,13 +617,15 @@ private:
 
         execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion networkmanager");
 
-        create_new_user(fs_type, drive);
-        
         execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        execute_command("touch /mnt/etc/vconsole.conf");        
 
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
 
         install_grub_ext4(drive);
+
+        create_new_user(fs_type, drive);
 
         std::cout << COLOR_GREEN << "Arch TTY Grub installation completed successfully!" << COLOR_RESET << std::endl;
 

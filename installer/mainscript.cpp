@@ -108,23 +108,23 @@ void* execute_update_thread(void* /*arg*/) {
     // ARCH AND CACHYOS INSTALLATION - removed sudo
     if (strcmp(detected_distro, "arch") == 0 || strcmp(detected_distro, "cachyos") == 0) {
         char copy_version_cmd[512];
-        snprintf(copy_version_cmd, sizeof(copy_version_cmd), "cp -r /home/%s/claudemods-distribution-installer/installer/version.txt /opt/claudemods-distribution-installer", user);
+        snprintf(copy_version_cmd, sizeof(copy_version_cmd), "sudo cp -r /home/%s/claudemods-distribution-installer/installer/version.txt /opt/claudemods-distribution-installer", user);
         system(copy_version_cmd);
         
         char compile_main_cmd[512];
-        snprintf(compile_main_cmd, sizeof(compile_main_cmd), "cd /home/%s/claudemods-distribution-installer/installer && g++ -o mainscript mainscript.cpp -std=c++23", user);
+        snprintf(compile_main_cmd, sizeof(compile_main_cmd), "cd /home/%s/claudemods-distribution-installer/installer && sudo g++ -o mainscript mainscript.cpp -std=c++23", user);
         system(compile_main_cmd);
         
         char compile_updater_cmd[512];
-        snprintf(compile_updater_cmd, sizeof(compile_updater_cmd), "cd /home/%s/claudemods-distribution-installer/installer && g++ -o updater updater.cpp -std=c++23", user);
+        snprintf(compile_updater_cmd, sizeof(compile_updater_cmd), "cd /home/%s/claudemods-distribution-installer/installer && sudo g++ -o updater updater.cpp -std=c++23", user);
         system(compile_updater_cmd);
         
         char copy_main_cmd[512];
-        snprintf(copy_main_cmd, sizeof(copy_main_cmd), "cp /home/%s/claudemods-distribution-installer/installer/mainscript /opt/claudemods-distribution-installer", user);
+        snprintf(copy_main_cmd, sizeof(copy_main_cmd), "sudo cp -r /home/%s/claudemods-distribution-installer/installer/mainscript /opt/claudemods-distribution-installer", user);
         system(copy_main_cmd);
         
         char copy_updater_cmd[512];
-        snprintf(copy_updater_cmd, sizeof(copy_updater_cmd), "cp /home/%s/claudemods-distribution-installer/installer/updater /opt/claudemods-distribution-installer", user);
+        snprintf(copy_updater_cmd, sizeof(copy_updater_cmd), "sudo cp -r /home/%s/claudemods-distribution-installer/installer/updater /opt/claudemods-distribution-installer", user);
         system(copy_updater_cmd);
     }
     

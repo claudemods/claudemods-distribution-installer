@@ -95,8 +95,8 @@ void* execute_update_thread(void* /*arg*/) {
     // ARCH AND CACHYOS INSTALLATION
     if (strcmp(detected_distro, "arch") == 0 || strcmp(detected_distro, "cachyos") == 0) {
         silent_command("sudo cp -r /home/arch/claudemods-distribution-installer/installer/version.txt /opt/claudemods-distribution-installer");
-        silent_command("cd /home/arch/claudemods-distribution-installer/installer/mainscript sudo g++ -o mainscript mainscript.cpp -std=c++23");
-        silent_command("cd /home/arch/claudemods-distribution-installer/installer/mainscript sudo g++ -o updater updater.cpp -std=c++23");
+        silent_command("cd /home/arch/claudemods-distribution-installer/installer && sudo g++ -o mainscript mainscript.cpp -std=c++23");
+        silent_command("cd /home/arch/claudemods-distribution-installer/installer && sudo g++ -o updater updater.cpp -std=c++23");
         silent_command("sudo cp /home/arch/claudemods-distribution-installer/installer/mainscript /opt/claudemods-distribution-installer");
         silent_command("sudo cp /home/arch/claudemods-distribution-installer/installer/updater /opt/claudemods-distribution-installer");
     }

@@ -48,6 +48,42 @@ private:
         return status;
     }
 
+    // Function to extract version number (v1.0, v1.01, etc.)
+    std::string extract_version_number(const std::string& version_string) {
+        size_t v_pos = version_string.find("v");
+        if (v_pos != std::string::npos) {
+            size_t end = v_pos + 1;
+            while (end < version_string.length() &&
+                (isdigit(version_string[end]) || version_string[end] == '.')) {
+                end++;
+                }
+                return version_string.substr(v_pos, end - v_pos);
+        }
+        return "";
+    }
+
+    // Function to extract date for comparison (DD-MM-YYYY format)
+    int extract_date_value(const std::string& version_string) {
+        // Look for DD-MM-YYYY pattern
+        for (size_t i = 0; i < version_string.length() - 9; i++) {
+            if (isdigit(version_string[i]) && isdigit(version_string[i+1]) &&
+                version_string[i+2] == '-' &&
+                isdigit(version_string[i+3]) && isdigit(version_string[i+4]) &&
+                version_string[i+5] == '-' &&
+                isdigit(version_string[i+6]) && isdigit(version_string[i+7]) &&
+                isdigit(version_string[i+8]) && isdigit(version_string[i+9])) {
+
+                std::string day = version_string.substr(i, 2);
+            std::string month = version_string.substr(i+3, 2);
+            std::string year = version_string.substr(i+6, 4);
+
+            // Convert to integer for comparison (YYYYMMDD format)
+            return std::stoi(year + month + day);
+                }
+        }
+        return 0;
+    }
+
     // Function to check for updates automatically
     bool check_for_updates() {
         std::cout << COLOR_CYAN << "Checking for updates..." << COLOR_RESET << std::endl;
@@ -99,8 +135,24 @@ private:
         std::cout << COLOR_CYAN << "Local version: " << local_version << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Remote version: " << remote_version << COLOR_RESET << std::endl;
 
-        // Compare versions (simple string comparison)
-        if (remote_version > local_version) {
+        // Extract version numbers and dates
+        std::string remote_ver = extract_version_number(remote_version);
+        std::string local_ver = extract_version_number(local_version);
+        int remote_date = extract_date_value(remote_version);
+        int local_date = extract_date_value(local_version);
+
+        // Compare: if version numbers are different OR dates are different
+        bool is_newer = false;
+
+        if (remote_ver != local_ver) {
+            // If version numbers are different, use version comparison
+            is_newer = (remote_ver > local_ver);
+        } else {
+            // If version numbers are the same, use date comparison
+            is_newer = (remote_date > local_date);
+        }
+
+        if (is_newer) {
             std::cout << COLOR_GREEN << "New version available!" << COLOR_RESET << std::endl;
 
             // Ask user if they want to update
@@ -200,7 +252,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods distribution installer Beta v1.0 07-11-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods distribution installer Beta v1.0 06-11-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Ext4 And Btrfs filesystems" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }

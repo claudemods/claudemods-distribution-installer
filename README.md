@@ -1,8 +1,8 @@
-arch options work fine 
+arch options and apex and spitfire should work fine 
 
 just waiting on last cachyos gnome grub upload
 
-both scripts have updated link for apex and spitfire & cachyos has now been integrate, but all needs to be tested 
+both scripts have updated links for apex and spitfire & cachyos has now been integrated, but all needs to be tested mainly btrfs options
 
 
 # claudemods Distribution Installer 🚀

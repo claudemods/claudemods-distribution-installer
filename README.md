@@ -1,6 +1,8 @@
-arch options work fine and claudemods spitfire and apex works fine
+arch options work fine 
 
-cachyos needs to be implemented but i will be making the iso first
+just waiting on last cachyos gnome grub upload
+
+both scripts have updated link for apex and spitfire & cachyos has now been integrate, but all needs to be tested 
 
 
 # claudemods Distribution Installer 🚀

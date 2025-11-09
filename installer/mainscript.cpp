@@ -252,7 +252,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods distribution installer Beta v1.0 07-11-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods distribution installer Beta v1.0 09-11-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Ext4 And Btrfs filesystems" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }
@@ -907,15 +907,14 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("pacstrap /mnt base grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/Cachyos-TtyGrub/rootfs.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-
+        
         install_grub_ext4(drive);
 
-        create_new_user("ext4", drive);
+        change_username("ext4", drive);
 
         std::cout << COLOR_GREEN << "CachyOS TTY Grub installation completed!" << COLOR_RESET << std::endl;
 
@@ -932,30 +931,14 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr curl os-prober sudo arch-install-scripts mkinitcpio vim nano bash-completion networkmanager");
-
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/cachyos-kde/rootfs.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-
+        
         install_grub_ext4(drive);
 
-        create_new_user("ext4", drive);
-
-        std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
-        execute_command("cp -r /etc/resolv.conf /mnt/etc/resolv.conf");
-        execute_command("chroot /mnt curl https://mirror.cachyos.org/cachyos-repo.tar.xz -o cachyos-repo.tar.xz");
-        execute_command("chroot /mnt tar xvf cachyos-repo.tar.xz");
-        execute_command("chroot /mnt/cachyos-repo && ./cachyos-repo.sh");
-        execute_command("mkdir /mnt/home/" + new_username + "/.config");
-        execute_command("mkdir /mnt/home/" + new_username + "/.config/autostart");
-        execute_command("cp -r /opt/claudemods-distribution-installer /mnt/opt");
-        execute_command("cp -r /opt/claudemods-distribution-installer/install-fullkde-grub/cachyoskdegrub.desktop /mnt/home/" + new_username + "/.config/autostart");
-        execute_command("chroot /mnt chown " + new_username + " /home/" + new_username + "/.config");
-        execute_command("chroot /mnt chown " + new_username + " /home/" + new_username + "/.config/autostart");
-        execute_command("chroot /mnt chown " + new_username + " /home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
-        execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/cachyoskdegrub.desktop");
-        execute_command("chroot /mnt chmod +x /opt/claudemods-distribution-installer/install-fullkde-grub/*");
+        change_username("ext4", drive);
 
         std::cout << COLOR_GREEN << "CachyOS KDE Part 1 installation completed!" << COLOR_RESET << std::endl;
         std::cout << COLOR_GREEN << " For CachyOS KDE Part 2 installation Please Reboot And login To Run Next Script!" << COLOR_RESET << std::endl;
@@ -973,16 +956,14 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
-
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable gdm\"");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/Cachyos-GnomeGrub/rootfs.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-
+        
         install_grub_ext4(drive);
 
-        create_new_user("ext4", drive);
+        change_username("ext4", drive);
 
         std::cout << COLOR_CYAN << "Setting up CachyOS..." << COLOR_RESET << std::endl;
 
@@ -1036,7 +1017,7 @@ private:
 
         // Use execute_cd_command for cd commands
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-v1.img");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
         execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
@@ -1068,7 +1049,7 @@ private:
         setup_ext4_filesystem(root_part);
 
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-v1.img");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
         execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 

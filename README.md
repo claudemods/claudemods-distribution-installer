@@ -1,6 +1,8 @@
 all ext4 and btrfs options now work 10-11-2025 15:41PM GMT
 
-new claudemods options added to dev only as only spitfire ckge minimal and apex ckge minimal will work for now which is in mainbranch
+new claudemods options added e.g Full editions and dev edtions to dev only 
+
+as only spitfire ckge minimal and apex ckge minimal will work
 
 
 # claudemods Distribution Installer 🚀

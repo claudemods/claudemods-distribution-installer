@@ -313,26 +313,22 @@ private:
         }
     }
 
-    // Function to get filesystem selection (Step 2)
+    // Function to get filesystem selection (Step 2) - FIXED BTRFS CALL
     void get_filesystem_selection() {
         std::cout << COLOR_CYAN << "Choose filesystem type (ext4/btrfs): " << COLOR_RESET;
         std::getline(std::cin, fs_type);
 
-        // Handle Btrfs case immediately
+        // Handle Btrfs case immediately - FIXED VERSION
         if (fs_type == "btrfs") {
-            std::cout << COLOR_CYAN << "Executing btrfsinstaller with drive: " << selected_drive << COLOR_RESET << std::endl;
+            std::cout << COLOR_CYAN << "Starting Btrfs installer with drive: " << selected_drive << COLOR_RESET << std::endl;
 
-            // Convert to char* array for the btrfs installer
-            char* argv[2];
-            argv[0] = const_cast<char*>("btrfsinstaller");
-            argv[1] = const_cast<char*>(selected_drive.c_str());
-
-            // Create and run Btrfs installer
+            // Create and run Btrfs installer PROPERLY
             BtrfsInstaller btrfs_installer;
-            btrfs_installer.run(2, argv);
+            btrfs_installer.setDrive(selected_drive);  // Set the drive first
+            btrfs_installer.run();  // Then run without arguments
 
-            std::cout << COLOR_GREEN << "Btrfs installation complete!" << COLOR_RESET << std::endl;
-            exit(0);
+            // BtrfsInstaller will handle everything - when it returns, we're done
+            return;
         }
     }
 

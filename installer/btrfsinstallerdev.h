@@ -118,7 +118,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods Distribution Installer Btrfs v1.0 10-11-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods Distribution Installer Btrfs DevBranch v1.01 10-11-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Btrfs (with Zstd compression 22) filesystem" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }
@@ -840,7 +840,7 @@ private:
         execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/Cachyos-TtyGrub/rootfs.img");
         execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-        
+
         install_grub_btrfs(drive);
 
         change_username("btrfs", drive);
@@ -864,7 +864,7 @@ private:
         execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/cachyos-kde/rootfs.img");
         execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-        
+
         install_grub_btrfs(drive);
 
         change_username("btrfs", drive);
@@ -889,7 +889,7 @@ private:
         execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/Cachyos-GnomeGrub/rootfs.img");
         execute_command("unsquashfs -f -d /mnt /mnt/rootfs.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
-        
+
         install_grub_btrfs(drive);
 
         change_username("btrfs", drive);
@@ -936,7 +936,7 @@ private:
 
     // Function to install Spitfire CKGE
     void install_spitfire_ckge(const std::string& drive) {
-        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE..." << COLOR_RESET << std::endl;
+        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Minimal..." << COLOR_RESET << std::endl;
 
         prepare_target_partitions(drive);
         std::string efi_part = drive + "1";
@@ -969,7 +969,7 @@ private:
 
     // Function to install Apex CKGE
     void install_apex_ckge(const std::string& drive) {
-        std::cout << COLOR_PURPLE << "Installing Apex CKGE..." << COLOR_RESET << std::endl;
+        std::cout << COLOR_PURPLE << "Installing Apex CKGE Minimal..." << COLOR_RESET << std::endl;
 
         prepare_target_partitions(drive);
         std::string efi_part = drive + "1";
@@ -999,6 +999,201 @@ private:
         prompt_reboot();
     }
 
+    // Function to install Spitfire CKGE Full
+    void install_spitfire_ckge_full(const std::string& drive) {
+        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Full..." << COLOR_RESET << std::endl;
+
+        prepare_target_partitions(drive);
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+
+        setup_btrfs_subvolumes(root_part);
+
+        // Use execute_cd_command for cd commands
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        install_grub_btrfs(drive);
+
+        change_username("btrfs", drive);
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktop.sh /mnt/opt/Arch-Systemtool");
+        execute_command("chmod +x /mnt/opt/Arch-Systemtool/desktop.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh " + new_username + "'\"");
+
+        std::cout << COLOR_ORANGE << "Spitfire CKGE Full installation completed!" << COLOR_RESET << std::endl;
+
+        prompt_reboot();
+    }
+
+    // Function to install Apex CKGE Full
+    void install_apex_ckge_full(const std::string& drive) {
+        std::cout << COLOR_PURPLE << "Installing Apex CKGE Full..." << COLOR_RESET << std::endl;
+
+        prepare_target_partitions(drive);
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+
+        setup_btrfs_subvolumes(root_part);
+
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        install_grub_btrfs(drive);
+
+        change_username("btrfs", drive);
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
+
+
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
+
+        std::cout << COLOR_PURPLE << "Apex CKGE Full installation completed!" << COLOR_RESET << std::endl;
+
+        prompt_reboot();
+    }
+
+    // Function to install Spitfire CKGE Minimal Dev
+    void install_spitfire_ckge_minimal_dev(const std::string& drive) {
+        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Minimal Dev..." << COLOR_RESET << std::endl;
+
+        prepare_target_partitions(drive);
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+
+        setup_btrfs_subvolumes(root_part);
+
+        // Use execute_cd_command for cd commands
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        install_grub_btrfs(drive);
+
+        change_username("btrfs", drive);
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktop.sh /mnt/opt/Arch-Systemtool");
+        execute_command("chmod +x /mnt/opt/Arch-Systemtool/desktop.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh " + new_username + "'\"");
+
+        std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal Dev installation completed!" << COLOR_RESET << std::endl;
+
+        prompt_reboot();
+    }
+
+    // Function to install Apex CKGE Minimal Dev
+    void install_apex_ckge_minimal_dev(const std::string& drive) {
+        std::cout << COLOR_PURPLE << "Installing Apex CKGE Minimal Dev..." << COLOR_RESET << std::endl;
+
+        prepare_target_partitions(drive);
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+
+        setup_btrfs_subvolumes(root_part);
+
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        install_grub_btrfs(drive);
+
+        change_username("btrfs", drive);
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
+
+
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
+
+        std::cout << COLOR_PURPLE << "Apex CKGE Minimal Dev installation completed!" << COLOR_RESET << std::endl;
+
+        prompt_reboot();
+    }
+
+    // Function to install Spitfire CKGE Full Dev
+    void install_spitfire_ckge_full_dev(const std::string& drive) {
+        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Full Dev..." << COLOR_RESET << std::endl;
+
+        prepare_target_partitions(drive);
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+
+        setup_btrfs_subvolumes(root_part);
+
+        // Use execute_cd_command for cd commands
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        install_grub_btrfs(drive);
+
+        change_username("btrfs", drive);
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktop.sh /mnt/opt/Arch-Systemtool");
+        execute_command("chmod +x /mnt/opt/Arch-Systemtool/desktop.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh " + new_username + "'\"");
+
+        std::cout << COLOR_ORANGE << "Spitfire CKGE Full Dev installation completed!" << COLOR_RESET << std::endl;
+
+        prompt_reboot();
+    }
+
+    // Function to install Apex CKGE Full Dev
+    void install_apex_ckge_full_dev(const std::string& drive) {
+        std::cout << COLOR_PURPLE << "Installing Apex CKGE Full Dev..." << COLOR_RESET << std::endl;
+
+        prepare_target_partitions(drive);
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+
+        setup_btrfs_subvolumes(root_part);
+
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        install_grub_btrfs(drive);
+
+        change_username("btrfs", drive);
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
+
+
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
+
+        std::cout << COLOR_PURPLE << "Apex CKGE Full Dev installation completed!" << COLOR_RESET << std::endl;
+
+        prompt_reboot();
+    }
+
     // Function to display Claudemods Distribution menu
     void display_claudemods_menu(const std::string& fs_type, const std::string& drive) {
         while (true) {
@@ -1008,11 +1203,17 @@ private:
             std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
             std::cout << "║  1. Install Spitfire CKGE                                  ║" << std::endl;
             std::cout << "║  2. Install Apex CKGE                                      ║" << std::endl;
-            std::cout << "║  3. Return to Main Menu                                    ║" << std::endl;
+            std::cout << "║  3. Install Spitfire CKGE Full                             ║" << std::endl;
+            std::cout << "║  4. Install Apex CKGE Full                                 ║" << std::endl;
+            std::cout << "║  5. Install Spitfire CKGE Minimal Dev                      ║" << std::endl;
+            std::cout << "║  6. Install Apex CKGE Minimal Dev                          ║" << std::endl;
+            std::cout << "║  7. Install Spitfire CKGE Full Dev                         ║" << std::endl;
+            std::cout << "║  8. Install Apex CKGE Full Dev                             ║" << std::endl;
+            std::cout << "║  9. Return to Main Menu                                    ║" << std::endl;
             std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
             std::cout << COLOR_RESET;
 
-            std::cout << COLOR_CYAN << "Select Claudemods option (1-3): " << COLOR_RESET;
+            std::cout << COLOR_CYAN << "Select Claudemods option (1-9): " << COLOR_RESET;
             std::string claudemods_choice;
             std::getline(std::cin, claudemods_choice);
 
@@ -1021,6 +1222,18 @@ private:
             } else if (claudemods_choice == "2") {
                 install_apex_ckge(drive);
             } else if (claudemods_choice == "3") {
+                install_spitfire_ckge_full(drive);
+            } else if (claudemods_choice == "4") {
+                install_apex_ckge_full(drive);
+            } else if (claudemods_choice == "5") {
+                install_spitfire_ckge_minimal_dev(drive);
+            } else if (claudemods_choice == "6") {
+                install_apex_ckge_minimal_dev(drive);
+            } else if (claudemods_choice == "7") {
+                install_spitfire_ckge_full_dev(drive);
+            } else if (claudemods_choice == "8") {
+                install_apex_ckge_full_dev(drive);
+            } else if (claudemods_choice == "9") {
                 std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
                 break;
             } else {

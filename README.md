@@ -1,4 +1,4 @@
-all ext4 options working fine btrfs is broken please wait
+ext4 works fine and btrfs is being tested now seems to work fine but will wait till finished
 
 
 # claudemods Distribution Installer 🚀

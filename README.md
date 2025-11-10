@@ -5,7 +5,7 @@ i will add new claudemods distribution options next before i polish ui to script
 
 # claudemods Distribution Installer 🚀
 
-A 821mb Tty Grub-based Iso Built From Arch Bootstrap offering multiple Arch Linux CachyOS claudemods Distribution installation options. 💻
+A 698mb Tty Grub-based Iso Built From Arch Bootstrap offering multiple Arch Linux CachyOS claudemods Distribution installation options. 💻
 
 ##  [Click Here For Changelog](https://github.com/claudemods/claudemods-distribution-installer/blob/main/changelog.md)
 

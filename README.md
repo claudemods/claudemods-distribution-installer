@@ -1,4 +1,4 @@
-ext4 works fine and btrfs is being tested now seems to work fine but will wait till finished
+all ext4 and btrfs options now work i will add new claudemods distribution options next before i polish ui to script please wait!!!
 
 
 # claudemods Distribution Installer 🚀

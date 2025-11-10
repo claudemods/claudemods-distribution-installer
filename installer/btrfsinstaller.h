@@ -118,7 +118,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods Distribution Installer Btrfs v1.0 07-11-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods Distribution Installer Btrfs v1.0 10-11-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Btrfs (with Zstd compression 22) filesystem" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }
@@ -193,19 +193,9 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"mkinitcpio -P\"");
     }
 
-    // Function to get drive selection (Step 1) - Modified to accept command line argument
-    void get_drive_selection(int argc, char* argv[]) {
-        // Check if drive was provided as command line argument
-        if (argc >= 2) {
-            selected_drive = argv[1];
-            std::cout << COLOR_GREEN << "Using drive from command line: " << selected_drive << COLOR_RESET << std::endl;
-
-            if (!is_block_device(selected_drive)) {
-                std::cerr << COLOR_RED << "Error: " << selected_drive << " is not a valid block device" << COLOR_RESET << std::endl;
-                exit(1);
-            }
-        } else {
-            // Interactive drive selection
+    // Function to get drive selection (Step 1) - MODIFIED to use internal state
+    void get_drive_selection() {
+        if (selected_drive.empty()) {
             display_available_drives();
             std::cout << COLOR_CYAN << "Enter target drive (e.g., /dev/sda): " << COLOR_RESET;
             std::getline(std::cin, selected_drive);
@@ -213,16 +203,14 @@ private:
                 std::cerr << COLOR_RED << "Error: " << selected_drive << " is not a valid block device" << COLOR_RESET << std::endl;
                 exit(1);
             }
+        } else {
+            std::cout << COLOR_GREEN << "Using drive: " << selected_drive << COLOR_RESET << std::endl;
         }
     }
 
     // Function to get filesystem selection (Step 2) - Modified for Btrfs focus
     void get_filesystem_selection() {
-        std::cout << COLOR_CYAN << "Filesystem type (btrfs): " << COLOR_RESET;
-        std::getline(std::cin, fs_type);
-        if (fs_type.empty()) {
-            fs_type = "btrfs";
-        }
+        fs_type = "btrfs";
         std::cout << COLOR_GREEN << "Using Btrfs filesystem with Zstd compression" << COLOR_RESET << std::endl;
     }
 
@@ -1084,16 +1072,20 @@ private:
     }
 
 public:
-    // Main script
-    void run(int argc, char* argv[]) {
+    // NEW: Method to set the drive from main script
+    void setDrive(const std::string& drive) {
+        selected_drive = drive;
+    }
+
+    // NEW: Updated run method without command line arguments
+    void run() {
         display_header();
 
-        // Step 1: Drive selection (now accepts command line argument)
-        get_drive_selection(argc, argv);
+        // Step 1: Drive selection (uses pre-set drive or asks user)
+        get_drive_selection();
 
         // Step 2: Filesystem selection - Btrfs only
-        fs_type = "btrfs";
-        std::cout << COLOR_GREEN << "Using Btrfs filesystem with Zstd compression" << COLOR_RESET << std::endl;
+        get_filesystem_selection();
 
         // Step 3: Kernel selection
         get_kernel_selection();

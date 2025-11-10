@@ -10,7 +10,7 @@
 #include <functional>
 #include <unistd.h>
 #include <fstream>
-#include "btrfsinstaller.h"
+#include "btrfsinstallerdev.h"
 
 // Color definitions
 const std::string COLOR_CYAN = "\033[38;2;0;255;255m";

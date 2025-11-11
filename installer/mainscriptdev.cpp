@@ -1096,7 +1096,7 @@ private:
 
         // Use execute_cd_command for cd commands
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
+        execute_command("curl -L -C - -O https://www.claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
         execute_command("unsquashfs -f -d /mnt /mnt/apex.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 

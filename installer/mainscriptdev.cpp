@@ -1492,33 +1492,28 @@ private:
                 install_cachyos_gnome(selected_drive);
             }
         } else if (installation_type == "Claudemods") {
-            if (desktop_environment.find("Spitfire CKGE") != std::string::npos) {
-                if (desktop_environment.find("Full") != std::string::npos) {
-                    if (desktop_environment.find("Dev") != std::string::npos) {
-                        install_spitfire_ckge_full_dev(selected_drive);
-                    } else {
-                        install_spitfire_ckge_full(selected_drive);
-                    }
-                } else if (desktop_environment.find("Minimal Dev") != std::string::npos) {
-                    install_spitfire_ckge_minimal_dev(selected_drive);
-                } else {
-                    install_spitfire_ckge(selected_drive);
-                }
-            } else if (desktop_environment.find("Apex CKGE") != std::string::npos) {
-                if (desktop_environment.find("Full") != std::string::npos) {
-                    if (desktop_environment.find("Dev") != std::string::npos) {
-                        install_apex_ckge_full_dev(selected_drive);
-                    } else {
-                        install_apex_ckge_full(selected_drive);
-                    }
-                } else if (desktop_environment.find("Minimal Dev") != std::string::npos) {
-                    install_apex_ckge_minimal_dev(selected_drive);
-                } else {
-                    install_apex_ckge(selected_drive);
-                }
+            // Spitfire installations
+            if (desktop_environment == "Spitfire CKGE") {
+                install_spitfire_ckge(selected_drive);
+            } else if (desktop_environment == "Spitfire CKGE Full") {
+                install_spitfire_ckge_full(selected_drive);
+            } else if (desktop_environment == "Spitfire CKGE Minimal Dev") {
+                install_spitfire_ckge_minimal_dev(selected_drive);
+            } else if (desktop_environment == "Spitfire CKGE Full Dev") {
+                install_spitfire_ckge_full_dev(selected_drive);
+            }
+            // Apex installations
+            else if (desktop_environment == "Apex CKGE") {
+                install_apex_ckge(selected_drive);
+            } else if (desktop_environment == "Apex CKGE Full") {
+                install_apex_ckge_full(selected_drive);
+            } else if (desktop_environment == "Apex CKGE Minimal Dev") {
+                install_apex_ckge_minimal_dev(selected_drive);
+            } else if (desktop_environment == "Apex CKGE Full Dev") {
+                install_apex_ckge_full_dev(selected_drive);
             }
         }
-    }
+    } // Add this closing brace for start_installation()
 
 public:
     // Main script
@@ -1534,7 +1529,7 @@ public:
         // Show main menu with arrow key navigation
         main_menu();
     }
-};
+}; // Add this closing brace for the class
 
 int main() {
     ArchInstaller installer;

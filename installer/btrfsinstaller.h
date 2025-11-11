@@ -503,6 +503,8 @@ private:
 
         setup_btrfs_subvolumes(root_part);
 
+        execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+
         execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr os-prober sudo vim nano bash-completion networkmanager");
 
         // Copy btrfsfstabcompressed.sh to the new system
@@ -558,6 +560,8 @@ private:
 
             setup_btrfs_subvolumes(root_part);
 
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+
             execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
             // Copy btrfsfstabcompressed.sh to the new system
@@ -584,6 +588,8 @@ private:
             std::string root_part = drive + "2";
 
             setup_btrfs_subvolumes(root_part);
+
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -612,6 +618,8 @@ private:
 
             setup_btrfs_subvolumes(root_part);
 
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+
             execute_command("pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
             // Copy btrfsfstabcompressed.sh to the new system
@@ -638,6 +646,8 @@ private:
             std::string root_part = drive + "2";
 
             setup_btrfs_subvolumes(root_part);
+
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -666,6 +676,8 @@ private:
 
             setup_btrfs_subvolumes(root_part);
 
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+
             execute_command("pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
             // Copy btrfsfstabcompressed.sh to the new system
@@ -692,6 +704,8 @@ private:
             std::string root_part = drive + "2";
 
             setup_btrfs_subvolumes(root_part);
+
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -720,6 +734,8 @@ private:
 
             setup_btrfs_subvolumes(root_part);
 
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+
             execute_command("pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
             // Copy btrfsfstabcompressed.sh to the new system
@@ -746,6 +762,8 @@ private:
             std::string root_part = drive + "2";
 
             setup_btrfs_subvolumes(root_part);
+
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -774,6 +792,8 @@ private:
 
             setup_btrfs_subvolumes(root_part);
 
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+
             execute_command("pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
             // Copy btrfsfstabcompressed.sh to the new system
@@ -800,6 +820,8 @@ private:
             std::string root_part = drive + "2";
 
             setup_btrfs_subvolumes(root_part);
+
+            execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 

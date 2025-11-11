@@ -1392,7 +1392,7 @@ private:
                                                     // Show Claudemods options
                                                     {
                                                         std::vector<std::string> claudemods_options = {
-                                                            "Spitfire CKGE",
+                                                            "Spitfire CKGE Minimal",
                                                             "Spitfire CKGE Full",
                                                             "Spitfire CKGE Minimal Dev",
                                                             "Spitfire CKGE Full Dev",
@@ -1482,7 +1482,7 @@ private:
             }
         } else if (installation_type == "claudemods") {
             // Spitfire installations
-            if (desktop_environment == "Spitfire CKGE") {
+            if (desktop_environment == "Spitfire CKGE Minimal") {
                 install_spitfire_ckge(selected_drive);
             } else if (desktop_environment == "Spitfire CKGE Full") {
                 install_spitfire_ckge_full(selected_drive);
@@ -1492,7 +1492,7 @@ private:
                 install_spitfire_ckge_full_dev(selected_drive);
             }
             // Apex installations
-            else if (desktop_environment == "Apex CKGE") {
+            else if (desktop_environment == "Apex CKGE Minimal") {
                 install_apex_ckge(selected_drive);
             } else if (desktop_environment == "Apex CKGE Full") {
                 install_apex_ckge_full(selected_drive);

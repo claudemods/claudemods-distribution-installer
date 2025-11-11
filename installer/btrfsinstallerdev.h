@@ -118,7 +118,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods Distribution Installer Btrfs v1.0 07-11-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods Distribution Installer Btrfs v1.01 11-11-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Btrfs (with Zstd compression 22) filesystem" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }
@@ -986,8 +986,8 @@ private:
 
         // Use execute_cd_command for cd commands
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-v1.img");
-        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/apex.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/apex.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
         install_grub_btrfs(drive);
@@ -1018,8 +1018,8 @@ private:
         setup_btrfs_subvolumes(root_part);
 
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-v1.img");
-        execute_command("unsquashfs -f -d /mnt /mnt/claudemods-v1.img");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=3 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/apex.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/apex.img");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
         install_grub_btrfs(drive);

@@ -2,7 +2,8 @@
 
 ## Main branch v1.0 — 11-11-2025
 - claudemods Options: fixed slight error with `.img` name  
-- Arch Options: fixed missing `vconsole.conf`  
+- Arch Options: fixed missing `vconsole.conf`
+- Arch Options: further fixed allowing network after install and before reboot if needed
 - Note: Spitfire uses Apex as base before conversion. All builds tested and working.
 - main branch all works fine now the dev branch is being tested with a new ui and new menu options please wait
 

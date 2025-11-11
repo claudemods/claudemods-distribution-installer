@@ -1540,9 +1540,9 @@ private:
             }
         } else if (installation_type == "Claudemods") {
             // Spitfire installations
-            if (desktop_environment == "Spitfire CKGE Minimal") {
+            if (desktop_environment == "Spitfire CKGE") {
                 install_spitfire_ckge(selected_drive);
-            } else if (desktop_environment == "Spitfire CKGE Full") {
+            } else if (desktop_environment == "Spitfire CKGE") {
                 install_spitfire_ckge_full(selected_drive);
             } else if (desktop_environment == "Spitfire CKGE Minimal Dev") {
                 install_spitfire_ckge_minimal_dev(selected_drive);
@@ -1550,7 +1550,7 @@ private:
                 install_spitfire_ckge_full_dev(selected_drive);
             }
             // Apex installations
-            else if (desktop_environment == "Apex CKGE Minimal") {
+            else if (desktop_environment == "Apex CKGE") {
                 install_apex_ckge(selected_drive);
             } else if (desktop_environment == "Apex CKGE Full") {
                 install_apex_ckge_full(selected_drive);

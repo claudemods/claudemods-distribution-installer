@@ -1,4 +1,4 @@
-v1.0 11-11-2025
+main branch v1.0 11-11-2025
 
 claudemods options fixed slight error with .img name 
 

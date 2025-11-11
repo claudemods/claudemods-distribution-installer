@@ -4,6 +4,7 @@
 - claudemods Options: fixed slight error with `.img` name  
 - Arch Options: fixed missing `vconsole.conf`  
 - Note: Spitfire uses Apex as base before conversion. All builds tested and working.
+- main branch all works fine now the dev branch is being tested with a new ui and new menu options please wait
 
 ## Main branch v1.0 — 07-11-2025
 - New ~600 MB ISO created  

@@ -1392,7 +1392,7 @@ private:
                                                     // Show Claudemods options
                                                     {
                                                         std::vector<std::string> claudemods_options = {
-                                                            "Spitfire CKGE Minimal",
+                                                            "Spitfire CKGE",
                                                             "Spitfire CKGE Full",
                                                             "Spitfire CKGE Minimal Dev",
                                                             "Spitfire CKGE Full Dev",

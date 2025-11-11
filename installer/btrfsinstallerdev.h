@@ -1181,7 +1181,7 @@ private:
     // Function to display Claudemods Distribution menu
     void display_claudemods_menu(const std::string& fs_type, const std::string& drive) {
         std::vector<std::string> claudemods_options = {
-            "Install Spitfire CKGE",
+            "Install Spitfire CKGE Minimal",
             "Install Spitfire CKGE Full",
             "Install Spitfire CKGE Minimal Dev",
             "Install Spitfire CKGE Full Dev",

@@ -1193,11 +1193,11 @@ private:
     // Function to display Claudemods Distribution menu
     void display_claudemods_menu(const std::string& fs_type, const std::string& drive) {
         std::vector<std::string> claudemods_options = {
-            "Install Spitfire CKGE",
+            "Install Spitfire CKGE Minimal",
             "Install Spitfire CKGE Full",
             "Install Spitfire CKGE Minimal Dev",
             "Install Spitfire CKGE Full Dev",
-            "Install Apex CKGE",
+            "Install Apex CKGE Minimal",
             "Install Apex CKGE Full",
             "Install Apex CKGE Minimal Dev",
             "Install Apex CKGE Full Dev",
@@ -1426,11 +1426,11 @@ private:
                                                     // Show Claudemods options
                                                     {
                                                         std::vector<std::string> claudemods_options = {
-                                                            "Spitfire CKGE",
+                                                            "Spitfire CKGE Minimal",
                                                             "Spitfire CKGE Full",
                                                             "Spitfire CKGE Minimal Dev",
                                                             "Spitfire CKGE Full Dev",
-                                                            "Apex CKGE",
+                                                            "Apex CKGE Minimal",
                                                             "Apex CKGE Full",
                                                             "Apex CKGE Minimal Dev",
                                                             "Apex CKGE Full Dev"
@@ -1518,7 +1518,7 @@ private:
             }
         } else if (installation_type == "Claudemods") {
             // Spitfire installations
-            if (desktop_environment == "Spitfire CKGE") {
+            if (desktop_environment == "Spitfire CKGE Minimal") {
                 install_spitfire_ckge(selected_drive);
             } else if (desktop_environment == "Spitfire CKGE Full") {
                 install_spitfire_ckge_full(selected_drive);
@@ -1528,7 +1528,7 @@ private:
                 install_spitfire_ckge_full_dev(selected_drive);
             }
             // Apex installations
-            else if (desktop_environment == "Apex CKGE") {
+            else if (desktop_environment == "Apex CKGE Minimal") {
                 install_apex_ckge(selected_drive);
             } else if (desktop_environment == "Apex CKGE Full") {
                 install_apex_ckge_full(selected_drive);

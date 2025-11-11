@@ -1,4 +1,4 @@
-# Spitfire ISO Builder
+# claudemods distribution installer
 
 ## Main branch v1.0 — 11-11-2025
 - claudemods Options: fixed slight error with `.img` name  

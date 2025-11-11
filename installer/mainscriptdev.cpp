@@ -1203,7 +1203,7 @@ private:
         }
     }
 
-    // Function to display main menu with arrow keys
+    // Function to display main menu with arrow keys - MODIFIED to remember position
     void main_menu() {
         // Initialize default values
         if (selected_drive.empty()) selected_drive = "Not set";
@@ -1214,6 +1214,8 @@ private:
         if (keyboard_layout.empty()) keyboard_layout = "Not set";
         if (installation_type.empty()) installation_type = "Not set";
         desktop_environment = "Not set";
+
+        int current_selection = 0; // Track current menu position
 
         while (true) {
             std::vector<std::string> main_options = {
@@ -1230,7 +1232,10 @@ private:
                 "Exit"
             };
 
-            int choice = show_menu(main_options, "Arch Linux Installer - Main Menu");
+            int choice = show_menu(main_options, "Arch Linux Installer - Main Menu", current_selection);
+
+            // Update current selection to remember position
+            current_selection = choice;
 
             switch(choice) {
                 case 0: // Drive

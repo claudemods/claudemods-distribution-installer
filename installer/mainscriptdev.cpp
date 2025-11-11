@@ -1212,7 +1212,7 @@ private:
         prompt_reboot();
     }
 
-    // Function to display Claudemods Distribution menu
+    // Function to display claudemods Distribution menu
     void display_claudemods_menu(const std::string& fs_type, const std::string& drive) {
         std::vector<std::string> claudemods_options = {
             "Install Spitfire CKGE Minimal",
@@ -1226,7 +1226,7 @@ private:
             "Return to Main Menu"
         };
 
-        int claudemods_choice = show_menu(claudemods_options, "Claudemods Distribution Options");
+        int claudemods_choice = show_menu(claudemods_options, "claudemods Distribution Options");
 
         if (claudemods_choice == 8) {
             std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
@@ -1401,7 +1401,7 @@ private:
                                             std::vector<std::string> install_options = {
                                                 "Vanilla Arch Desktop",
                                                 "CachyOS",
-                                                "Claudemods Distribution"
+                                                "claudemods Distribution"
                                             };
 
                                             int install_choice = show_menu(install_options, "Select Installation Type");
@@ -1444,8 +1444,8 @@ private:
                                                     }
                                                     break;
                                                 case 2:
-                                                    installation_type = "Claudemods";
-                                                    // Show Claudemods options
+                                                    installation_type = "claudemods";
+                                                    // Show claudemods options
                                                     {
                                                         std::vector<std::string> claudemods_options = {
                                                             "Spitfire CKGE Minimal",
@@ -1458,7 +1458,7 @@ private:
                                                             "Apex CKGE Full Dev"
                                                         };
 
-                                                        int claudemods_choice = show_menu(claudemods_options, "Select Claudemods Variant");
+                                                        int claudemods_choice = show_menu(claudemods_options, "Select claudemods Variant");
                                                         desktop_environment = claudemods_options[claudemods_choice];
                                                     }
                                                     break;
@@ -1538,7 +1538,7 @@ private:
             } else if (desktop_environment.find("GNOME") != std::string::npos) {
                 install_cachyos_gnome(selected_drive);
             }
-        } else if (installation_type == "Claudemods") {
+        } else if (installation_type == "claudemods") {
             // Spitfire installations
             if (desktop_environment == "Spitfire CKGE Minimal") {
                 install_spitfire_ckge(selected_drive);

@@ -1425,7 +1425,7 @@ private:
                                         break;
 
                                                 case 7: // Desktop Environment
-                                                    // This will only be available if installation type supports desktop environments
+                                                    // Only allow changing desktop environment if Vanilla Arch is selected
                                                     if (installation_type == "Vanilla Arch") {
                                                         std::vector<std::string> desktop_options = {
                                                             "Arch TTY Grub (Complete Installation)",
@@ -1443,6 +1443,11 @@ private:
 
                                                         int desktop_choice = show_menu(desktop_options, "Select Desktop Environment");
                                                         desktop_environment = desktop_options[desktop_choice];
+                                                    } else {
+                                                        std::cout << COLOR_YELLOW << "Desktop environment is determined by the installation type selection." << COLOR_RESET << std::endl;
+                                                        std::cout << COLOR_YELLOW << "Change 'Installation Type' to modify desktop environment." << COLOR_RESET << std::endl;
+                                                        // Small delay to show message
+                                                        system("sleep 2");
                                                     }
                                                     break;
 

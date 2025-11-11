@@ -10,6 +10,8 @@
 #include <functional>
 #include <unistd.h>
 #include <fstream>
+#include <termios.h>
+#include <sys/ioctl.h>
 #include "btrfsinstallerdev.h"
 
 // Color definitions
@@ -34,6 +36,11 @@ private:
     std::string keyboard_layout;
     std::string root_password;
     std::string user_password;
+    std::string installation_type;
+    std::string desktop_environment;
+
+    // Terminal control for arrow keys
+    struct termios oldt, newt;
 
     // Function to execute commands with error handling
     int execute_command(const std::string& cmd) {
@@ -46,6 +53,75 @@ private:
             exit(1);
         }
         return status;
+    }
+
+    // Function to setup terminal for arrow key reading
+    void setup_terminal() {
+        tcgetattr(STDIN_FILENO, &oldt);
+        newt = oldt;
+        newt.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    }
+
+    // Function to restore terminal
+    void restore_terminal() {
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    }
+
+    // Function to get arrow key input
+    int get_arrow_key() {
+        int ch = getchar();
+        if (ch == 27) { // ESC
+            getchar(); // Skip [
+            ch = getchar(); // Actual key
+            return ch;
+        }
+        return ch;
+    }
+
+    // Function to display menu with selection
+    int show_menu(const std::vector<std::string>& options, const std::string& title, int selected = 0) {
+        setup_terminal();
+
+        while (true) {
+            system("clear");
+            std::cout << COLOR_CYAN;
+            std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
+            std::cout << "║ " << std::left << std::setw(60) << title << "║" << std::endl;
+            std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
+
+            for (int i = 0; i < options.size(); i++) {
+                std::cout << "║ ";
+                if (i == selected) {
+                    std::cout << COLOR_GREEN << "> " << COLOR_RESET << COLOR_CYAN;
+                } else {
+                    std::cout << "  ";
+                }
+                std::cout << std::left << std::setw(58) << options[i] << "║" << std::endl;
+            }
+
+            std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
+            std::cout << COLOR_RESET;
+            std::cout << COLOR_YELLOW << "Use ↑↓ arrows to navigate, Enter to select" << COLOR_RESET << std::endl;
+
+            int key = get_arrow_key();
+            if (key == 'A') { // Up arrow
+                selected = (selected - 1 + options.size()) % options.size();
+            } else if (key == 'B') { // Down arrow
+                selected = (selected + 1) % options.size();
+            } else if (key == 10) { // Enter
+                restore_terminal();
+                return selected;
+            }
+        }
+    }
+
+    // Function to get text input with prompt
+    std::string get_input(const std::string& prompt) {
+        std::cout << COLOR_CYAN << prompt << COLOR_RESET;
+        std::string input;
+        std::getline(std::cin, input);
+        return input;
     }
 
     // Function to extract version number (v1.0, v1.01, etc.)
@@ -252,7 +328,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods distribution installer Beta DevBranch v1.01 10-11-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods distribution installer Beta DevBranch v1.01 11-11-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Ext4 And Btrfs filesystems" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }
@@ -302,189 +378,32 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"mkinitcpio -P\"");
     }
 
-    // Function to get drive selection (Step 1)
-    void get_drive_selection() {
-        display_available_drives();
-        std::cout << COLOR_CYAN << "Enter target drive (e.g., /dev/sda): " << COLOR_RESET;
-        std::getline(std::cin, selected_drive);
-        if (!is_block_device(selected_drive)) {
-            std::cerr << COLOR_RED << "Error: " << selected_drive << " is not a valid block device" << COLOR_RESET << std::endl;
-            exit(1);
-        }
-    }
-
-    // Function to get filesystem selection (Step 2) - FIXED BTRFS CALL
-    void get_filesystem_selection() {
-        std::cout << COLOR_CYAN << "Choose filesystem type (ext4/btrfs): " << COLOR_RESET;
-        std::getline(std::cin, fs_type);
-
-        // Handle Btrfs case immediately - FIXED VERSION
-        if (fs_type == "btrfs") {
-            std::cout << COLOR_CYAN << "Starting Btrfs installer with drive: " << selected_drive << COLOR_RESET << std::endl;
-
-            // Create and run Btrfs installer PROPERLY
-            BtrfsInstaller btrfs_installer;
-            btrfs_installer.setDrive(selected_drive);  // Set the drive first
-            btrfs_installer.run();  // Then run without arguments
-
-            // BtrfsInstaller will handle everything - when it returns, we're done
-            return;
-        }
-    }
-
-    // Function to select kernel (Step 3)
-    void get_kernel_selection() {
-        while (true) {
-            std::cout << COLOR_CYAN;
-            std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
-            std::cout << "║                      Select Kernel                          ║" << std::endl;
-            std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
-            std::cout << "║  1. linux (Standard)                                        ║" << std::endl;
-            std::cout << "║  2. linux-lts (Long Term Support)                           ║" << std::endl;
-            std::cout << "║  3. linux-zen (Tuned for desktop performance)               ║" << std::endl;
-            std::cout << "║  4. linux-hardened (Security-focused)                       ║" << std::endl;
-            std::cout << "║  5. Return to Main Menu                                     ║" << std::endl;
-            std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
-            std::cout << COLOR_RESET;
-
-            std::cout << COLOR_CYAN << "Select kernel (1-5): " << COLOR_RESET;
-            std::string kernel_choice;
-            std::getline(std::cin, kernel_choice);
-
-            if (kernel_choice == "1") {
-                selected_kernel = "linux";
-                break;
-            } else if (kernel_choice == "2") {
-                selected_kernel = "linux-lts";
-                break;
-            } else if (kernel_choice == "3") {
-                selected_kernel = "linux-zen";
-                break;
-            } else if (kernel_choice == "4") {
-                selected_kernel = "linux-hardened";
-                break;
-            } else if (kernel_choice == "5") {
-                std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
-                break;
-            } else {
-                std::cout << COLOR_RED << "Invalid selection. Please enter a number between 1-5." << COLOR_RESET << std::endl;
-            }
-        }
-        std::cout << COLOR_GREEN << "Selected kernel: " << selected_kernel << COLOR_RESET << std::endl;
-    }
-
-    // Function to get new user credentials (Step 4)
-    void get_new_user_credentials() {
+    // Function to show confirmation screen
+    bool show_confirmation_screen() {
+        system("clear");
         std::cout << COLOR_CYAN;
         std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
-        std::cout << "║                    User Configuration                        ║" << std::endl;
+        std::cout << "║                  Installation Summary                       ║" << std::endl;
         std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
-        std::cout << "║  Please enter the following user details:                   ║" << std::endl;
+        std::cout << "║ " << std::left << std::setw(35) << "Drive:" << selected_drive << std::setw(23) << "" << "║" << std::endl;
+        std::cout << "║ " << std::left << std::setw(35) << "Filesystem:" << fs_type << std::setw(23) << "" << "║" << std::endl;
+        std::cout << "║ " << std::left << std::setw(35) << "Kernel:" << selected_kernel << std::setw(23) << "" << "║" << std::endl;
+        std::cout << "║ " << std::left << std::setw(35) << "Username:" << new_username << std::setw(23) << "" << "║" << std::endl;
+        std::cout << "║ " << std::left << std::setw(35) << "Timezone:" << timezone << std::setw(23) << "" << "║" << std::endl;
+        std::cout << "║ " << std::left << std::setw(35) << "Keyboard Layout:" << keyboard_layout << std::setw(23) << "" << "║" << std::endl;
+        std::cout << "║ " << std::left << std::setw(35) << "Installation Type:" << installation_type << std::setw(23) << "" << "║" << std::endl;
+        if (!desktop_environment.empty()) {
+            std::cout << "║ " << std::left << std::setw(35) << "Desktop Environment:" << desktop_environment << std::setw(23) << "" << "║" << std::endl;
+        }
+        std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
+        std::cout << "║ " << COLOR_RED << "WARNING: This will erase all data on " << selected_drive << COLOR_CYAN << "   ║" << std::endl;
         std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
         std::cout << COLOR_RESET;
 
-        // Get username
-        std::cout << COLOR_CYAN << "Enter new username: " << COLOR_RESET;
-        std::getline(std::cin, new_username);
+        std::vector<std::string> options = {"Start Installation", "Go Back to Main Menu"};
+        int choice = show_menu(options, "Confirm Installation");
 
-        // Get root password
-        std::cout << COLOR_CYAN << "Enter root password: " << COLOR_RESET;
-        std::getline(std::cin, root_password);
-
-        // Get user password
-        std::cout << COLOR_CYAN << "Enter password for user '" << new_username << "': " << COLOR_RESET;
-        std::getline(std::cin, user_password);
-
-        std::cout << COLOR_GREEN << "User credentials stored successfully!" << COLOR_RESET << std::endl;
-    }
-
-    // Function to setup timezone and keyboard (Step 5)
-    void get_timezone_keyboard_settings() {
-        // Timezone setup
-        std::cout << COLOR_CYAN;
-        std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
-        std::cout << "║                      Timezone Setup                          ║" << std::endl;
-        std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
-        std::cout << "║  1. America/New_York (US English)                           ║" << std::endl;
-        std::cout << "║  2. Europe/London (UK English)                              ║" << std::endl;
-        std::cout << "║  3. Europe/Berlin (German)                                  ║" << std::endl;
-        std::cout << "║  4. Europe/Paris (French)                                   ║" << std::endl;
-        std::cout << "║  5. Europe/Madrid (Spanish)                                 ║" << std::endl;
-        std::cout << "║  6. Europe/Rome (Italian)                                   ║" << std::endl;
-        std::cout << "║  7. Asia/Tokyo (Japanese)                                   ║" << std::endl;
-        std::cout << "║  8. Other (manual entry)                                    ║" << std::endl;
-        std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
-        std::cout << COLOR_RESET;
-
-        std::string timezone_choice;
-        std::cout << COLOR_CYAN << "Select timezone (1-8): " << COLOR_RESET;
-        std::getline(std::cin, timezone_choice);
-
-        if (timezone_choice == "1") {
-            timezone = "America/New_York";
-        } else if (timezone_choice == "2") {
-            timezone = "Europe/London";
-        } else if (timezone_choice == "3") {
-            timezone = "Europe/Berlin";
-        } else if (timezone_choice == "4") {
-            timezone = "Europe/Paris";
-        } else if (timezone_choice == "5") {
-            timezone = "Europe/Madrid";
-        } else if (timezone_choice == "6") {
-            timezone = "Europe/Rome";
-        } else if (timezone_choice == "7") {
-            timezone = "Asia/Tokyo";
-        } else if (timezone_choice == "8") {
-            std::cout << COLOR_CYAN << "Enter timezone (e.g., Europe/Berlin): " << COLOR_RESET;
-            std::getline(std::cin, timezone);
-        } else {
-            std::cout << COLOR_RED << "Invalid selection. Using default: America/New_York" << COLOR_RESET << std::endl;
-            timezone = "America/New_York";
-        }
-
-        // Keyboard layout setup
-        std::cout << COLOR_CYAN;
-        std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
-        std::cout << "║                    Keyboard Layout Setup                     ║" << std::endl;
-        std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
-        std::cout << "║  1. us (US English)                                         ║" << std::endl;
-        std::cout << "║  2. uk (UK English)                                         ║" << std::endl;
-        std::cout << "║  3. de (German)                                             ║" << std::endl;
-        std::cout << "║  4. fr (French)                                             ║" << std::endl;
-        std::cout << "║  5. es (Spanish)                                            ║" << std::endl;
-        std::cout << "║  6. it (Italian)                                            ║" << std::endl;
-        std::cout << "║  7. jp (Japanese)                                           ║" << std::endl;
-        std::cout << "║  8. Other (manual entry)                                    ║" << std::endl;
-        std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
-        std::cout << COLOR_RESET;
-
-        std::string keyboard_choice;
-        std::cout << COLOR_CYAN << "Select keyboard layout (1-8): " << COLOR_RESET;
-        std::getline(std::cin, keyboard_choice);
-
-        if (keyboard_choice == "1") {
-            keyboard_layout = "us";
-        } else if (keyboard_choice == "2") {
-            keyboard_layout = "uk";
-        } else if (keyboard_choice == "3") {
-            keyboard_layout = "de";
-        } else if (keyboard_choice == "4") {
-            keyboard_layout = "fr";
-        } else if (keyboard_choice == "5") {
-            keyboard_layout = "es";
-        } else if (keyboard_choice == "6") {
-            keyboard_layout = "it";
-        } else if (keyboard_choice == "7") {
-            keyboard_layout = "jp";
-        } else if (keyboard_choice == "8") {
-            std::cout << COLOR_CYAN << "Enter keyboard layout (e.g., br, ru, pt): " << COLOR_RESET;
-            std::getline(std::cin, keyboard_layout);
-        } else {
-            std::cout << COLOR_RED << "Invalid selection. Using default: us" << COLOR_RESET << std::endl;
-            keyboard_layout = "us";
-        }
-
-        std::cout << COLOR_GREEN << "Timezone: " << timezone << ", Keyboard: " << keyboard_layout << COLOR_RESET << std::endl;
+        return (choice == 0); // Return true if "Start Installation" selected
     }
 
     // Function to apply timezone and keyboard settings during installation
@@ -505,7 +424,6 @@ private:
         std::cout << COLOR_CYAN << "Creating user '" << new_username << "'..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"useradd -m -G wheel -s /bin/bash " + new_username + "\"");
 
-        // Set passwords using stored credentials
         std::cout << COLOR_CYAN << "Setting root password..." << COLOR_RESET << std::endl;
         execute_command("chroot /mnt /bin/bash -c \"echo 'root:" + root_password + "' | chpasswd\"");
 
@@ -630,32 +548,33 @@ private:
 
     // Function to install desktop environments
     void install_desktop(const std::string& fs_type, const std::string& drive) {
-        std::cout << COLOR_CYAN;
-        std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
-        std::cout << "║                   Desktop Environments                       ║" << std::endl;
-        std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
-        std::cout << "║  1. Arch TTY Grub (Complete Installation)                   ║" << std::endl;
-        std::cout << "║  2. GNOME                                                   ║" << std::endl;
-        std::cout << "║  3. KDE Plasma                                              ║" << std::endl;
-        std::cout << "║  4. XFCE                                                    ║" << std::endl;
-        std::cout << "║  5. LXQt                                                   ║" << std::endl;
-        std::cout << "║  6. Cinnamon                                                ║" << std::endl;
-        std::cout << "║  7. MATE                                                    ║" << std::endl;
-        std::cout << "║  8. Budgie                                                  ║" << std::endl;
-        std::cout << "║  9. i3 (tiling WM)                                          ║" << std::endl;
-        std::cout << "║ 10. Sway (Wayland tiling)                                   ║" << std::endl;
-        std::cout << "║ 11. Hyprland (Wayland)                                      ║" << std::endl;
-        std::cout << "║ 12. Return to Main Menu                                     ║" << std::endl;
-        std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
-        std::cout << COLOR_RESET;
+        std::vector<std::string> desktop_options = {
+            "Arch TTY Grub (Complete Installation)",
+            "GNOME",
+            "KDE Plasma",
+            "XFCE",
+            "LXQt",
+            "Cinnamon",
+            "MATE",
+            "Budgie",
+            "i3 (tiling WM)",
+            "Sway (Wayland tiling)",
+            "Hyprland (Wayland)",
+            "Return to Main Menu"
+        };
 
-        std::cout << COLOR_CYAN << "Select desktop environment (1-12): " << COLOR_RESET;
-        std::string desktop_choice;
-        std::getline(std::cin, desktop_choice);
+        int desktop_choice = show_menu(desktop_options, "Select Desktop Environment");
 
-        if (desktop_choice == "1") {
+        if (desktop_choice == 11) {
+            std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
+            return;
+        }
+
+        desktop_environment = desktop_options[desktop_choice];
+
+        if (desktop_choice == 0) {
             install_arch_tty_grub(drive);
-        } else if (desktop_choice == "2") {
+        } else if (desktop_choice == 1) {
             std::cout << COLOR_CYAN << "Installing GNOME Desktop..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -678,7 +597,7 @@ private:
             std::cout << COLOR_GREEN << "GNOME installation completed!" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "3") {
+        } else if (desktop_choice == 2) {
             std::cout << COLOR_CYAN << "Installing KDE Plasma..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -701,7 +620,7 @@ private:
             std::cout << COLOR_GREEN << "KDE Plasma installation completed!" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "4") {
+        } else if (desktop_choice == 3) {
             std::cout << COLOR_CYAN << "Installing XFCE..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -724,7 +643,7 @@ private:
             std::cout << COLOR_GREEN << "XFCE installation completed!" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "5") {
+        } else if (desktop_choice == 4) {
             std::cout << COLOR_CYAN << "Installing LXQt..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -747,7 +666,7 @@ private:
             std::cout << COLOR_GREEN << "LXQt installation completed!" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "6") {
+        } else if (desktop_choice == 5) {
             std::cout << COLOR_CYAN << "Installing Cinnamon..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -770,7 +689,7 @@ private:
             std::cout << COLOR_GREEN << "Cinnamon installation completed!" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "7") {
+        } else if (desktop_choice == 6) {
             std::cout << COLOR_CYAN << "Installing MATE..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -784,7 +703,6 @@ private:
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable lightdm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
 
-
             execute_command("mount " + efi_part + " /mnt/boot/efi");
 
             install_grub_ext4(drive);
@@ -794,7 +712,7 @@ private:
             std::cout << COLOR_GREEN << "MATE installation completed!" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "8") {
+        } else if (desktop_choice == 7) {
             std::cout << COLOR_CYAN << "Installing Budgie..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -817,7 +735,7 @@ private:
             std::cout << COLOR_GREEN << "Budgie installation completed!" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "9") {
+        } else if (desktop_choice == 8) {
             std::cout << COLOR_CYAN << "Installing i3 (tiling WM)..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -840,7 +758,7 @@ private:
             std::cout << COLOR_GREEN << "i3 installation completed!" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "10") {
+        } else if (desktop_choice == 9) {
             std::cout << COLOR_CYAN << "Installing Sway (Wayland tiling)..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -863,7 +781,7 @@ private:
             std::cout << COLOR_GREEN << "Sway installation completed!" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "11") {
+        } else if (desktop_choice == 10) {
             std::cout << COLOR_PURPLE << "Installing Hyprland (Modern Wayland Compositor)..." << COLOR_RESET << std::endl;
 
             prepare_target_partitions(drive, "ext4");
@@ -886,10 +804,6 @@ private:
             std::cout << COLOR_PURPLE << "Hyprland installed! Note: You may need to configure ~/.config/hypr/hyprland.conf" << COLOR_RESET << std::endl;
 
             prompt_reboot();
-        } else if (desktop_choice == "12") {
-            std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
-        } else {
-            std::cout << COLOR_RED << "Invalid option. Returning to main menu." << COLOR_RESET << std::endl;
         }
     }
 
@@ -970,34 +884,30 @@ private:
 
     // Function to display Cachyos menu
     void display_cachyos_menu(const std::string& fs_type, const std::string& drive) {
-        while (true) {
-            std::cout << COLOR_CYAN;
-            std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
-            std::cout << "║                    CachyOS Options                          ║" << std::endl;
-            std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
-            std::cout << "║  1. Install CachyOS TTY Grub                               ║" << std::endl;
-            std::cout << "║  2. Install CachyOS KDE Grub                               ║" << std::endl;
-            std::cout << "║  3. Install CachyOS GNOME Grub                             ║" << std::endl;
-            std::cout << "║  4. Return to Main Menu                                    ║" << std::endl;
-            std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
-            std::cout << COLOR_RESET;
+        std::vector<std::string> cachyos_options = {
+            "Install CachyOS TTY Grub",
+            "Install CachyOS KDE Grub",
+            "Install CachyOS GNOME Grub",
+            "Return to Main Menu"
+        };
 
-            std::cout << COLOR_CYAN << "Select CachyOS option (1-4): " << COLOR_RESET;
-            std::string cachyos_choice;
-            std::getline(std::cin, cachyos_choice);
+        int cachyos_choice = show_menu(cachyos_options, "CachyOS Options");
 
-            if (cachyos_choice == "1") {
+        if (cachyos_choice == 3) {
+            std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
+            return;
+        }
+
+        switch(cachyos_choice) {
+            case 0:
                 install_cachyos_tty_grub(drive);
-            } else if (cachyos_choice == "2") {
-                install_cachyos_kde(drive);
-            } else if (cachyos_choice == "3") {
-                install_cachyos_gnome(drive);
-            } else if (cachyos_choice == "4") {
-                std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
                 break;
-            } else {
-                std::cout << COLOR_RED << "Invalid option. Please try again." << COLOR_RESET << std::endl;
-            }
+            case 1:
+                install_cachyos_kde(drive);
+                break;
+            case 2:
+                install_cachyos_gnome(drive);
+                break;
         }
     }
 
@@ -1056,7 +966,6 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
-
 
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
@@ -1122,7 +1031,6 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
 
-
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
 
@@ -1186,7 +1094,6 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
-
 
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
@@ -1252,7 +1159,6 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
 
-
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x cleanup.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./cleanup.sh'\"");
 
@@ -1263,91 +1169,346 @@ private:
 
     // Function to display Claudemods Distribution menu
     void display_claudemods_menu(const std::string& fs_type, const std::string& drive) {
+        std::vector<std::string> claudemods_options = {
+            "Install Spitfire CKGE",
+            "Install Apex CKGE",
+            "Install Spitfire CKGE Full",
+            "Install Apex CKGE Full",
+            "Install Spitfire CKGE Minimal Dev",
+            "Install Apex CKGE Minimal Dev",
+            "Install Spitfire CKGE Full Dev",
+            "Install Apex CKGE Full Dev",
+            "Return to Main Menu"
+        };
+
+        int claudemods_choice = show_menu(claudemods_options, "Claudemods Distribution Options");
+
+        if (claudemods_choice == 8) {
+            std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
+            return;
+        }
+
+        switch(claudemods_choice) {
+            case 0: install_spitfire_ckge(drive); break;
+            case 1: install_apex_ckge(drive); break;
+            case 2: install_spitfire_ckge_full(drive); break;
+            case 3: install_apex_ckge_full(drive); break;
+            case 4: install_spitfire_ckge_minimal_dev(drive); break;
+            case 5: install_apex_ckge_minimal_dev(drive); break;
+            case 6: install_spitfire_ckge_full_dev(drive); break;
+            case 7: install_apex_ckge_full_dev(drive); break;
+        }
+    }
+
+    // Function to display main menu with arrow keys
+    void main_menu() {
+        // Initialize default values
+        if (selected_drive.empty()) selected_drive = "Not set";
+        if (fs_type.empty()) fs_type = "Not set";
+        if (selected_kernel.empty()) selected_kernel = "Not set";
+        if (new_username.empty()) new_username = "Not set";
+        if (timezone.empty()) timezone = "Not set";
+        if (keyboard_layout.empty()) keyboard_layout = "Not set";
+        if (installation_type.empty()) installation_type = "Not set";
+        desktop_environment = "Not set";
+
         while (true) {
-            std::cout << COLOR_CYAN;
-            std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
-            std::cout << "║               Claudemods Distribution Options               ║" << std::endl;
-            std::cout << "╠══════════════════════════════════════════════════════════════╣" << std::endl;
-            std::cout << "║  1. Install Spitfire CKGE                                  ║" << std::endl;
-            std::cout << "║  2. Install Apex CKGE                                      ║" << std::endl;
-            std::cout << "║  3. Install Spitfire CKGE Full                             ║" << std::endl;
-            std::cout << "║  4. Install Apex CKGE Full                                 ║" << std::endl;
-            std::cout << "║  5. Install Spitfire CKGE Minimal Dev                      ║" << std::endl;
-            std::cout << "║  6. Install Apex CKGE Minimal Dev                          ║" << std::endl;
-            std::cout << "║  7. Install Spitfire CKGE Full Dev                         ║" << std::endl;
-            std::cout << "║  8. Install Apex CKGE Full Dev                             ║" << std::endl;
-            std::cout << "║  9. Return to Main Menu                                    ║" << std::endl;
-            std::cout << "╚══════════════════════════════════════════════════════════════╝" << std::endl;
-            std::cout << COLOR_RESET;
+            std::vector<std::string> main_options = {
+                "Drive: " + selected_drive,
+                "Filesystem: " + fs_type,
+                "Kernel: " + selected_kernel,
+                "Username: " + new_username,
+                "Timezone: " + timezone,
+                "Keyboard: " + keyboard_layout,
+                "Installation Type: " + installation_type,
+                "Desktop Environment: " + desktop_environment,
+                "Confirm and Install",
+                "Reboot System",
+                "Exit"
+            };
 
-            std::cout << COLOR_CYAN << "Select Claudemods option (1-9): " << COLOR_RESET;
-            std::string claudemods_choice;
-            std::getline(std::cin, claudemods_choice);
+            int choice = show_menu(main_options, "Arch Linux Installer - Main Menu");
 
-            if (claudemods_choice == "1") {
-                install_spitfire_ckge(drive);
-            } else if (claudemods_choice == "2") {
-                install_apex_ckge(drive);
-            } else if (claudemods_choice == "3") {
-                install_spitfire_ckge_full(drive);
-            } else if (claudemods_choice == "4") {
-                install_apex_ckge_full(drive);
-            } else if (claudemods_choice == "5") {
-                install_spitfire_ckge_minimal_dev(drive);
-            } else if (claudemods_choice == "6") {
-                install_apex_ckge_minimal_dev(drive);
-            } else if (claudemods_choice == "7") {
-                install_spitfire_ckge_full_dev(drive);
-            } else if (claudemods_choice == "8") {
-                install_apex_ckge_full_dev(drive);
-            } else if (claudemods_choice == "9") {
-                std::cout << COLOR_CYAN << "Returning to main menu..." << COLOR_RESET << std::endl;
+            switch(choice) {
+                case 0: // Drive
+                    display_available_drives();
+                    selected_drive = get_input("Enter target drive (e.g., /dev/sda): ");
+                    if (!is_block_device(selected_drive)) {
+                        std::cerr << COLOR_RED << "Error: " << selected_drive << " is not a valid block device" << COLOR_RESET << std::endl;
+                        selected_drive = "Invalid - try again";
+                    }
+                    break;
+
+                case 1: // Filesystem
+                {
+                    std::vector<std::string> fs_options = {"ext4", "btrfs"};
+                    int fs_choice = show_menu(fs_options, "Select Filesystem Type");
+                    fs_type = fs_options[fs_choice];
+
+                    // In the filesystem selection case (around line 1251):
+                    if (fs_type == "btrfs") {
+                        std::cout << COLOR_CYAN << "Starting Btrfs installer with drive: " << selected_drive << COLOR_RESET << std::endl;
+
+                        // Create command line arguments for BtrfsInstaller
+                        int argc = 2;
+                        char arg1[] = "btrfsinstaller";
+                        char* arg2 = const_cast<char*>(selected_drive.c_str());
+                        char* argv[] = {arg1, arg2, nullptr};
+
+                        // Create and run BtrfsInstaller with correct arguments
+                        BtrfsInstaller btrfs_installer;
+                        btrfs_installer.run(argc, argv);
+
+                        // BtrfsInstaller will handle everything - when it returns, we're done
+                        return;
+                    }
+                }
                 break;
-            } else {
-                std::cout << COLOR_RED << "Invalid option. Please try again." << COLOR_RESET << std::endl;
+
+                case 2: // Kernel
+                {
+                    std::vector<std::string> kernel_options = {
+                        "linux (Standard)",
+                        "linux-lts (Long Term Support)",
+                        "linux-zen (Tuned for desktop performance)",
+                        "linux-hardened (Security-focused)"
+                    };
+                    int kernel_choice = show_menu(kernel_options, "Select Kernel");
+
+                    switch(kernel_choice) {
+                        case 0: selected_kernel = "linux"; break;
+                        case 1: selected_kernel = "linux-lts"; break;
+                        case 2: selected_kernel = "linux-zen"; break;
+                        case 3: selected_kernel = "linux-hardened"; break;
+                    }
+                }
+                break;
+
+                        case 3: // Username
+                            new_username = get_input("Enter new username: ");
+                            root_password = get_input("Enter root password: ");
+                            user_password = get_input("Enter password for user '" + new_username + "': ");
+                            break;
+
+                        case 4: // Timezone
+                        {
+                            std::vector<std::string> timezone_options = {
+                                "America/New_York (US English)",
+                                "Europe/London (UK English)",
+                                "Europe/Berlin (German)",
+                                "Europe/Paris (French)",
+                                "Europe/Madrid (Spanish)",
+                                "Europe/Rome (Italian)",
+                                "Asia/Tokyo (Japanese)",
+                                "Other (manual entry)"
+                            };
+
+                            int timezone_choice = show_menu(timezone_options, "Select Timezone");
+
+                            switch(timezone_choice) {
+                                case 0: timezone = "America/New_York"; break;
+                                case 1: timezone = "Europe/London"; break;
+                                case 2: timezone = "Europe/Berlin"; break;
+                                case 3: timezone = "Europe/Paris"; break;
+                                case 4: timezone = "Europe/Madrid"; break;
+                                case 5: timezone = "Europe/Rome"; break;
+                                case 6: timezone = "Asia/Tokyo"; break;
+                                case 7: timezone = get_input("Enter timezone (e.g., Europe/Berlin): "); break;
+                            }
+                        }
+                        break;
+
+                                case 5: // Keyboard
+                                {
+                                    std::vector<std::string> keyboard_options = {
+                                        "us (US English)",
+                                        "uk (UK English)",
+                                        "de (German)",
+                                        "fr (French)",
+                                        "es (Spanish)",
+                                        "it (Italian)",
+                                        "jp (Japanese)",
+                                        "Other (manual entry)"
+                                    };
+
+                                    int keyboard_choice = show_menu(keyboard_options, "Select Keyboard Layout");
+
+                                    switch(keyboard_choice) {
+                                        case 0: keyboard_layout = "us"; break;
+                                        case 1: keyboard_layout = "uk"; break;
+                                        case 2: keyboard_layout = "de"; break;
+                                        case 3: keyboard_layout = "fr"; break;
+                                        case 4: keyboard_layout = "es"; break;
+                                        case 5: keyboard_layout = "it"; break;
+                                        case 6: keyboard_layout = "jp"; break;
+                                        case 7: keyboard_layout = get_input("Enter keyboard layout (e.g., br, ru, pt): "); break;
+                                    }
+                                }
+                                break;
+
+                                        case 6: // Installation Type
+                                        {
+                                            std::vector<std::string> install_options = {
+                                                "Vanilla Arch Desktop",
+                                                "CachyOS",
+                                                "Claudemods Distribution"
+                                            };
+
+                                            int install_choice = show_menu(install_options, "Select Installation Type");
+
+                                            switch(install_choice) {
+                                                case 0:
+                                                    installation_type = "Vanilla Arch";
+                                                    // Show desktop environment selection for Vanilla Arch
+                                                    {
+                                                        std::vector<std::string> desktop_options = {
+                                                            "Arch TTY Grub (Complete Installation)",
+                                                            "GNOME",
+                                                            "KDE Plasma",
+                                                            "XFCE",
+                                                            "LXQt",
+                                                            "Cinnamon",
+                                                            "MATE",
+                                                            "Budgie",
+                                                            "i3 (tiling WM)",
+                                                            "Sway (Wayland tiling)",
+                                                            "Hyprland (Wayland)"
+                                                        };
+
+                                                        int desktop_choice = show_menu(desktop_options, "Select Desktop Environment");
+                                                        desktop_environment = desktop_options[desktop_choice];
+                                                    }
+                                                    break;
+                                                case 1:
+                                                    installation_type = "CachyOS";
+                                                    // Show CachyOS options
+                                                    {
+                                                        std::vector<std::string> cachyos_options = {
+                                                            "CachyOS TTY Grub",
+                                                            "CachyOS KDE Grub",
+                                                            "CachyOS GNOME Grub"
+                                                        };
+
+                                                        int cachyos_choice = show_menu(cachyos_options, "Select CachyOS Variant");
+                                                        desktop_environment = cachyos_options[cachyos_choice];
+                                                    }
+                                                    break;
+                                                case 2:
+                                                    installation_type = "Claudemods";
+                                                    // Show Claudemods options
+                                                    {
+                                                        std::vector<std::string> claudemods_options = {
+                                                            "Spitfire CKGE",
+                                                            "Apex CKGE",
+                                                            "Spitfire CKGE Full",
+                                                            "Apex CKGE Full",
+                                                            "Spitfire CKGE Minimal Dev",
+                                                            "Apex CKGE Minimal Dev",
+                                                            "Spitfire CKGE Full Dev",
+                                                            "Apex CKGE Full Dev"
+                                                        };
+
+                                                        int claudemods_choice = show_menu(claudemods_options, "Select Claudemods Variant");
+                                                        desktop_environment = claudemods_options[claudemods_choice];
+                                                    }
+                                                    break;
+                                            }
+                                        }
+                                        break;
+
+                                                case 7: // Desktop Environment
+                                                    // This will only be available if installation type supports desktop environments
+                                                    if (installation_type == "Vanilla Arch") {
+                                                        std::vector<std::string> desktop_options = {
+                                                            "Arch TTY Grub (Complete Installation)",
+                                                            "GNOME",
+                                                            "KDE Plasma",
+                                                            "XFCE",
+                                                            "LXQt",
+                                                            "Cinnamon",
+                                                            "MATE",
+                                                            "Budgie",
+                                                            "i3 (tiling WM)",
+                                                            "Sway (Wayland tiling)",
+                                                            "Hyprland (Wayland)"
+                                                        };
+
+                                                        int desktop_choice = show_menu(desktop_options, "Select Desktop Environment");
+                                                        desktop_environment = desktop_options[desktop_choice];
+                                                    }
+                                                    break;
+
+                                                case 8: // Confirm and Install
+                                                    if (show_confirmation_screen()) {
+                                                        start_installation();
+                                                    }
+                                                    break;
+
+                                                case 9: // Reboot
+                                                    std::cout << COLOR_GREEN << "Rebooting system..." << COLOR_RESET << std::endl;
+                                                    execute_command("sudo reboot");
+                                                    break;
+
+                                                case 10: // Exit
+                                                    std::cout << COLOR_GREEN << "Exiting. Goodbye!" << COLOR_RESET << std::endl;
+                                                    exit(0);
+                                                    break;
             }
         }
     }
 
-    // Function to display main menu
-    void main_menu() {
-        while (true) {
-            std::cout << COLOR_CYAN;
-            std::cout << "╔══════════════════════════════════════╗" << std::endl;
-            std::cout << "║              Main Menu               ║" << std::endl;
-            std::cout << "╠══════════════════════════════════════╣" << std::endl;
-            std::cout << "║ 1. Install Vanilla Arch Desktop      ║" << std::endl;
-            std::cout << "║ 2. Vanilla Cachyos Options           ║" << std::endl;
-            std::cout << "║ 3. Claudemods Distribution Options   ║" << std::endl;
-            std::cout << "║ 4. Reboot System                     ║" << std::endl;
-            std::cout << "║ 5. Exit                              ║" << std::endl;
-            std::cout << "╚══════════════════════════════════════╝" << std::endl;
-            std::cout << COLOR_RESET;
+    // Function to start the actual installation based on selections
+    void start_installation() {
+        std::cout << COLOR_GREEN << "Starting installation with selected options..." << COLOR_RESET << std::endl;
 
-            std::cout << COLOR_CYAN << "Select an option (1-5): " << COLOR_RESET;
-            std::string choice;
-            std::getline(std::cin, choice);
+        // Check if all required fields are set
+        if (selected_drive == "Not set" || selected_drive.empty()) {
+            std::cerr << COLOR_RED << "Error: Drive not selected" << COLOR_RESET << std::endl;
+            return;
+        }
 
-            if (choice == "1") {
-                install_desktop(fs_type, selected_drive);
-            } else if (choice == "2") {
-                display_cachyos_menu(fs_type, selected_drive);
-            } else if (choice == "3") {
-                display_claudemods_menu(fs_type, selected_drive);
-            } else if (choice == "4") {
-                std::cout << COLOR_GREEN << "Rebooting system..." << COLOR_RESET << std::endl;
-                execute_command("sudo reboot");
-            } else if (choice == "5") {
-                std::cout << COLOR_GREEN << "Exiting. Goodbye!" << COLOR_RESET << std::endl;
-                exit(0);
+        if (installation_type == "Vanilla Arch") {
+            if (desktop_environment.find("Arch TTY Grub") != std::string::npos) {
+                install_arch_tty_grub(selected_drive);
+            } else if (desktop_environment.find("GNOME") != std::string::npos) {
+                install_desktop("ext4", selected_drive);
             } else {
-                std::cout << COLOR_RED << "Invalid option. Please try again." << COLOR_RESET << std::endl;
+                install_desktop("ext4", selected_drive);
             }
-
-            std::cout << std::endl;
-            std::cout << COLOR_YELLOW << "Press Enter to continue..." << COLOR_RESET;
-            std::cin.ignore(); // Clear the buffer
-            std::getline(std::cin, choice); // Wait for Enter
+        } else if (installation_type == "CachyOS") {
+            if (desktop_environment.find("TTY Grub") != std::string::npos) {
+                install_cachyos_tty_grub(selected_drive);
+            } else if (desktop_environment.find("KDE") != std::string::npos) {
+                install_cachyos_kde(selected_drive);
+            } else if (desktop_environment.find("GNOME") != std::string::npos) {
+                install_cachyos_gnome(selected_drive);
+            }
+        } else if (installation_type == "Claudemods") {
+            if (desktop_environment.find("Spitfire CKGE") != std::string::npos) {
+                if (desktop_environment.find("Full") != std::string::npos) {
+                    if (desktop_environment.find("Dev") != std::string::npos) {
+                        install_spitfire_ckge_full_dev(selected_drive);
+                    } else {
+                        install_spitfire_ckge_full(selected_drive);
+                    }
+                } else if (desktop_environment.find("Minimal Dev") != std::string::npos) {
+                    install_spitfire_ckge_minimal_dev(selected_drive);
+                } else {
+                    install_spitfire_ckge(selected_drive);
+                }
+            } else if (desktop_environment.find("Apex CKGE") != std::string::npos) {
+                if (desktop_environment.find("Full") != std::string::npos) {
+                    if (desktop_environment.find("Dev") != std::string::npos) {
+                        install_apex_ckge_full_dev(selected_drive);
+                    } else {
+                        install_apex_ckge_full(selected_drive);
+                    }
+                } else if (desktop_environment.find("Minimal Dev") != std::string::npos) {
+                    install_apex_ckge_minimal_dev(selected_drive);
+                } else {
+                    install_apex_ckge(selected_drive);
+                }
+            }
         }
     }
 
@@ -1362,22 +1523,7 @@ public:
 
         display_header();
 
-        // Step 1: Drive selection
-        get_drive_selection();
-
-        // Step 2: Filesystem selection
-        get_filesystem_selection();
-
-        // Step 3: Kernel selection
-        get_kernel_selection();
-
-        // Step 4: User credentials
-        get_new_user_credentials();
-
-        // Step 5: Timezone and keyboard
-        get_timezone_keyboard_settings();
-
-        // Show main menu for ext4
+        // Show main menu with arrow key navigation
         main_menu();
     }
 };

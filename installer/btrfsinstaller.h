@@ -504,6 +504,8 @@ private:
         setup_btrfs_subvolumes(root_part);
 
         execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+        
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
         execute_command("pacstrap /mnt base " + selected_kernel + " linux-firmware grub efibootmgr os-prober sudo vim nano bash-completion networkmanager");
 
@@ -561,6 +563,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base gnome gnome-extra gdm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -590,6 +594,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -619,6 +625,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base xfce4 xfce4-goodies lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -648,6 +656,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base lxqt sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -677,6 +687,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base cinnamon lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -706,6 +718,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base mate mate-extra lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -735,6 +749,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base budgie-desktop lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -764,6 +780,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base i3-wm i3status i3lock dmenu lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -793,6 +811,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base sway swaybg waybar wofi lightdm lightdm-gtk-greeter grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -822,6 +842,8 @@ private:
             setup_btrfs_subvolumes(root_part);
 
             execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+            
+            execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
             execute_command("pacstrap /mnt base hyprland waybar rofi wl-clipboard sddm grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
@@ -891,8 +913,7 @@ private:
 
         change_username("btrfs", drive);
 
-        std::cout << COLOR_GREEN << "CachyOS KDE Part 1 installation completed!" << COLOR_RESET << std::endl;
-        std::cout << COLOR_GREEN << " For CachyOS KDE Part 2 installation Please Reboot And login To Run Next Script!" << COLOR_RESET << std::endl;
+        std::cout << COLOR_GREEN << "CachyOS KDE installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();
     }

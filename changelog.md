@@ -1,21 +1,15 @@
-main branch v1.0 11-11-2025
+# Spitfire ISO Builder
 
-claudemods options fixed slight error with .img name 
+## Main branch v1.0 — 11-11-2025
+- Claudemods: fixed slight error with `.img` name  
+- Arch: fixed missing `vconsole.conf`  
+- Note: Spitfire uses Apex as base before conversion. All builds tested and working.
 
-arch options fixed slight error with missing file needed vconsole.conf
+## Main branch v1.0 — 07-11-2025
+- New ~600 MB ISO created  
+- May need updates after testing scripts/updater  
+- Serves as current base
 
-please understand that spitfire uses apex as a base before converting all works and has been tested
-
-
-main branch v1.0 07-11-2025
-
-new 600mb iso made might need to be updated after testing scripts updater but atleast for now its a base
-
-
-
-
-main brnach v1.0 before 07-11-2025
-
-initial released nearly was scrapped to bugs and problems 
-
-much work to make spitfire apex and arch work before proceeding to others
+## Main branch v1.0 — before 07-11-2025
+- Initial release — nearly scrapped due to bugs  
+- Significant work to get Spitfire, Apex, and Arch working together before proceeding

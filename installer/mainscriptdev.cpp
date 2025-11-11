@@ -916,7 +916,7 @@ private:
 
     // Function to install Spitfire CKGE
     void install_spitfire_ckge(const std::string& drive) {
-        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Minimal..." << COLOR_RESET << std::endl;
+        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Minimal This Uses apex.img before converting..." << COLOR_RESET << std::endl;
 
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";

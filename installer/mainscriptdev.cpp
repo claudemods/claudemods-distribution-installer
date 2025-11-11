@@ -42,6 +42,20 @@ private:
     // Terminal control for arrow keys
     struct termios oldt, newt;
 
+    // Function to display header
+    void display_header() {
+        std::cout << COLOR_RED;
+        std::cout << "░█████╗░██╗░░░░░░█████╗░██║░░░██╗██████╗░███████╗███╗░░░███╗░█████╗░██████╗░░██████╗" << std::endl;
+        std::cout << "██╔══██╗██║░░░░░██╔══██╗██║░░░██║██╔══██╗██╔════╝████╗░████║██╔══██╗██╔══██╗██╔════╝" << std::endl;
+        std::cout << "██║░░╚═╝██║░░░░░███████║██║░░░██║██║░░██║█████╗░░██╔████╔██║██║░░██║██║░░██║╚█████╗░" << std::endl;
+        std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
+        std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
+        std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
+        std::cout << COLOR_CYAN << "claudemods distribution installer Beta DevBranch v1.01 11-11-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "Supports Ext4 And Btrfs filesystems" << COLOR_RESET << std::endl;
+        std::cout << std::endl;
+    }
+
     // Function to execute commands with error handling
     int execute_command(const std::string& cmd) {
         std::cout << COLOR_CYAN;
@@ -85,6 +99,8 @@ private:
 
         while (true) {
             system("clear");
+            display_header(); // Display ASCII art and custom text at all times
+
             std::cout << COLOR_CYAN;
             std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
             std::cout << "║ " << std::left << std::setw(60) << title << "║" << std::endl;
@@ -319,20 +335,6 @@ private:
         std::cout << COLOR_RESET << std::endl;
     }
 
-    // Function to display header
-    void display_header() {
-        std::cout << COLOR_RED;
-        std::cout << "░█████╗░██╗░░░░░░█████╗░██║░░░██╗██████╗░███████╗███╗░░░███╗░█████╗░██████╗░░██████╗" << std::endl;
-        std::cout << "██╔══██╗██║░░░░░██╔══██╗██║░░░██║██╔══██╗██╔════╝████╗░████║██╔══██╗██╔══██╗██╔════╝" << std::endl;
-        std::cout << "██║░░╚═╝██║░░░░░███████║██║░░░██║██║░░██║█████╗░░██╔████╔██║██║░░██║██║░░██║╚█████╗░" << std::endl;
-        std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
-        std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
-        std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods distribution installer Beta DevBranch v1.01 11-11-2025" << COLOR_RESET << std::endl;
-        std::cout << COLOR_CYAN << "Supports Ext4 And Btrfs filesystems" << COLOR_RESET << std::endl;
-        std::cout << std::endl;
-    }
-
     // Function to prepare target partitions
     void prepare_target_partitions(const std::string& drive, const std::string& fs_type) {
         execute_command("umount -f " + drive + "* 2>/dev/null || true");
@@ -381,6 +383,7 @@ private:
     // Function to show confirmation screen
     bool show_confirmation_screen() {
         system("clear");
+        display_header(); // Display ASCII art and custom text
         std::cout << COLOR_CYAN;
         std::cout << "╔══════════════════════════════════════════════════════════════╗" << std::endl;
         std::cout << "║                  Installation Summary                       ║" << std::endl;
@@ -1171,12 +1174,12 @@ private:
     void display_claudemods_menu(const std::string& fs_type, const std::string& drive) {
         std::vector<std::string> claudemods_options = {
             "Install Spitfire CKGE",
-            "Install Apex CKGE",
             "Install Spitfire CKGE Full",
-            "Install Apex CKGE Full",
             "Install Spitfire CKGE Minimal Dev",
-            "Install Apex CKGE Minimal Dev",
             "Install Spitfire CKGE Full Dev",
+            "Install Apex CKGE",
+            "Install Apex CKGE Full",
+            "Install Apex CKGE Minimal Dev",
             "Install Apex CKGE Full Dev",
             "Return to Main Menu"
         };
@@ -1190,12 +1193,12 @@ private:
 
         switch(claudemods_choice) {
             case 0: install_spitfire_ckge(drive); break;
-            case 1: install_apex_ckge(drive); break;
-            case 2: install_spitfire_ckge_full(drive); break;
-            case 3: install_apex_ckge_full(drive); break;
-            case 4: install_spitfire_ckge_minimal_dev(drive); break;
-            case 5: install_apex_ckge_minimal_dev(drive); break;
-            case 6: install_spitfire_ckge_full_dev(drive); break;
+            case 1: install_spitfire_ckge_full(drive); break;
+            case 2: install_spitfire_ckge_minimal_dev(drive); break;
+            case 3: install_spitfire_ckge_full_dev(drive); break;
+            case 4: install_apex_ckge(drive); break;
+            case 5: install_apex_ckge_full(drive); break;
+            case 6: install_apex_ckge_minimal_dev(drive); break;
             case 7: install_apex_ckge_full_dev(drive); break;
         }
     }
@@ -1399,12 +1402,12 @@ private:
                                                     {
                                                         std::vector<std::string> claudemods_options = {
                                                             "Spitfire CKGE",
-                                                            "Apex CKGE",
                                                             "Spitfire CKGE Full",
-                                                            "Apex CKGE Full",
                                                             "Spitfire CKGE Minimal Dev",
-                                                            "Apex CKGE Minimal Dev",
                                                             "Spitfire CKGE Full Dev",
+                                                            "Apex CKGE",
+                                                            "Apex CKGE Full",
+                                                            "Apex CKGE Minimal Dev",
                                                             "Apex CKGE Full Dev"
                                                         };
 

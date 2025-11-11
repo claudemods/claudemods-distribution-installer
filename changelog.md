@@ -1,8 +1,8 @@
 # Spitfire ISO Builder
 
 ## Main branch v1.0 — 11-11-2025
-- Claudemods: fixed slight error with `.img` name  
-- Arch: fixed missing `vconsole.conf`  
+- claudemods Options: fixed slight error with `.img` name  
+- Arch Options: fixed missing `vconsole.conf`  
 - Note: Spitfire uses Apex as base before conversion. All builds tested and working.
 
 ## Main branch v1.0 — 07-11-2025

@@ -95,9 +95,14 @@ print_info "Configuring Fish color scheme..."
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /home/$TARGET_USER/.local/share/konsole
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/claudemods-cyan.profile /home/$TARGET_USER/.local/share/konsole
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/konsolerc /home/$TARGET_USER/.config
+sudo -S chsh -s $(which fish)
+sudo chmod +X /home/$USER/.config/fish/config.fish
 print_status "Fish configuration applied"
 
 print_info "Apply Cachyos Kde Theme..."
+sudo chown $TARGET_USER:$TARGET_USER /home
+sudo chown $TARGET_USER:$TARGET_USER /home/$TARGET_USER
+sed -i '/^\[Desktop Entry\]/,/^\[/ s/^DefaultProfile=.*/DefaultProfile=claudemods-cyan.profile/' ~/.config/konsolerc
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/wallpaperupdated.desktop /home/$TARGET_USER/.config/autostart
 sudo -S chmod +x /home/$TARGET_USER/.config/autostart/wallpaperupdated.desktop
 sudo -S chown $TARGET_USER /home/$TARGET_USER/.config/autostart/wallpaperupdated.desktop

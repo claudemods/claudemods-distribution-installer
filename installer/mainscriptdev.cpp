@@ -968,7 +968,10 @@ private:
         // Use execute_cd_command for cd commands
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/desktopminimal.img");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-arch-systemtool/Arch-Systemtool.zip");
         execute_command("unsquashfs -f -d /mnt /mnt/desktopminimal.img");
+        execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
+        execute_command("unsquashfs -f -d /mnt/opt /mnt/Arch-Systemtool.img");
         execute_command("mv /mnt/cachyos /mnt/home/" + new_username);
         execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /mnt/etc");
         execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /etc");
@@ -979,6 +982,8 @@ private:
         execute_command("mkdir -p /mnt/boot");
         execute_command("mkdir -p /mnt/boot/grub");
         execute_command("touch /mnt/boot/grub/grub.cfg.new");
+        execute_command("rm -rf /mnt/Arch-Systemtool.zip");
+        execute_command("rm -rf /mnt/desktopminimal.img");
         execute_command("pacman -Sy");
 
         execute_command("pacstrap /mnt claudemods-desktop");

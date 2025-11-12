@@ -979,7 +979,7 @@ private:
         
 
         execute_command("chroot /mnt /bin/bash -c \"pacman -Sy\"")
-        execute_command("chroot /mnt /bin/bash -c \"pacman -S claudemods-desktop --disable-download-timeout\"")
+        execute_command("chroot /mnt /bin/bash -c \"pacman -S claudemods-desktop --disable-download-timeout\"");
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
@@ -987,7 +987,7 @@ private:
         
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktopupdated.sh /mnt/home/$USER/.config/Arch-Systemtool");
         execute_command("chmod +x /mnt/home/$USER/.config/Arch-Systemtool/desktopupdated.sh");
-        execute_command("chroot /mnt /bin/bash -c \"chown -R " + new_username + ":" + new_username + " /home/" + new_username + "\"")
+        execute_command("chroot /mnt /bin/bash -c \"chown -R " + new_username + ":" + new_username + " /home/" + new_username + "\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");

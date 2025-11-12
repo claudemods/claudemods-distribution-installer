@@ -978,7 +978,7 @@ private:
 
         
 
-        execute_command("chroot /mnt /bin/bash -c \"pacman -Sy\"")
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Sy\"");
         execute_command("chroot /mnt /bin/bash -c \"pacman -S claudemods-desktop --disable-download-timeout\"");
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");

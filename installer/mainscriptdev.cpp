@@ -1112,17 +1112,17 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh " + new_username + "'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm phonon-qt6'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm breeze-gtk'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm kcoreaddons'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm kconfig'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm karchive kconfig'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm raptor'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm poppler-glib'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm harfbuzz-icu'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm ark karchive plasma-desktop dolphin kate konsole attica knewstuff discover'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Sy'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -S --noconfirm kdedevpackages kate'\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm phonon-qt6\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm breeze-gtk\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm kcoreaddons\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm kconfig\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm karchive kconfig\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm raptor\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm poppler-glib\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm harfbuzz-icu\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm ark karchive plasma-desktop dolphin kate konsole attica knewstuff discover\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Sy\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -S --noconfirm kdedevpackages kate\"");
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal Dev installation completed!" << COLOR_RESET << std::endl;
 

@@ -992,7 +992,7 @@ private:
 
         create_new_user(fs_type, drive);
 
-        
+        execute_command("mkdir -p /mnt/opt/Arch-Systemtool");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktop.sh /mnt/opt/Arch-Systemtool");
         execute_command("chmod +x /mnt/opt/Arch-Systemtool/desktop.sh");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");

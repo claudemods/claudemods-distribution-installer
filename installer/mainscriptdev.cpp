@@ -1122,7 +1122,7 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm harfbuzz-icu'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Rsc --noconfirm ark karchive plasma-desktop dolphin kate konsole attica knewstuff discover'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -Sy'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -S --noconfirm kdedevpackages'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'sudo -S pacman -S --noconfirm kdedevpackages kate'\"");
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal Dev installation completed!" << COLOR_RESET << std::endl;
 

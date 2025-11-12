@@ -991,7 +991,6 @@ private:
 
         create_new_user(fs_type, drive);
 
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
         
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktopupdated.sh /mnt/home/" + new_username + "/.config/Arch-Systemtool");
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/Arch-Systemtool/desktopupdated.sh");

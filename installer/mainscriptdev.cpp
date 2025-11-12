@@ -980,13 +980,10 @@ private:
         execute_command("touch /mnt/boot/grub/grub.cfg.new");
         execute_command("pacman -Sy");
 
-        
-        
-
-        
-
-       
         execute_command("pacstrap /mnt claudemods-desktop");
+
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 

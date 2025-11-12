@@ -968,7 +968,7 @@ private:
         // Use execute_cd_command for cd commands
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/desktopminimal.img");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-arch-systemtool/Arch-Systemtool.zip");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unsquashfs -f -d /mnt /mnt/desktopminimal.img");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
         execute_command("unsquashfs -f -d /mnt/opt /mnt/Arch-Systemtool.img");

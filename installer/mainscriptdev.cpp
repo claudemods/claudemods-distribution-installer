@@ -895,8 +895,7 @@ private:
 
         change_username("ext4", drive);
 
-        std::cout << COLOR_GREEN << "CachyOS KDE Part 1 installation completed!" << COLOR_RESET << std::endl;
-        std::cout << COLOR_GREEN << " For CachyOS KDE Part 2 installation Please Reboot And login To Run Next Script!" << COLOR_RESET << std::endl;
+        std::cout << COLOR_GREEN << "CachyOS KDE installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();
     }
@@ -958,7 +957,7 @@ private:
 
     // Function to install Spitfire CKGE
     void install_spitfire_ckge(const std::string& drive) {
-        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Minimal This Uses apex.img before converting..." << COLOR_RESET << std::endl;
+        std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Minimal..." << COLOR_RESET << std::endl;
 
         prepare_target_partitions(drive, "ext4");
         std::string efi_part = drive + "1";
@@ -968,16 +967,24 @@ private:
 
         // Use execute_cd_command for cd commands
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-rootfs-images/claudemods-apex-ckge-minimal/apex.img");
-        execute_command("unsquashfs -f -d /mnt /mnt/apex.img");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/desktop-minimal.img");
+        execute_command("unsquashfs -f -d /mnt /mnt/desktopminimal.img");
+        execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /etc");
+        execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+
+        
         execute_command("mount " + efi_part + " /mnt/boot/efi");
 
         install_grub_ext4(drive);
 
-        change_username("ext4", drive);
-        execute_command("cp -r /etc/resolv.conf /mnt/etc");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktop.sh /mnt/opt/Arch-Systemtool");
-        execute_command("chmod +x /mnt/opt/Arch-Systemtool/desktop.sh");
+        create_new_user(fs_type, drive);
+
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Sy\"")
+        execute_command("chroot /mnt /bin/bash -c \"pacman -S claudemods-desktop\"")
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktop.sh /mnt/home/$USER/.config/Arch-Systemtool");
+        execute_command("chmod +x /mnt/home/$USER/.config/Arch-Systemtool/desktop.sh");
+        execute_command("chroot /mnt /bin/bash -c \"chown -R " + new_username + ":" + new_username + " /home/" + new_username + "\"")
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");

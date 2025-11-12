@@ -969,6 +969,7 @@ private:
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/desktopminimal.img");
         execute_command("unsquashfs -f -d /mnt /mnt/desktopminimal.img");
+        execute_command("mv /mnt/cachyos /mnt/home/" + new_username);
         execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /mnt/etc");
         execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /etc");
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /mnt/etc");

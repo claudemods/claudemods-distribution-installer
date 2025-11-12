@@ -1112,6 +1112,8 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh " + new_username + "'\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Sy\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Syu\"");
         execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm phonon-qt6\"");
         execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm breeze-gtk\"");
         execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm kcoreaddons\"");

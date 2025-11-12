@@ -1117,7 +1117,8 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm phonon-qt6\"");
         execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm breeze-gtk\"");
         execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm kcoreaddons\"");
-        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm karchive kconfig\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm kconfig\"");
+        execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm karchive\"");
         execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm raptor\"");
         execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm poppler-glib\"");
         execute_command("chroot /mnt /bin/bash -c \"pacman -Rsc --noconfirm harfbuzz-icu\"");

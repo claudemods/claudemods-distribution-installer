@@ -975,6 +975,8 @@ private:
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
         execute_command("cp -r /etc/resolv.conf /mnt/etc");
         execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+        execute_command("mkdir -p /mnt/boot");
+        execute_command("mkdir -p /mnt/boot/grub");
         execute_command("touch /mnt/boot/grub/grub.cfg.new");
         execute_command("pacman -Sy");
 

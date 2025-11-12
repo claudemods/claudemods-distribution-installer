@@ -108,7 +108,7 @@ sudo -S chmod +x /home/$TARGET_USER/.config/autostart/wallpaperupdated.desktop
 sudo -S chown $TARGET_USER /home/$TARGET_USER/.config/autostart/wallpaperupdated.desktop
 cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S unzip -uo SpitFireLogin.zip -d /usr/share/sddm/themes
 sudo -S cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
-cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip -uo theme.zip -d /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
+cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip -uo themeupdated.zip -d /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
 unzip -uo Windows10Dark.zip -d /home/$TARGET_USER/.icons > /dev/null 2>&1
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/aurorae /home/$TARGET_USER/.local/share
 print_status "Proceeding..."

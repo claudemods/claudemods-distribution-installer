@@ -974,14 +974,17 @@ private:
         execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
         
-        execute_command("mount " + efi_part + " /mnt/boot/efi");
-
-        install_grub_ext4(drive);
+        
 
         
 
         execute_command("chroot /mnt /bin/bash -c \"pacman -Sy\"")
         execute_command("chroot /mnt /bin/bash -c \"pacman -S claudemods-desktop\"")
+
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+
+        install_grub_ext4(drive);
+        
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktopupdated.sh /mnt/home/$USER/.config/Arch-Systemtool");
         execute_command("chmod +x /mnt/home/$USER/.config/Arch-Systemtool/desktopupdated.sh");
         execute_command("chroot /mnt /bin/bash -c \"chown -R " + new_username + ":" + new_username + " /home/" + new_username + "\"")

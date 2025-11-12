@@ -95,7 +95,7 @@ print_info "Configuring Fish color scheme..."
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /home/$TARGET_USER/.local/share/konsole
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/claudemods-cyan.profile /home/$TARGET_USER/.local/share/konsole
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/konsolerc /home/$TARGET_USER/.config
-sudo -S chsh -s $(which fish)
+chsh -s $(which fish)
 sudo chmod +X /home/$USER/.config/fish/config.fish
 print_status "Fish configuration applied"
 
@@ -104,11 +104,11 @@ sudo chown $TARGET_USER:$TARGET_USER /home
 sudo chown $TARGET_USER:$TARGET_USER /home/$TARGET_USER
 sed -i '/^\[Desktop Entry\]/,/^\[/ s/^DefaultProfile=.*/DefaultProfile=claudemods-cyan.profile/' ~/.config/konsolerc
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/wallpaperupdated.desktop /home/$TARGET_USER/.config/autostart
-sudo -S chmod +x /home/$TARGET_USER/.config/autostart/wallpaperupdated.desktop
-sudo -S chown $TARGET_USER /home/$TARGET_USER/.config/autostart/wallpaperupdated.desktop
+sudo -S chmod +x /home/$TARGET_USER/.config/autostart/wallpaper.desktop
+sudo -S chown $TARGET_USER /home/$TARGET_USER/.config/autostart/wallpaper.desktop
 cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S unzip -uo SpitFireLogin.zip -d /usr/share/sddm/themes
 sudo -S cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d
-cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip -uo themeupdated.zip -d /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
+cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && unzip -uo updated.zip -d /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal
 unzip -uo Windows10Dark.zip -d /home/$TARGET_USER/.icons > /dev/null 2>&1
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/aurorae /home/$TARGET_USER/.local/share
 print_status "Proceeding..."

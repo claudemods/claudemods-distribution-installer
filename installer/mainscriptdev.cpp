@@ -998,8 +998,11 @@ private:
         execute_command("rm -rf /home/" + new_username + "/" + new_username);
         execute_command("chroot /mnt /bin/bash -c \"chown " + new_username + ":" + new_username + " /home\"");
         execute_command("chroot /mnt /bin/bash -c \"chown -R " + new_username + ":" + new_username + " /home/" + new_username + "\"");
-        execute_command("chroot /mnt /bin/bash -c \"chsh -s $(which fish)\"");
-        execute_command("chmod +X /mnt/usr/share/fish/config.fish");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfireupdated.sh'\"");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfireupdated.sh " + new_username + "'\"");
         
 
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");

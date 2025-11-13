@@ -997,6 +997,7 @@ private:
         execute_command("cp -r /mnt/home/" + new_username + "/" + new_username + " /mnt/home");
         execute_command("rm -rf /home/" + new_username + "/" + new_username);
         execute_command("chroot /mnt /bin/bash -c \"chown " + new_username + ":" + new_username + " /home\"");
+        execute_command("mkdir -p /mnt/etc/sddm.conf.d");
         execute_command("chroot /mnt /bin/bash -c \"chown -R " + new_username + ":" + new_username + " /home/" + new_username + "\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");

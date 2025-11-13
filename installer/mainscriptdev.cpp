@@ -965,46 +965,26 @@ private:
 
         setup_ext4_filesystem(root_part);
 
-        // Use execute_cd_command for cd commands
-        execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/desktopminimal.img");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
-        execute_command("unsquashfs -f -d /mnt /mnt/desktopminimal.img");
-        execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
-        execute_command("mv /mnt/cachyos /mnt/home/" + new_username);
+        execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
         execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /mnt/etc");
         execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /etc");
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /mnt/etc");
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
-        execute_command("cp -r /etc/resolv.conf /mnt/etc");
-        execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
-        execute_command("mkdir -p /mnt/boot");
-        execute_command("mkdir -p /mnt/boot/grub");
-        execute_command("touch /mnt/boot/grub/grub.cfg.new");
-        execute_command("rm -rf /mnt/Arch-Systemtool.zip");
-        execute_command("rm -rf /mnt/desktopminimal.img");
-        execute_command("pacman -Sy");
 
+        execute_command("pacman -Sy");
         execute_command("pacstrap /mnt claudemods-desktop");
+
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
 
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
-
-        execute_command("mount " + efi_part + " /mnt/boot/efi");
 
         install_grub_ext4(drive);
 
         create_new_user(fs_type, drive);
 
-        execute_command("mkdir -p /mnt/opt/Arch-Systemtool");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/desktop.sh /mnt/opt/Arch-Systemtool");
-        execute_command("chmod +x /mnt/opt/Arch-Systemtool/desktop.sh");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfire.sh'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfire.sh " + new_username + "'\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();

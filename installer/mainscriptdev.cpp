@@ -1009,6 +1009,8 @@ private:
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
         execute_command("rm -rf /mnt/desktopminimal.img");
 
+        create_new_user(fs_type, drive);
+
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();

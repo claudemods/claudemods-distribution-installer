@@ -999,7 +999,6 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"chown " + new_username + ":" + new_username + " /home\"");
         execute_command("chroot /mnt /bin/bash -c \"chown -R " + new_username + ":" + new_username + " /home/" + new_username + "\"");
         execute_command("chroot /mnt /bin/bash -c \"chsh -s $(which fish)\"");
-        execute_command("chmod +X /mnt/home/$USER/.config/fish/config.fish");
         execute_command("chmod +X /mnt/usr/share/fish/config.fish");
         
 

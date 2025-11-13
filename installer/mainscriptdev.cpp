@@ -977,6 +977,7 @@ private:
         execute_command("pacstrap /mnt claudemods-desktop");
 
         execute_command("mount " + efi_part + " /mnt/boot/efi");
+        execute_command("touch /mnt/boot/grub/grub.cfg.new");
 
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
@@ -984,6 +985,15 @@ private:
         install_grub_ext4(drive);
 
         create_new_user(fs_type, drive);
+
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/desktopminimal.img");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
+        execute_command("unsquashfs -f -d /mnt /mnt/desktopminimal.img");
+        execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
+        execute_command("mv /mnt/cachyos /mnt/home/" + new_username);
+        execute_command("rm -rf /mnt/Arch-Systemtool.zip");
+        execute_command("rm -rf /mnt/desktopminimal.img");
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;
 

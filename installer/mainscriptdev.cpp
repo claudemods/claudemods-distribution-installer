@@ -985,31 +985,26 @@ private:
 
         install_grub_ext4(drive);
 
-        create_new_user(fs_type, drive);
-
-        execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/desktopminimal.img");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
-        execute_command("unsquashfs -f -d /mnt /mnt/desktopminimal.img");
-        execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
-        execute_command("mv /mnt/cachyos /mnt/home/" + new_username);
-        execute_command("mv /mnt/home/" + new_username + "/cachyos /mnt/home/" + new_username + "/" + new_username);
-        execute_command("cp -r /mnt/home/" + new_username + "/" + new_username + " /mnt/home");
-        execute_command("rm -rf /home/" + new_username + "/" + new_username);
-        execute_command("chroot /mnt /bin/bash -c \"chown " + new_username + ":" + new_username + " /home\"");
-        execute_command("mkdir -p /mnt/etc/sddm.conf.d");
-        execute_command("chroot /mnt /bin/bash -c \"chown -R " + new_username + ":" + new_username + " /home/" + new_username + "\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + " && git clone https://github.com/claudemods/claudemods-distribution-installer'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && chmod +x dolphinfixes.sh'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer && ./dolphinfixes.sh " + new_username + "'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && chmod +x installspitfireupdated.sh'\"");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /home/" + new_username + "/claudemods-distribution-installer/installer/spitfire-ckge-minimal && ./installspitfireupdated.sh " + new_username + "'\"");
         
-
-        execute_command("rm -rf /mnt/Arch-Systemtool.zip");
-        execute_command("rm -rf /mnt/desktopminimal.img");
+        
+        execute_command("echo setting up system tweaks grub and plymouth and fish and newuser")
+        execute_command("echo 'blacklist ntfs3' | tee /mnt/etc/modprobe.d/disable-ntfs3.conf >/dev/null 2>&1")
+        execute_command("chroot /mnt /bin/bash -c \"chmod 4755 /usr/lib/spice-client-glib-usb-acl-helper\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default")
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub")
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes")
+        execute_command("grub-mkconfig -o /boot/grub/grub.cfg")
+        execute_command("cp -r /home/$TARGET_USER/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/")
+        execute_command("cp -r /home/$TARGET_USER/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin")
+        execute_command("chmod +x /mnt/usr/local/bin/term.sh")
+        execute_command("cp -r /home/$TARGET_USER/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/")
+        execute_command("systemctl enable term.service >/dev/null 2>&1")
+        execute_command("plymouth-set-default-theme -R cachyos-bootanimation");
 
         create_new_user(fs_type, drive);
+        execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
+        execute_command("chsh -s $(which fish)");
+        
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;
 

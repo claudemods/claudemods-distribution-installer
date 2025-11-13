@@ -103,7 +103,7 @@ print_info "Apply Cachyos Kde Theme..."
 sudo chown $TARGET_USER:$TARGET_USER /home
 sudo chown $TARGET_USER:$TARGET_USER /home/$TARGET_USER
 sed -i '/^\[Desktop Entry\]/,/^\[/ s/^DefaultProfile=.*/DefaultProfile=claudemods-cyan.profile/' ~/.config/konsolerc
-cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/wallpaperupdated.desktop /home/$TARGET_USER/.config/autostart
+cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/wallpaper.desktop /home/$TARGET_USER/.config/autostart
 sudo -S chmod +x /home/$TARGET_USER/.config/autostart/wallpaper.desktop
 sudo -S chown $TARGET_USER /home/$TARGET_USER/.config/autostart/wallpaper.desktop
 cd /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal && sudo -S unzip -uo SpitFireLogin.zip -d /usr/share/sddm/themes

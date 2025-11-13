@@ -994,7 +994,7 @@ private:
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
         execute_command("mv /mnt/cachyos /mnt/home/" + new_username);
         execute_command("mv /mnt/home/" + new_username + "/cachyos /mnt/home/" + new_username + "/" + new_username);
-        execute_command("cp -r /home/" + new_username + "/" + new_username + " /home");
+        execute_command("cp -r /mnt/home/" + new_username + "/" + new_username + " /mnt/home");
         execute_command("rm -rf /home/" + new_username + "/" + new_username);
         execute_command("chown " + new_username + ":" + new_username + " /mnt/home");
         execute_command("chown -R " + new_username + ":" + new_username + " /mnt/home/" + new_username);

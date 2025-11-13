@@ -992,12 +992,12 @@ private:
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unsquashfs -f -d /mnt /mnt/desktopminimal.img");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
-        execute_command("mv /mnt/cachyos /mnt/home/" + new_username");
-        execute_command("mv /mnt/home/" + new_username + "/cachyos /mnt/home/" + new_username + "/" + new_username");
+        execute_command("mv /mnt/cachyos /mnt/home/" + new_username);
+        execute_command("mv /mnt/home/" + new_username + "/cachyos /mnt/home/" + new_username + "/" + new_username);
         execute_command("cp -r /home/" + new_username + "/" + new_username + " /home");
-        execute_command("rm -rf /home/" + new_username + "/" + new_username");
+        execute_command("rm -rf /home/" + new_username + "/" + new_username);
         execute_command("chown " + new_username + ":" + new_username + " /mnt/home");
-        execute_command("chown -R " + new_username + ":" + new_username + " /mnt/home/" + new_username");
+        execute_command("chown -R " + new_username + ":" + new_username + " /mnt/home/" + new_username);
         execute_command("chroot /mnt /bin/bash -c \"sudo -S chsh -s $(which fish)\"");
         execute_command("chmod +X /mnt/home/$USER/.config/fish/config.fish");
         execute_command("chmod +X /mnt/usr/share/fish/config.fish");

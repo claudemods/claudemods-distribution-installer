@@ -24,7 +24,7 @@ cat << "EOF"
 EOF
 
 echo -e "${CYAN}"
-echo "           claudemods Spitfire CKGE Minimal v1.03.1 06-11-2025"
+echo "           claudemods Spitfire CKGE Minimal v1.03.2 13-11-2025"
 echo -e "${NC}"
 echo "================================================================================"
 echo ""
@@ -96,13 +96,9 @@ cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ck
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/claudemods-cyan.profile /home/$TARGET_USER/.local/share/konsole
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/konsolerc /home/$TARGET_USER/.config
 chsh -s $(which fish)
-sudo chmod +X /home/$USER/.config/fish/config.fish
 print_status "Fish configuration applied"
 
 print_info "Apply Cachyos Kde Theme..."
-sudo chown $TARGET_USER:$TARGET_USER /home
-sudo chown $TARGET_USER:$TARGET_USER /home/$TARGET_USER
-sed -i '/^\[Desktop Entry\]/,/^\[/ s/^DefaultProfile=.*/DefaultProfile=claudemods-cyan.profile/' ~/.config/konsolerc
 cp -r /home/$TARGET_USER/claudemods-distribution-installer/installer/spitfire-ckge-minimal/wallpaper.desktop /home/$TARGET_USER/.config/autostart
 sudo -S chmod +x /home/$TARGET_USER/.config/autostart/wallpaper.desktop
 sudo -S chown $TARGET_USER /home/$TARGET_USER/.config/autostart/wallpaper.desktop

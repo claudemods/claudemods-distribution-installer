@@ -975,7 +975,8 @@ private:
 
         execute_command("pacman -Sy");
         execute_command("pacstrap /mnt claudemods-desktop");
-
+        execute_command("mkdir -p /mnt/boot");
+        execute_command("mkdir -p /mnt/boot/grub");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
         execute_command("touch /mnt/boot/grub/grub.cfg.new");
 

@@ -993,6 +993,10 @@ private:
         execute_command("unsquashfs -f -d /mnt /mnt/desktopminimal.img");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
         execute_command("mv /mnt/cachyos /mnt/home/" + new_username);
+        execute_command("mv /home/$USER/cachyos /home/" + new_username);
+        execute_command("chown " + new_username + ":" + new_username + " /home");
+        execute_command("chown -R " + new_username + ":" + new_username + " /home/" + new_username);
+
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
         execute_command("rm -rf /mnt/desktopminimal.img");
 

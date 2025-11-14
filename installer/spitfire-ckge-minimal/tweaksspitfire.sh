@@ -1,10 +1,6 @@
 #!/bin/bash
 
-username="$1"
-
-target_file="/home/$username/.local/share/user-places.xbel"
-[ -f "$target_file" ] && sed -i "s/spitfire/$username/g" "$target_file"
-
+cd /opt/claudemods-distribution-installer/spitfire-ckge-minimal && sudo -S unzip -uo SpitFireLogin.zip -d /mnt/usr/share/sddm/themes
 sudo -S chmod 4755 /usr/lib/spice-client-glib-usb-acl-helper
 echo 'blacklist ntfs3' | sudo -S tee /etc/modprobe.d/disable-ntfs3.conf >/dev/null 2>&1
 chsh -s $(which fish)

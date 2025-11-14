@@ -1013,7 +1013,7 @@ private:
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
         execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
         execute_command("mkdir -p /opt/etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
         execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");

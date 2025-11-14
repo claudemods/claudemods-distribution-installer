@@ -988,7 +988,6 @@ private:
         
         
         execute_command("echo setting up system tweaks grub and plymouth and fish and newuser");
-        execute_command("chroot /mnt /bin/bash -c \"echo 'blacklist ntfs3' | tee /mnt/etc/modprobe.d/disable-ntfs3.conf >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"chmod 4755 /usr/lib/spice-client-glib-usb-acl-helper\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");

@@ -1014,9 +1014,12 @@ private:
         execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
         execute_command("mkdir -p /mnt/etc/sddm.conf.d");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
-        execute_cd_command("cd /opt/claudemods-distribution-installer/spitfire-ckge-minimal && sudo unzip -uo SpitFireLogin.zip -d /mnt/usr/share/sddm/themes");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
         execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
+        execute_command("cp /opt/claudemods-distribution-installer/spitfire-ckge-minimal/finalfixes.sh /mnt/opt");
+        execute_command("cp /opt/claudemods-distribution-installer/spitfire-ckge-minimal/finalfixes.desktop /mnt/home/" + new_username + "/.config/autostart");
+        execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/finalfixes.desktop");
+        execute_command("chmod +x /mnt/opt/finalfixes.sh");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");

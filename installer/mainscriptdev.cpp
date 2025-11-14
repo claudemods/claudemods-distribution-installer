@@ -1022,12 +1022,12 @@ private:
         execute_command("chmod +x /mnt/opt/finalfixes.sh");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/SpitFireLogin /mnt/usr/share/sddm/themes");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
         execute_command("rm -rf /mnt/spitfire-minimal.zip");
         execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
-        
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;
 

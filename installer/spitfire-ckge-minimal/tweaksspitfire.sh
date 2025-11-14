@@ -1,7 +1,7 @@
 #!/bin/bash
 
 username="$1"
-target_file="/home/$[username]/.local/share/user-places.xbel"
+target_file="/home/${username}/.local/share/user-places.xbel"
 
 sed -i "s/spitfire/${username}/g" "$target_file"
 

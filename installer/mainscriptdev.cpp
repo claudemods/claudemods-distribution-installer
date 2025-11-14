@@ -1003,8 +1003,6 @@ private:
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
         execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
-        execute_command("rm -rf /mnt/Arch-Systemtool.zip");
-        execute_command("rm -rf /mnt/spitfire-minimal.zip");
         create_new_user(fs_type, drive);
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chsh -s $(which fish)\"");
@@ -1013,7 +1011,8 @@ private:
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
-        
+        execute_command("rm -rf /mnt/Arch-Systemtool.zip");
+        execute_command("rm -rf /mnt/spitfire-minimal.zip");
         
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;

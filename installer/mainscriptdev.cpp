@@ -986,8 +986,7 @@ private:
         install_grub_ext4(drive);
 
         
-        std::cout << COLOR_CYAN << "echo setting up system tweaks, grub, plymouth, fish, newuser and theme" << COLOR_RESET << std::endl;
-        execute_command("chroot /mnt /bin/bash -c \"chmod 4755 /usr/lib/spice-client-glib-usb-acl-helper\"");
+        std::cout << COLOR_CYAN << "echo setting up sCustrom grub and plymouth" << COLOR_RESET << std::endl;
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
@@ -998,21 +997,33 @@ private:
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
+
+        
+        
+        std::cout << COLOR_CYAN << "echo setting up newuser" << COLOR_RESET << std::endl;
+        create_new_user(fs_type, drive);
+        
+        std::cout << COLOR_CYAN << "echo setting up fish" << COLOR_RESET << std::endl;
+        execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
+
+        std::cout << COLOR_CYAN << "echo setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
         execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
-        create_new_user(fs_type, drive);
-        execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
-        execute_command("chroot /mnt /bin/bash -c \"chsh -s $(which fish)\"");
-        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
+        execute_command("mkdir -p /etc/sddm.conf.d");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/");
+        execute_command("chmod +x /mnt/tweaksspitfire.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c './tweaksspitfire.sh " + new_username + "'\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
         execute_command("rm -rf /mnt/spitfire-minimal.zip");
+        execute_command("rm -rf /mnt/tweaksspitfire");
         
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;

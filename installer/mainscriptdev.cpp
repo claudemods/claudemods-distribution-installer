@@ -995,7 +995,7 @@ private:
         execute_command("chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin");
-        execute_command("chroot /mnt /bin/bash -c \"chmod +x /mnt/usr/local/bin/term.sh\"");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/term.sh\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");

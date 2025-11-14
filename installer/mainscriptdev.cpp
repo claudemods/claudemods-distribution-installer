@@ -1003,7 +1003,6 @@ private:
         std::cout << COLOR_CYAN << "echo setting up newuser" << COLOR_RESET << std::endl;
         create_new_user(fs_type, drive);
         
-        std::cout << COLOR_CYAN << "echo setting up fish" << COLOR_RESET << std::endl;
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
@@ -1015,15 +1014,15 @@ private:
         execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
         execute_command("mkdir -p /etc/sddm.conf.d");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/");
-        execute_command("chmod +x /mnt/tweaksspitfire.sh");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c './tweaksspitfire.sh " + new_username + "'\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
+        execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c './opt/tweaksspitfire.sh " + new_username + "'\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
         execute_command("rm -rf /mnt/spitfire-minimal.zip");
-        execute_command("rm -rf /mnt/tweaksspitfire");
+        execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
         
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;

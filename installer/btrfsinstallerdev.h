@@ -49,7 +49,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods Distribution Installer Btrfs v1.01 15-11-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods Distribution Installer Btrfs v1.01 11-11-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Btrfs (with Zstd compression 22) filesystem" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }
@@ -260,7 +260,7 @@ private:
         execute_command("mount --bind /proc /mnt/proc");
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
-        execute_command("cp -r /opt/claudemods-distribution-installer/btrfsfstabcompressed.sh /mnt/opt/r");
+        execute_command("cp -r /opt/claudemods-distribution-installer/btrfsfstabcompressed.sh /mnt/opt");
         execute_command("chmod +x /mnt/optr/btrfsfstabcompressed.sh");
         execute_command("chroot /mnt /bin/bash -c \"mount -t efivarfs efivarfs /sys/firmware/efi/efivars\"");
         execute_command("chroot /mnt /bin/bash -c \"genfstab -U / >> /etc/fstab\"");

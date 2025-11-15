@@ -1701,7 +1701,7 @@ if (pipe) {
         execute_command("mkdir -p /mnt/etc/sddm.conf.d");
         execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
         execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/tweaksapex.sh /mnt/opt");
-        execute_command("chmod +x /mnt/opt/tweakapex.sh");
+        execute_command("chmod +x /mnt/opt/tweaksapex.sh");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
         execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/ApexLogin2 /mnt/usr/share/sddm/themes");

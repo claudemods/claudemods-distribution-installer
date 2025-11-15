@@ -241,7 +241,7 @@ private:
         execute_command("umount /mnt");
 
         execute_command("mount -o subvol=@,compress=zstd:22,compress-force=zstd:22 " + root_part + " /mnt");
-        execute_command("mkdir -p /mnt/{home,root,srv,tmp,var/{cache,log},var/lib/{portables,machines},boot/efi}");
+        execute_command("mkdir -p /mnt/{home,root,etc,srv,tmp,var/{cache,log},var/lib/{portables,machines},boot/efi}");
 
         execute_command("mount -o subvol=@home,compress=zstd:22,compress-force=zstd:22 " + root_part + " /mnt/home");
         execute_command("mount -o subvol=@root,compress=zstd:22,compress-force=zstd:22 " + root_part + " /mnt/root");

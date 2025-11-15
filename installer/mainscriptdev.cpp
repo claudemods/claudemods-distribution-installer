@@ -986,7 +986,7 @@ private:
         install_grub_ext4(drive);
 
         
-        std::cout << COLOR_CYAN << "echo setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
@@ -1000,13 +1000,13 @@ private:
 
         
         
-        std::cout << COLOR_CYAN << "echo setting up newuser" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "setting up newuser" << COLOR_RESET << std::endl;
         create_new_user(fs_type, drive);
         
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
-        std::cout << COLOR_CYAN << "echo setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
@@ -1053,7 +1053,7 @@ if (pipe) {
         prompt_reboot();
     }
 
-    // Function to install Apex CKGE
+    // Function to install Apex CKGE - 
     void install_apex_ckge(const std::string& drive) {
         std::cout << COLOR_PURPLE << "Installing Apex CKGE Minimal..." << COLOR_RESET << std::endl;
 
@@ -1083,8 +1083,8 @@ if (pipe) {
 
         install_grub_ext4(drive);
 
-
-        std::cout << COLOR_CYAN << "echo setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
+        
+        std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
@@ -1096,15 +1096,15 @@ if (pipe) {
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
-
-
-        std::cout << COLOR_CYAN << "echo setting up newuser" << COLOR_RESET << std::endl;
+        
+        
+        std::cout << COLOR_CYAN << "setting up newuser" << COLOR_RESET << std::endl;
         create_new_user(fs_type, drive);
-
+        
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
-        std::cout << COLOR_CYAN << "echo setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "echo setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
@@ -1126,32 +1126,32 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
 
-        // Get the actual home directory name from /mnt/home
-        std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
-        FILE* pipe = popen(cmd.c_str(), "r");
-        if (pipe) {
-            char buffer[128];
-            std::string home_folder;
-            if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-                home_folder = buffer;
-                home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
-            }
-            pclose(pipe);
-
-            if (!home_folder.empty()) {
-                std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
-                std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
-                execute_command(sed_cmd);
-                std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
-            }
-        }
+// Get the actual home directory name from /mnt/home
+std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
+FILE* pipe = popen(cmd.c_str(), "r");
+if (pipe) {
+    char buffer[128];
+    std::string home_folder;
+    if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        home_folder = buffer;
+        home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
+    }
+    pclose(pipe);
+    
+    if (!home_folder.empty()) {
+        std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
+        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        execute_command(sed_cmd);
+        std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
+    }
+}
 
         std::cout << COLOR_PURPLE << "Apex CKGE Minimal installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();
     }
 
-    // Function to install Spitfire CKGE Full
+    // Function to install Spitfire CKGE Full - 
     void install_spitfire_ckge_full(const std::string& drive) {
         std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Full..." << COLOR_RESET << std::endl;
 
@@ -1181,8 +1181,8 @@ if (pipe) {
 
         install_grub_ext4(drive);
 
-
-        std::cout << COLOR_CYAN << "echo setting up sCustrom grub and plymouth" << COLOR_RESET << std::endl;
+        
+        std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
@@ -1194,15 +1194,15 @@ if (pipe) {
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
-
-
-        std::cout << COLOR_CYAN << "echo setting up newuser" << COLOR_RESET << std::endl;
+        
+        
+        std::cout << COLOR_CYAN << "setting up newuser" << COLOR_RESET << std::endl;
         create_new_user(fs_type, drive);
-
+        
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
-        std::cout << COLOR_CYAN << "echo setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
@@ -1224,32 +1224,32 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
 
-        // Get the actual home directory name from /mnt/home
-        std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
-        FILE* pipe = popen(cmd.c_str(), "r");
-        if (pipe) {
-            char buffer[128];
-            std::string home_folder;
-            if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-                home_folder = buffer;
-                home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
-            }
-            pclose(pipe);
-
-            if (!home_folder.empty()) {
-                std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
-                std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
-                execute_command(sed_cmd);
-                std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
-            }
-        }
+// Get the actual home directory name from /mnt/home
+std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
+FILE* pipe = popen(cmd.c_str(), "r");
+if (pipe) {
+    char buffer[128];
+    std::string home_folder;
+    if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        home_folder = buffer;
+        home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
+    }
+    pclose(pipe);
+    
+    if (!home_folder.empty()) {
+        std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
+        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        execute_command(sed_cmd);
+        std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
+    }
+}
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Full installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();
     }
 
-    // Function to install Apex CKGE Full
+    // Function to install Apex CKGE Full - 
     void install_apex_ckge_full(const std::string& drive) {
         std::cout << COLOR_PURPLE << "Installing Apex CKGE Full..." << COLOR_RESET << std::endl;
 
@@ -1279,8 +1279,8 @@ if (pipe) {
 
         install_grub_ext4(drive);
 
-
-        std::cout << COLOR_CYAN << "echo setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
+        
+        std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
@@ -1292,15 +1292,15 @@ if (pipe) {
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
-
-
-        std::cout << COLOR_CYAN << "echo setting up newuser" << COLOR_RESET << std::endl;
+        
+        
+        std::cout << COLOR_CYAN << "setting up newuser" << COLOR_RESET << std::endl;
         create_new_user(fs_type, drive);
-
+        
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
-        std::cout << COLOR_CYAN << "echo setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "echo setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
@@ -1322,32 +1322,32 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
 
-        // Get the actual home directory name from /mnt/home
-        std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
-        FILE* pipe = popen(cmd.c_str(), "r");
-        if (pipe) {
-            char buffer[128];
-            std::string home_folder;
-            if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-                home_folder = buffer;
-                home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
-            }
-            pclose(pipe);
-
-            if (!home_folder.empty()) {
-                std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
-                std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
-                execute_command(sed_cmd);
-                std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
-            }
-        }
+// Get the actual home directory name from /mnt/home
+std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
+FILE* pipe = popen(cmd.c_str(), "r");
+if (pipe) {
+    char buffer[128];
+    std::string home_folder;
+    if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        home_folder = buffer;
+        home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
+    }
+    pclose(pipe);
+    
+    if (!home_folder.empty()) {
+        std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
+        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        execute_command(sed_cmd);
+        std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
+    }
+}
 
         std::cout << COLOR_PURPLE << "Apex CKGE Full installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();
     }
 
-    // Function to install Spitfire CKGE Minimal Dev
+    // Function to install Spitfire CKGE Minimal Dev - 
     void install_spitfire_ckge_minimal_dev(const std::string& drive) {
         std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Minimal Dev..." << COLOR_RESET << std::endl;
 
@@ -1377,8 +1377,8 @@ if (pipe) {
 
         install_grub_ext4(drive);
 
-
-        std::cout << COLOR_CYAN << "echo setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
+        
+        std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
@@ -1390,15 +1390,15 @@ if (pipe) {
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
-
-
-        std::cout << COLOR_CYAN << "echo setting up newuser" << COLOR_RESET << std::endl;
+        
+        
+        std::cout << COLOR_CYAN << "setting up newuser" << COLOR_RESET << std::endl;
         create_new_user(fs_type, drive);
-
+        
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
-        std::cout << COLOR_CYAN << "echo setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
@@ -1420,34 +1420,130 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
 
-        // Get the actual home directory name from /mnt/home
-        std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
-        FILE* pipe = popen(cmd.c_str(), "r");
-        if (pipe) {
-            char buffer[128];
-            std::string home_folder;
-            if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-                home_folder = buffer;
-                home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
-            }
-            pclose(pipe);
+// Get the actual home directory name from /mnt/home
+std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
+FILE* pipe = popen(cmd.c_str(), "r");
+if (pipe) {
+    char buffer[128];
+    std::string home_folder;
+    if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        home_folder = buffer;
+        home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
+    }
+    pclose(pipe);
+    
+    if (!home_folder.empty()) {
+        std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
+        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        execute_command(sed_cmd);
+        std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
+    }
+}
 
-            if (!home_folder.empty()) {
-                std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
-                std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
-                execute_command(sed_cmd);
-                std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
-            }
-        }
+        std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal Dev installation completed!" << COLOR_RESET << std::endl;
+
+        prompt_reboot();
+    }
+
+    // Function to install Apex CKGE Minimal Dev - 
+    void install_apex_ckge_minimal_dev(const std::string& drive) {
+        std::cout << COLOR_PURPLE << "Installing Apex CKGE Minimal Dev..." << COLOR_RESET << std::endl;
+
+        prepare_target_partitions(drive, "ext4");
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+
+        setup_ext4_filesystem(root_part);
+
+        execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /mnt/etc");
+        execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /etc");
+        execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /mnt/etc");
+        execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
+
+        execute_command("pacman -Sy");
+        execute_command("pacstrap /mnt claudemods-desktop");
+        execute_command("mkdir -p /mnt/boot");
+        execute_command("mkdir -p /mnt/boot/grub");
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+        execute_command("touch /mnt/boot/grub/grub.cfg.new");
+
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+
+        install_grub_ext4(drive);
 
         
+        std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
+        execute_command("chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/term.sh\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
+        execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
+
+        
+        
+        std::cout << COLOR_CYAN << "setting up newuser" << COLOR_RESET << std::endl;
+        create_new_user(fs_type, drive);
+        
+        execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
+
+        std::cout << COLOR_CYAN << "echo setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
+        execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
+        execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
+        execute_command("mkdir -p /mnt/etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
+        execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/SpitFireLogin /mnt/usr/share/sddm/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("rm -rf /mnt/Arch-Systemtool.zip");
+        execute_command("rm -rf /mnt/spitfire-minimal.zip");
+        execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
+        std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
+
+        std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
+
+// Get the actual home directory name from /mnt/home
+std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
+FILE* pipe = popen(cmd.c_str(), "r");
+if (pipe) {
+    char buffer[128];
+    std::string home_folder;
+    if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        home_folder = buffer;
+        home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
+    }
+    pclose(pipe);
+    
+    if (!home_folder.empty()) {
+        std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
+        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        execute_command(sed_cmd);
+        std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
+    }
+}
 
         std::cout << COLOR_PURPLE << "Apex CKGE Minimal Dev installation completed!" << COLOR_RESET << std::endl;
 
         prompt_reboot();
     }
 
-    // Function to install Spitfire CKGE Full Dev
+    // Function to install Spitfire CKGE Full Dev - 
     void install_spitfire_ckge_full_dev(const std::string& drive) {
         std::cout << COLOR_ORANGE << "Installing Spitfire CKGE Full Dev..." << COLOR_RESET << std::endl;
 
@@ -1477,8 +1573,8 @@ if (pipe) {
 
         install_grub_ext4(drive);
 
-
-        std::cout << COLOR_CYAN << "echo setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
+        
+        std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
@@ -1490,15 +1586,15 @@ if (pipe) {
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
-
-
-        std::cout << COLOR_CYAN << "echo setting up newuser" << COLOR_RESET << std::endl;
+        
+        
+        std::cout << COLOR_CYAN << "setting up newuser" << COLOR_RESET << std::endl;
         create_new_user(fs_type, drive);
-
+        
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
-        std::cout << COLOR_CYAN << "echo setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
@@ -1520,25 +1616,123 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
 
-        // Get the actual home directory name from /mnt/home
-        std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
-        FILE* pipe = popen(cmd.c_str(), "r");
-        if (pipe) {
-            char buffer[128];
-            std::string home_folder;
-            if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-                home_folder = buffer;
-                home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
-            }
-            pclose(pipe);
+// Get the actual home directory name from /mnt/home
+std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
+FILE* pipe = popen(cmd.c_str(), "r");
+if (pipe) {
+    char buffer[128];
+    std::string home_folder;
+    if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        home_folder = buffer;
+        home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
+    }
+    pclose(pipe);
+    
+    if (!home_folder.empty()) {
+        std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
+        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        execute_command(sed_cmd);
+        std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
+    }
+}
 
-            if (!home_folder.empty()) {
-                std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
-                std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
-                execute_command(sed_cmd);
-                std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
-            }
-        }
+        std::cout << COLOR_ORANGE << "Spitfire CKGE Full Dev installation completed!" << COLOR_RESET << std::endl;
+
+        prompt_reboot();
+    }
+
+    // Function to install Apex CKGE Full Dev - 
+    void install_apex_ckge_full_dev(const std::string& drive) {
+        std::cout << COLOR_PURPLE << "Installing Apex CKGE Full Dev..." << COLOR_RESET << std::endl;
+
+        prepare_target_partitions(drive, "ext4");
+        std::string efi_part = drive + "1";
+        std::string root_part = drive + "2";
+
+        setup_ext4_filesystem(root_part);
+
+        execute_command("cp -r /opt/claudemods-distribution-installer/vconsole.conf /mnt/etc");
+
+        execute_command("cp -r /etc/resolv.conf /mnt/etc");
+        execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /mnt/etc");
+        execute_command("unzip -o /opt/claudemods-distribution-installer/pacman.d.zip -d /etc");
+        execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /mnt/etc");
+        execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
+
+        execute_command("pacman -Sy");
+        execute_command("pacstrap /mnt claudemods-desktop");
+        execute_command("mkdir -p /mnt/boot");
+        execute_command("mkdir -p /mnt/boot/grub");
+        execute_command("mount " + efi_part + " /mnt/boot/efi");
+        execute_command("touch /mnt/boot/grub/grub.cfg.new");
+
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");
+
+        install_grub_ext4(drive);
+
+        
+        std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
+        execute_command("chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/term.sh\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
+        execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
+
+        
+        
+        std::cout << COLOR_CYAN << "setting up newuser" << COLOR_RESET << std::endl;
+        create_new_user(fs_type, drive);
+        
+        execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
+
+        std::cout << COLOR_CYAN << "echo setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
+        execute_cd_command("cd /mnt");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
+        execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
+        execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
+        execute_command("mkdir -p /mnt/etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
+        execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/SpitFireLogin /mnt/usr/share/sddm/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("rm -rf /mnt/Arch-Systemtool.zip");
+        execute_command("rm -rf /mnt/spitfire-minimal.zip");
+        execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
+        std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
+
+        std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
+
+// Get the actual home directory name from /mnt/home
+std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
+FILE* pipe = popen(cmd.c_str(), "r");
+if (pipe) {
+    char buffer[128];
+    std::string home_folder;
+    if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        home_folder = buffer;
+        home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
+    }
+    pclose(pipe);
+    
+    if (!home_folder.empty()) {
+        std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
+        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        execute_command(sed_cmd);
+        std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
+    }
+}
 
         std::cout << COLOR_PURPLE << "Apex CKGE Full Dev installation completed!" << COLOR_RESET << std::endl;
 

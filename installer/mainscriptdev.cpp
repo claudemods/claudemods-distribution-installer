@@ -51,7 +51,7 @@ private:
         std::cout << "██║░░██╗██║░░░░░██╔══██║██║░░░██║██║░░██║██╔══╝░░██║╚██╔╝██║██║░░██║██║░░██║░╚═══██╗" << std::endl;
         std::cout << "╚█████╔╝███████╗██║░░██║╚██████╔╝██████╔╝███████╗██║░╚═╝░██║╚█████╔╝██████╔╝██████╔╝" << std::endl;
         std::cout << "░╚════╝░╚══════╝╚═╝░░░░░░╚═════╝░╚═════╝░╚══════╝╚═╝░░░░░╚═╝░╚════╝░╚═════╝░╚═════╝░" << std::endl;
-        std::cout << COLOR_CYAN << "claudemods distribution installer Beta DevBranch v1.01 11-11-2025" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "claudemods distribution installer Beta DevBranch v1.01 15-11-2025" << COLOR_RESET << std::endl;
         std::cout << COLOR_CYAN << "Supports Ext4 And Btrfs filesystems" << COLOR_RESET << std::endl;
         std::cout << std::endl;
     }
@@ -1085,14 +1085,14 @@ if (pipe) {
 
         
         std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub /mnt/etc/default");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub.cfg /mnt/boot/grub");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
         execute_command("chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.sh /mnt/usr/local/bin");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/term.sh\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.service /mnt/etc/systemd/system/");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
@@ -1106,22 +1106,22 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "echo setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/apex-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
-        execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
+        execute_command("unzip -o /mnt/apex-minimal.zip -d /mnt/home/" + new_username + "/");
         execute_command("mkdir -p /mnt/etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
-        execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/SpitFireLogin /mnt/usr/share/sddm/themes");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/tweaksapex.sh /mnt/opt");
+        execute_command("chmod +x /mnt/opt/tweaksapex.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksapex.sh " + new_username + "'\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/ApexLogin2 /mnt/usr/share/sddm/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
-        execute_command("rm -rf /mnt/spitfire-minimal.zip");
-        execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
+        execute_command("rm -rf /mnt/apex-minimal.zip");
+        execute_command("rm -rf /mnt/opt/tweaksapex.sh");
         std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
 
         std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
@@ -1140,7 +1140,7 @@ if (pipe) {
     
     if (!home_folder.empty()) {
         std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
-        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        std::string sed_cmd = "sed -i 's/apex/" + home_folder + "/g' " + user_places_file;
         execute_command(sed_cmd);
         std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
     }
@@ -1170,7 +1170,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
 
         execute_command("pacman -Sy");
-        execute_command("pacstrap /mnt claudemods-desktop");
+        execute_command("pacstrap /mnt claudemods-desktop-full");
         execute_command("mkdir -p /mnt/boot");
         execute_command("mkdir -p /mnt/boot/grub");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -1188,10 +1188,10 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
         execute_command("chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin");
-        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/term.sh\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/termfull.sh /mnt/usr/local/bin");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/termfull.sh\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/termfull.service /mnt/etc/systemd/system/");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable termfull.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
         
@@ -1204,10 +1204,10 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-full.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
-        execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
+        execute_command("unzip -o /mnt/spitfire-full.zip -d /mnt/home/" + new_username + "/");
         execute_command("mkdir -p /mnt/etc/sddm.conf.d");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
@@ -1218,7 +1218,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
-        execute_command("rm -rf /mnt/spitfire-minimal.zip");
+        execute_command("rm -rf /mnt/spitfire-full.zip");
         execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
         std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
 
@@ -1268,7 +1268,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
 
         execute_command("pacman -Sy");
-        execute_command("pacstrap /mnt claudemods-desktop");
+        execute_command("pacstrap /mnt claudemods-desktop-full");
         execute_command("mkdir -p /mnt/boot");
         execute_command("mkdir -p /mnt/boot/grub");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -1281,15 +1281,15 @@ if (pipe) {
 
         
         std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub /mnt/etc/default");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub.cfg /mnt/boot/grub");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
         execute_command("chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin");
-        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/term.sh\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/termfull.sh /mnt/usr/local/bin");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/termfull.sh\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/termfull.service /mnt/etc/systemd/system/");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable termfull.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
         
@@ -1300,24 +1300,24 @@ if (pipe) {
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
-        std::cout << COLOR_CYAN << "echo setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/apex-full.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
-        execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
+        execute_command("unzip -o /mnt/apex-full.zip -d /mnt/home/" + new_username + "/");
         execute_command("mkdir -p /mnt/etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
-        execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/SpitFireLogin /mnt/usr/share/sddm/themes");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/tweaksapex.sh /mnt/opt");
+        execute_command("chmod +x /mnt/opt/tweaksapex.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksapex.sh " + new_username + "'\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/ApexLogin2 /mnt/usr/share/sddm/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
-        execute_command("rm -rf /mnt/spitfire-minimal.zip");
-        execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
+        execute_command("rm -rf /mnt/apex-full.zip");
+        execute_command("rm -rf /mnt/opt/tweaksapex.sh");
         std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
 
         std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
@@ -1336,7 +1336,7 @@ if (pipe) {
     
     if (!home_folder.empty()) {
         std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
-        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        std::string sed_cmd = "sed -i 's/apex/" + home_folder + "/g' " + user_places_file;
         execute_command(sed_cmd);
         std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
     }
@@ -1477,14 +1477,14 @@ if (pipe) {
 
         
         std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub /mnt/etc/default");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub.cfg /mnt/boot/grub");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
         execute_command("chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.sh /mnt/usr/local/bin");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/term.sh\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/term.service /mnt/etc/systemd/system/");
         execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
@@ -1498,22 +1498,22 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/apex-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
-        execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
+        execute_command("unzip -o /mnt/apex-minimal.zip -d /mnt/home/" + new_username + "/");
         execute_command("mkdir -p /mnt/etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
-        execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
-        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/SpitFireLogin /mnt/usr/share/sddm/themes");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/tweaksapex.sh /mnt/opt");
+        execute_command("chmod +x /mnt/opt/tweaksapex.sh");
+        execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksapex.sh " + new_username + "'\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/SpitFireLogin /mnt/usr/share/sddm/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
-        execute_command("rm -rf /mnt/spitfire-minimal.zip");
-        execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
+        execute_command("rm -rf /mnt/apex-minimal.zip");
+        execute_command("rm -rf /mnt/opt/tweakapex.sh");
         std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
 
         std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
@@ -1532,7 +1532,7 @@ if (pipe) {
     
     if (!home_folder.empty()) {
         std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
-        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        std::string sed_cmd = "sed -i 's/apex/" + home_folder + "/g' " + user_places_file;
         execute_command(sed_cmd);
         std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
     }
@@ -1562,7 +1562,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
 
         execute_command("pacman -Sy");
-        execute_command("pacstrap /mnt claudemods-desktop-dev");
+        execute_command("pacstrap /mnt claudemods-desktop-fulldev");
         execute_command("mkdir -p /mnt/boot");
         execute_command("mkdir -p /mnt/boot/grub");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -1580,10 +1580,10 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
         execute_command("chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin");
-        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/term.sh\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/termfull.sh /mnt/usr/local/bin");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/termfull.sh\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/termfull.service /mnt/etc/systemd/system/");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable termfull.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
         
@@ -1596,7 +1596,7 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "setting up Spitfire theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-full.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
         execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
@@ -1610,7 +1610,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
-        execute_command("rm -rf /mnt/spitfire-minimal.zip");
+        execute_command("rm -rf /mnt/spitfire-full.zip");
         execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
         std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
 
@@ -1660,7 +1660,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
 
         execute_command("pacman -Sy");
-        execute_command("pacstrap /mnt claudemods-desktop-dev");
+        execute_command("pacstrap /mnt claudemods-desktop-fulldev");
         execute_command("mkdir -p /mnt/boot");
         execute_command("mkdir -p /mnt/boot/grub");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -1673,15 +1673,15 @@ if (pipe) {
 
         
         std::cout << COLOR_CYAN << "setting up Custrom grub and plymouth" << COLOR_RESET << std::endl;
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub /mnt/etc/default");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/grub.cfg /mnt/boot/grub");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub /mnt/etc/default");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/grub.cfg /mnt/boot/grub");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/cachyos /mnt/usr/share/grub/themes");
         execute_command("chroot /mnt /bin/bash -c \"grub-mkconfig -o /boot/grub/grub.cfg\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/cachyos-bootanimation /mnt/usr/share/plymouth/themes/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.sh /mnt/usr/local/bin");
-        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/term.sh\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/term.service /mnt/etc/systemd/system/");
-        execute_command("chroot /mnt /bin/bash -c \"systemctl enable term.service >/dev/null 2>&1\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/termfull.sh /mnt/usr/local/bin");
+        execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/local/bin/termfull.sh\"");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/termfull.service /mnt/etc/systemd/system/");
+        execute_command("chroot /mnt /bin/bash -c \"systemctl enable termfull.service >/dev/null 2>&1\"");
         execute_command("chroot /mnt /bin/bash -c \"plymouth-set-default-theme -R cachyos-bootanimation\"");
 
         
@@ -1694,22 +1694,22 @@ if (pipe) {
 
         std::cout << COLOR_CYAN << "setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
-        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
+        execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/apex-full.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
         execute_command("unzip -o /mnt/Arch-Systemtool.zip -d /mnt/opt");
-        execute_command("unzip -o /mnt/spitfire-minimal.zip -d /mnt/home/" + new_username + "/");
+        execute_command("unzip -o /mnt/apex-full.zip -d /mnt/home/" + new_username + "/");
         execute_command("mkdir -p /mnt/etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/tweaksapex.sh /mnt/opt");
         execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/SpitFireLogin /mnt/usr/share/sddm/themes");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
-        execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/ApexLogin2 /mnt/usr/share/sddm/themes");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/claudemods-cyan.colorscheme /mnt/home/" + new_username + "/.local/share/konsole");
+        execute_command("cp -r /opt/claudemods-distribution-installer/apex-ckge-minimal/claudemods-cyan.profile /mnt/home/" + new_username + "/.local/share/konsole");
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
-        execute_command("rm -rf /mnt/spitfire-minimal.zip");
-        execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
+        execute_command("rm -rf /mnt/apex-full.zip");
+        execute_command("rm -rf /mnt/opt/tweaksapex.sh");
         std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
 
         std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
@@ -1728,7 +1728,7 @@ if (pipe) {
     
     if (!home_folder.empty()) {
         std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
-        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        std::string sed_cmd = "sed -i 's/apex/" + home_folder + "/g' " + user_places_file;
         execute_command(sed_cmd);
         std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
     }

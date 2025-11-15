@@ -1016,10 +1016,6 @@ private:
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/kde_settings.conf /mnt/etc/sddm.conf.d");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/tweaksspitfire.sh /mnt/opt");
         execute_command("chmod +x /mnt/opt/tweaksspitfire.sh");
-        execute_command("cp /opt/claudemods-distribution-installer/spitfire-ckge-minimal/finalfixes.sh /mnt/opt");
-        execute_command("cp /opt/claudemods-distribution-installer/spitfire-ckge-minimal/finalfixes.desktop /mnt/home/" + new_username + "/.config/autostart");
-        execute_command("chmod +x /mnt/home/" + new_username + "/.config/autostart/finalfixes.desktop");
-        execute_command("chmod +x /mnt/opt/finalfixes.sh");
         execute_command("chroot /mnt /bin/bash -c \"su - " + new_username + " -c 'cd /opt && ./tweaksspitfire.sh " + new_username + "'\"");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/konsolerc /mnt/home/" + new_username + "/.config/");
         execute_command("cp -r /opt/claudemods-distribution-installer/spitfire-ckge-minimal/SpitFireLogin /mnt/usr/share/sddm/themes");
@@ -1028,6 +1024,19 @@ private:
         execute_command("rm -rf /mnt/Arch-Systemtool.zip");
         execute_command("rm -rf /mnt/spitfire-minimal.zip");
         execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
+        std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
+
+        // Execute the username replacement command
+       std::string username_replace_cmd = 
+       "chroot /mnt /bin/bash -c \""
+       "for username in $(ls /home); do "
+       "    target_file=\\\"/home/\\${username}/.local/share/user-places.xbel\\\"; "
+       "    [ -f \\\"\\$target_file\\\" ] && sed -i \\\"s/spitfire/\\${username}/g\\\" \\\"\\$target_file\\\"; "
+       "done\"";
+
+       execute_command(username_replace_cmd);
+
+std::cout << COLOR_GREEN << "User-places.xbel updated successfully!" << COLOR_RESET << std::endl;
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;
 

@@ -1366,7 +1366,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
 
         execute_command("pacman -Sy");
-        execute_command("pacstrap /mnt claudemods-desktop");
+        execute_command("pacstrap /mnt claudemods-desktop-dev");
         execute_command("mkdir -p /mnt/boot");
         execute_command("mkdir -p /mnt/boot/grub");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -1464,7 +1464,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
 
         execute_command("pacman -Sy");
-        execute_command("pacstrap /mnt claudemods-desktop");
+        execute_command("pacstrap /mnt claudemods-desktop-dev");
         execute_command("mkdir -p /mnt/boot");
         execute_command("mkdir -p /mnt/boot/grub");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -1496,7 +1496,7 @@ if (pipe) {
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
-        std::cout << COLOR_CYAN << "echo setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");
@@ -1562,7 +1562,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
 
         execute_command("pacman -Sy");
-        execute_command("pacstrap /mnt claudemods-desktop");
+        execute_command("pacstrap /mnt claudemods-desktop-dev");
         execute_command("mkdir -p /mnt/boot");
         execute_command("mkdir -p /mnt/boot/grub");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -1660,7 +1660,7 @@ if (pipe) {
         execute_command("cp -r /opt/claudemods-distribution-installer/pacman.conf /etc");
 
         execute_command("pacman -Sy");
-        execute_command("pacstrap /mnt claudemods-desktop");
+        execute_command("pacstrap /mnt claudemods-desktop-dev");
         execute_command("mkdir -p /mnt/boot");
         execute_command("mkdir -p /mnt/boot/grub");
         execute_command("mount " + efi_part + " /mnt/boot/efi");
@@ -1692,7 +1692,7 @@ if (pipe) {
         execute_command("chmod +x /mnt/home/" + new_username + "/.config/fish/config.fish");
         execute_command("chroot /mnt /bin/bash -c \"chmod +x /usr/share/fish/config.fish\"");
 
-        std::cout << COLOR_CYAN << "echo setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
+        std::cout << COLOR_CYAN << "setting up Apex theme and tweaks" << COLOR_RESET << std::endl;
         execute_cd_command("cd /mnt");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/claudemods-desktop/spitfire-minimal.zip");
         execute_command("wget --show-progress --no-check-certificate --continue --tries=10 --timeout=30 --waitretry=5 https://claudemodsreloaded.co.uk/arch-systemtool/Arch-Systemtool.zip");

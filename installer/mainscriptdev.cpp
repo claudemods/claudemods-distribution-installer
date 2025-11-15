@@ -1026,17 +1026,27 @@ private:
         execute_command("rm -rf /mnt/opt/tweaksspitfire.sh");
         std::cout << COLOR_CYAN << "Updating user-places.xbel with correct username..." << COLOR_RESET << std::endl;
 
-        // Execute the username replacement command
-       std::string username_replace_cmd = 
-       "chroot /mnt /bin/bash -c \""
-       "for username in $(ls /home); do "
-       "    target_file=\\\"/home/\\${username}/.local/share/user-places.xbel\\\"; "
-       "    [ -f \\\"\\$target_file\\\" ] && sed -i \\\"s/spitfire/\\${username}/g\\\" \\\"\\$target_file\\\"; "
-       "done\"";
+        std::cout << COLOR_CYAN << "Fixing user-places.xbel with actual home folder name..." << COLOR_RESET << std::endl;
 
-       execute_command(username_replace_cmd);
-
-std::cout << COLOR_GREEN << "User-places.xbel updated successfully!" << COLOR_RESET << std::endl;
+// Get the actual home directory name from /mnt/home
+std::string cmd = "ls -1 /mnt/home | grep -v '^\\.' | head -1";
+FILE* pipe = popen(cmd.c_str(), "r");
+if (pipe) {
+    char buffer[128];
+    std::string home_folder;
+    if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+        home_folder = buffer;
+        home_folder.erase(std::remove(home_folder.begin(), home_folder.end(), '\n'), home_folder.end());
+    }
+    pclose(pipe);
+    
+    if (!home_folder.empty()) {
+        std::string user_places_file = "/mnt/home/" + home_folder + "/.local/share/user-places.xbel";
+        std::string sed_cmd = "sed -i 's/spitfire/" + home_folder + "/g' " + user_places_file;
+        execute_command(sed_cmd);
+        std::cout << COLOR_GREEN << "Updated user-places.xbel: replaced 'spitfire' with '" << home_folder << "'" << COLOR_RESET << std::endl;
+    }
+}
 
         std::cout << COLOR_ORANGE << "Spitfire CKGE Minimal installation completed!" << COLOR_RESET << std::endl;
 

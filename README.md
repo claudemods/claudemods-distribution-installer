@@ -1,4 +1,4 @@
-iso needs updated but v1.01 is out!
+iso needs updated but MainBranch v1.01 16-11-2025 is out!
 
 # claudemods Distribution Installer 🚀
 

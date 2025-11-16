@@ -261,7 +261,7 @@ private:
         execute_command("mount --bind /sys /mnt/sys");
         execute_command("mount --bind /run /mnt/run");
         execute_command("cp -r /opt/claudemods-distribution-installer/btrfsfstabcompressed.sh /mnt/opt");
-        execute_command("chmod +x /mnt/optr/btrfsfstabcompressed.sh");
+        execute_command("chmod +x /mnt/opt/btrfsfstabcompressed.sh");
         execute_command("chroot /mnt /bin/bash -c \"mount -t efivarfs efivarfs /sys/firmware/efi/efivars\"");
         execute_command("chroot /mnt /bin/bash -c \"genfstab -U / >> /etc/fstab\"");
         execute_command("chroot /mnt /bin/bash -c \"grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB --recheck\"");

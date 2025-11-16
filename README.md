@@ -6,8 +6,6 @@ Tty Grub-based Iso Built From Arch Bootstrap offering multiple Arch Linux CachyO
 
 ##  [Click Here For Changelog](https://github.com/claudemods/claudemods-distribution-installer/blob/main/changelog.md)
 
-##  [Click Here For More Information](https://github.com/claudemods/claudemods-distribution-installer/blob/main/information.md)
-
 ##  [Click Here For Photos Of This Project](https://github.com/claudemods/claudemods-distribution-installer/blob/main/photos/photos.md)
 
 ##  [Click Here For Photos Of Spitfire CKGE ](https://github.com/claudemods/SpitFireCKGE/tree/main/Photos)

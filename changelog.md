@@ -1,5 +1,10 @@
 # claudemods distribution installer
 
+## Main branch v1.01 — 16-11-2025
+- new ui 
+- new claudemods options integrated
+- coded and tested over 3 days all works fine
+
 ## Main branch v1.0 — 11-11-2025
 - claudemods Options: fixed slight error with `.img` name  
 - Arch Options: fixed missing `vconsole.conf`

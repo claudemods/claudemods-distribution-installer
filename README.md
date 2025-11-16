@@ -1,9 +1,3 @@
-all ext4 and btrfs options now work 10-11-2025 15:41PM GMT
-
-new claudemods options added e.g Full editions and dev edtions to devbranch only 
-
-as only spitfire ckge minimal and apex ckge minimal will work
-
 
 # claudemods Distribution Installer 🚀
 
@@ -41,6 +35,12 @@ ext4 and btrfs supported 💿
 13. 🌟 Vanilla CachyOS KDE GRUB
 14. 🎯 Vanilla CachyOS GNOME GRUB
 
-### 📦 claudemods CKGE Minimal Builds
+### 📦 claudemods CKGE Builds
 15. 🏔️ Spitfire CKGE Minimal
-16. 🔥 Apex CKGE Minimal
+16. 🏔️ Spitfire CKGE Minimal Dev
+17. 🏔️ Spitfire CKGE Full
+18. 🏔️ Spitfire CKGE Full Dev
+19. 🔥 Apex CKGE Minimal
+20. 🔥 Apex CKGE Minimal Dev
+21. 🔥 Apex CKGE Full
+22. 🔥 Apex CKGE Full Dev

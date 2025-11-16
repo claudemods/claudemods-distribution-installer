@@ -1,5 +1,3 @@
-iso needs updated but MainBranch v1.01 16-11-2025 is out!
-
 # claudemods Distribution Installer 🚀
 
 A 676mb Tty Grub-based Iso Built From Arch Bootstrap offering multiple Arch Linux CachyOS claudemods Distribution installation options. 💻

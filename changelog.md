@@ -2,7 +2,7 @@
 
 ## Main branch v1.01 — 16-11-2025
 - new ui 
-- new claudemods options integrated
+- new claudemods options integrated now using packages and not squashfs files
 - coded and tested over 3 days all works fine
 
 ## Main branch v1.0 — 11-11-2025

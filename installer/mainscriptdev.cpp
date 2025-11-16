@@ -619,7 +619,7 @@ private:
 
             execute_command("cp -r /etc/resolv.conf /mnt/etc");
 
-            execute_command("pacstrap /mnt base plasma sddm dolphin konsole grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
+            execute_command("pacstrap /mnt base plasma sddm dolphin konsole kate nano kcalc grub efibootmgr os-prober arch-install-scripts mkinitcpio " + selected_kernel + " linux-firmware sudo networkmanager");
 
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable sddm\"");
             execute_command("chroot /mnt /bin/bash -c \"systemctl enable NetworkManager\"");

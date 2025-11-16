@@ -34,7 +34,7 @@ ext4 and btrfs supported 💿
 13. 🌟 Vanilla CachyOS KDE GRUB
 14. 🎯 Vanilla CachyOS GNOME GRUB
 
-### 📦 claudemods CKGE Builds
+### 📦 claudemods Cachyos Kde Gamer's Edition Builds
 15. 🏔️ Spitfire CKGE Minimal
 16. 🏔️ Spitfire CKGE Minimal Dev
 17. 🏔️ Spitfire CKGE Full

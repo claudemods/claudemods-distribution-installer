@@ -1,3 +1,3 @@
-change of langauge seems to work better but more to fix and do
+lots has been added and changed the repo needs to be cleaned a little 
 
-g++ -o mainscript mainscript.cpp -std=c++23
+but after all it all works fine claudemods options install in full including my favourites for my 11 menu advanced hope you enjoy :)

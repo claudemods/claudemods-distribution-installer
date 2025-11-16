@@ -1,3 +1,4 @@
+iso needs updated but v1.01 is out!
 
 # claudemods Distribution Installer 🚀
 

@@ -13,7 +13,9 @@
 
 # claudemods Distribution Installer 🚀
 
-Tty Grub-based Iso Built From Arch Bootstrap offering multiple Arch Linux CachyOS And claudemods Distribution installation options. 💻
+# Tty Grub-based Iso Built From Arch Bootstrap offering multiple Arch Linux CachyOS And claudemods Distribution installation options. 💻
+
+# password for iso is 2025
 
 ##  [Click Here For claudemods website](https://claudemodsreloaded.co.uk)
 
